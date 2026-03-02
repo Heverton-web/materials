@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   User, Mail, Lock, Key, Palette, ChevronRight, ChevronLeft, 
-  CheckCircle2, Loader2, AlertTriangle, FileText, Upload
+  CheckCircle2, Loader2, AlertTriangle, FileText, Upload, ShieldCheck
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
@@ -29,11 +29,10 @@ export default function OnboardingWizard({ onComplete, onCancel }: OnboardingWiz
     groq: ''
   });
 
-  // Step 3: Branding
-  const [branding, setBranding] = useState({
-    primaryBlue: '#004a8e',
-    primaryGold: '#b38e5d',
-    description: ''
+  // Step 3: Supabase Config
+  const [supabaseConfig, setSupabaseConfig] = useState({
+    url: '',
+    anonKey: ''
   });
 
   const validateEmail = (email: string) => {
@@ -108,15 +107,18 @@ export default function OnboardingWizard({ onComplete, onCancel }: OnboardingWiz
         if (keysError) throw keysError;
       }
 
-      // 3. Save Branding
-      const { error: brandingError } = await supabase.from('branding_configs').insert({
+      // 3. Save Supabase Config (in branding_configs table for now as it's the general config table)
+      const { error: configError } = await supabase.from('branding_configs').insert({
         user_id: userId,
-        primary_blue: branding.primaryBlue,
-        primary_gold: branding.primaryGold,
-        description: branding.description
+        supabase_url: supabaseConfig.url,
+        supabase_anon_key: supabaseConfig.anonKey,
+        // Default branding if not provided
+        primary_blue: '#004a8e',
+        primary_gold: '#c5a059',
+        description: 'Configuração inicial via Onboarding'
       });
 
-      if (brandingError) throw brandingError;
+      if (configError) throw configError;
 
       // Success!
       onComplete();
@@ -310,58 +312,34 @@ export default function OnboardingWizard({ onComplete, onCancel }: OnboardingWiz
                 className="space-y-5"
               >
                 <div className="text-center mb-8">
-                  <div className="w-16 h-16 bg-purple-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-purple-500/20">
-                    <Palette size={32} className="text-purple-400" />
+                  <div className="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-500/20">
+                    <ShieldCheck size={32} className="text-blue-400" />
                   </div>
-                  <h3 className="text-xl font-bold text-white">Identidade Visual</h3>
-                  <p className="text-slate-400 text-sm mt-2">Defina as cores e a descrição da sua marca.</p>
+                  <h3 className="text-xl font-bold text-white">Projeto Supabase</h3>
+                  <p className="text-slate-400 text-sm mt-2">Configure as credenciais do seu projeto Supabase.</p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Cor Primária</label>
-                    <div className="flex items-center gap-3">
-                      <input 
-                        type="color" 
-                        value={branding.primaryBlue}
-                        onChange={(e) => setBranding({...branding, primaryBlue: e.target.value})}
-                        className="w-12 h-12 rounded cursor-pointer bg-transparent border-0 p-0"
-                      />
-                      <input 
-                        type="text" 
-                        value={branding.primaryBlue}
-                        onChange={(e) => setBranding({...branding, primaryBlue: e.target.value})}
-                        className="flex-1 bg-slate-950 border border-slate-800 rounded-xl py-2 px-3 text-white focus:outline-none focus:border-purple-500 font-mono text-sm"
-                      />
-                    </div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">Supabase URL</label>
+                    <input 
+                      type="text" 
+                      value={supabaseConfig.url}
+                      onChange={(e) => setSupabaseConfig({...supabaseConfig, url: e.target.value})}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-mono text-sm"
+                      placeholder="https://your-project.supabase.co"
+                    />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Cor Secundária</label>
-                    <div className="flex items-center gap-3">
-                      <input 
-                        type="color" 
-                        value={branding.primaryGold}
-                        onChange={(e) => setBranding({...branding, primaryGold: e.target.value})}
-                        className="w-12 h-12 rounded cursor-pointer bg-transparent border-0 p-0"
-                      />
-                      <input 
-                        type="text" 
-                        value={branding.primaryGold}
-                        onChange={(e) => setBranding({...branding, primaryGold: e.target.value})}
-                        className="flex-1 bg-slate-950 border border-slate-800 rounded-xl py-2 px-3 text-white focus:outline-none focus:border-purple-500 font-mono text-sm"
-                      />
-                    </div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">Supabase Anon Key</label>
+                    <input 
+                      type="password" 
+                      value={supabaseConfig.anonKey}
+                      onChange={(e) => setSupabaseConfig({...supabaseConfig, anonKey: e.target.value})}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-mono text-sm"
+                      placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    />
                   </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Descrição da Marca / Negócio</label>
-                  <textarea 
-                    value={branding.description}
-                    onChange={(e) => setBranding({...branding, description: e.target.value})}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all h-32 resize-none"
-                    placeholder="Descreva o que sua empresa faz, tom de voz, público alvo..."
-                  />
                 </div>
               </motion.div>
             )}

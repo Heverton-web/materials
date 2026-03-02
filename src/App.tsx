@@ -51,7 +51,7 @@ import OnboardingWizard from './components/OnboardingWizard';
 
 // --- Types & Constants ---
 
-type ViewType = 'branding' | 'keys' | 'converter' | 'editor' | 'preview' | 'materials';
+type ViewType = 'keys' | 'supabase' | 'branding' | 'converter' | 'editor' | 'preview' | 'materials';
 type ComponentType = 'hero' | 'grid' | 'comparison' | 'callout' | 'list';
 
 interface GeneratedMaterial {
@@ -104,8 +104,8 @@ const DEFAULT_PROMPTS = [
     description: "Estilo que utiliza as cores do branding",
     content: `Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
-Diretrizes de Design
-"Gere um ÚNICO arquivo HTML autônomo contendo HTML, CSS (use Tailwind via CDN: https://cdn.tailwindcss.com) e JS (use Lucide Icons via CDN: https://unpkg.com/lucide@latest).
+Diretrizes de Design:
+Gere um ÚNICO arquivo HTML autônomo contendo HTML, CSS (use Tailwind via CDN: https://cdn.tailwindcss.com) e JS (use Lucide Icons via CDN: https://unpkg.com/lucide@latest).
 
 NÃO inclua cabeçalhos ou rodapés externos do construtor.
 As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.
@@ -116,7 +116,7 @@ Use animações suaves (pode usar CSS puro ou bibliotecas via CDN se necessário
 
 O arquivo deve ser auto-contido e pronto para ser aberto em qualquer navegador.
 
-Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html)`
+Retorne APENAS o código HTML completo, sem blocos de código markdown (html)`
   },
   {
     title: "Neobrutalismo + Pastel Pop",
@@ -132,7 +132,7 @@ Diretrizes de Design & Sofisticação:
 - Estrutura: Layout estilo 'Service Grid' ou 'Feature List', com ícones Lucide grandes, sempre dentro de containers com bordas pretas.
 
 Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).
+NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (html).
 As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.`
   },
   {
@@ -149,7 +149,7 @@ Diretrizes de Design & Sofisticação:
 - Interatividade: Use GSAP para uma animação de 'Stagger' (entrada em cascata) onde os cards aparecem um após o outro com um leve movimento de baixo para cima e escala.
 
 Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).
+NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (html).
 As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.`
   },
   {
@@ -165,7 +165,7 @@ Diretrizes de Design & Sofisticação:
 - Estrutura: Layout de 'Landing Page Hero' ultra-clean, com um CTA central minimalista e ícones Lucide com traço fino (stroke-width: 1px).
 
 Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).
+NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (html).
 As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.`
   },
   {
@@ -174,7 +174,7 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
     content: `Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
 Diretrizes de Design & Sofisticação:
-- Estética Claymorphism: Os elementos devem parecer feitos de argila ou plástico macio. Utilize border-radius extremo (rounded-[3rem]) e uma combinação de box-shadow externa suave com duas sombras internas (inset) — uma clara no topo esquerdo e uma escura no canto inferior direito — para criar volume 3D tátil.
+- Estética Claymorphism: Os elementos devem parecer feitos de argila ou plástico macio. Utilize border-radius extremo (rounded-[3rem]) e uma combination de box-shadow externa suave com duas sombras internas (inset) — uma clara no topo esquerdo e uma escura no canto inferior direito — para criar volume 3D tátil.
 - Paleta de Cores: Use tons pastéis "doces" (ex: Azul bebê #A5D8FF, Rosa chiclete #FFD6E8, Lilás #E5DBFF). O fundo deve ser um gradiente radial muito suave entre duas cores pastéis próximas.
 - Profundidade e Camadas: Implemente o efeito de flutuação. Use GSAP para criar uma animação de 'Floating' contínua (bobbing) nos elementos principais, fazendo-os subir e descer levemente em tempos diferentes.
 - Tipografia: Use a fonte 'Outfit' ou 'Quicksand' via Google Fonts para manter o aspecto amigável e arredondado. Títulos em font-bold e cores de texto em tons de cinza azulado escuro (text-slate-700).
@@ -182,7 +182,7 @@ Diretrizes de Design & Sofisticação:
 - Estrutura: Layout estilo 'Onboarding Cards' ou 'Feature Showcase' com ícones Lucide estilizados com traços grossos e cores vibrantes.
 
 Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).
+NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (html).
 As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.`
   },
   {
@@ -199,7 +199,7 @@ Diretrizes de Design & Sofisticação:
 - Estrutura: Layout de 'Command Center' ou 'Tech Dashboard', com ícones Lucide estilizados em modo duotone usando as cores neon da paleta.
 
 Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).
+NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (html).
 As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.`
   },
   {
@@ -216,7 +216,7 @@ Diretrizes de Design & Sofisticação:
 - Estrutura: Layout de 'Smart Home Controller' ou 'Music Player', com botões circulares, sliders personalizados e ícones Lucide que parecem gravados na superfície.
 
 Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).
+NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (html).
 As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.`
   },
   {
@@ -233,7 +233,7 @@ Diretrizes de Design & Sofisticação:
 - Estrutura: Layout de 'Digital Agency Portfolio' ou 'Event Editorial', focado em impacto visual imediato com ícones Lucide agindo apenas como acentos minimalistas.
 
 Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).
+NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (html).
 As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.`
   },
   {
@@ -250,7 +250,7 @@ Diretrizes de Design & Sofisticação:
 - Estrutura: Layout estilo 'Luxury Lookbook' ou 'Architecture Portfolio', com grid ortogonal e ícones Lucide com stroke-width: 0.75px para máxima elegância.
 
 Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).
+NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (html).
 As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.`
   },
   {
@@ -267,7 +267,7 @@ Diretrizes de Design & Sofisticação:
 - Estrutura: Layout de 'Design Studio Concept' ou 'Portfolio de Engenharia', com seções numeradas (01, 02, 03) em fontes grandes e ícones Lucide simplificados.
 
 Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).
+NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (html).
 As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.`
   },
   {
@@ -284,7 +284,7 @@ Diretrizes de Design & Sofisticação:
 - Estrutura: Layout de 'Web3 Dashboard' ou 'NFT Marketplace Concept', com botões de ação que possuem um brilho intenso no hover e ícones Lucide com acabamento metálico.
 
 Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).
+NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (html).
 As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.`
   },
   {
@@ -301,7 +301,7 @@ Diretrizes de Design & Sofisticação:
 - Estrutura: Layout de 'Index' ou 'Product Catalog', com numeração técnica para cada seção e ícones Lucide pequenos e precisos (stroke-width: 1.5px), sempre alinhados ao topo dos seus respectivos grids.
 
 Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).
+NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (html).
 As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.`
   },
   {
@@ -316,7 +316,7 @@ Diretrizes de Design & Sofisticação:
 - Estrutura: Layouts assimétricos, mas perfeitamente balanceados. Linhas divisórias extremamente finas e discretas.
 
 Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).
+NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (html).
 As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.`
   },
   {
@@ -331,7 +331,7 @@ Diretrizes de Design & Sofisticação:
 - Estrutura: Layouts que lembram páginas de enciclopédias ou jornais antigos, com colunas de texto bem definidas.
 
 Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).
+NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (html).
 As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.`
   },
   {
@@ -346,7 +346,7 @@ Diretrizes de Design & Sofisticação:
 - Animações: Efeitos de marquee (texto rolando), piscar rápido, e cursores personalizados (via CSS).
 
 Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).
+NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (html).
 As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.`
   },
   {
@@ -361,7 +361,7 @@ Diretrizes de Design & Sofisticação:
 - Contraste: O contraste entre o "frio" do cinza/preto e o "vivo" do verde é o ponto central do design.
 
 Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).
+NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (html).
 As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.`
   },
   {
@@ -376,7 +376,7 @@ Diretrizes de Design & Sofisticação:
 - Animações: Pulsação suave das luzes neon de fundo, dando vida ao ambiente escuro.
 
 Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).
+NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (html).
 As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.`
   },
   {
@@ -391,7 +391,7 @@ Diretrizes de Design & Sofisticação:
 - Vibração: Um design alegre, nostálgico e acolhedor, sem linhas retas duras.
 
 Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).
+NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (html).
 As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.`
   },
   {
@@ -406,7 +406,7 @@ Diretrizes de Design & Sofisticação:
 - Estrutura: Layouts não convencionais, onde os elementos parecem ter sido "espalhados" de forma divertida, mas legível.
 
 Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).
+NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (html).
 As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.`
   },
   {
@@ -421,7 +421,7 @@ Diretrizes de Design & Sofisticação:
 - Tipografia: Mistura de fontes que parecem máquina de escrever ('Courier Prime') com fontes manuscritas ('Caveat' ou 'Permanent Marker').
 
 Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).
+NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (html).
 As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.`
   },
   {
@@ -436,7 +436,7 @@ Diretrizes de Design & Sofisticação:
 - Alinhamento: Mistura de alinhamentos justificados para blocos de texto e centralizados para grandes citações.
 
 Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).
+NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (html).
 As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.`
   },
   {
@@ -451,7 +451,7 @@ Diretrizes de Design & Sofisticação:
 - Atmosfera: Um visual surreal, nostálgico e levemente "glitchy".
 
 Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).
+NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (html).
 As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.`
   },
   {
@@ -466,7 +466,7 @@ Diretrizes de Design & Sofisticação:
 - Impacto: Um design ousado que banha o usuário em uma única atmosfera de cor.
 
 Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).
+NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (html).
 As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.`
   },
   {
@@ -481,7 +481,7 @@ Diretrizes de Design & Sofisticação:
 - Tipografia: Fontes limpas, com cores de texto em tons de cinza médio para manter o baixo contraste elegante.
 
 Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).
+NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (html).
 As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.`
   },
   {
@@ -496,7 +496,7 @@ Diretrizes de Design & Sofisticação:
 - Estrutura: Layout que lembra a interface de um equipamento militar ou maquinário pesado.
 
 Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).
+NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (html).
 As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.`
   },
   {
@@ -511,7 +511,7 @@ Diretrizes de Design & Sofisticação:
 - Iluminação: Efeitos de gradiente radial sutis que parecem luz de velas iluminando o centro da tela.
 
 Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).
+NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (html).
 As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.`
   },
   {
@@ -526,7 +526,7 @@ Diretrizes de Design & Sofisticação:
 - Elementos Visuais: Caixas de texto que lembram balões de fala ou quadros de HQ, com sombras pretas sólidas e deslocadas.
 
 Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).
+NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (html).
 As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.`
   },
   {
@@ -541,7 +541,7 @@ Diretrizes de Design & Sofisticação:
 - Atmosfera: Um visual calmante, moderno e altamente estético, focado na transição suave de cores.
 
 Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).
+NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (html).
 As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.`
   },
   {
@@ -556,7 +556,7 @@ Diretrizes de Design & Sofisticação:
 - Animações: Efeito de digitação (typewriter) no carregamento e cursores retangulares piscantes.
 
 Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).
+NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (html).
 As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.`
   },
   {
@@ -571,7 +571,7 @@ Diretrizes de Design & Sofisticação:
 - Atmosfera: Um design que parece um sonho ou uma obra de arte moderna, priorizando a expressão visual sobre a estrutura rígida.
 
 Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).
+NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (html).
 As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.`
   },
   {
@@ -586,7 +586,7 @@ Diretrizes de Design & Sofisticação:
 - Estrutura: Layouts emoldurados com bordas duplas ou triplas, criando uma sensação de convite VIP ou arquitetura de luxo.
 
 Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).
+NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (html).
 As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.`
   },
   {
@@ -601,10 +601,127 @@ Diretrizes de Design & Sofisticação:
 - Atmosfera: Um design limpo, otimista, com muito espaço em branco e elementos que parecem flutuar em gravidade zero.
 
 Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).
+NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (html).
 As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.`
   }
 ];
+
+const SUPABASE_SQL = `-- 1. Profiles (Tabela de usuários)
+CREATE TABLE profiles (
+  id UUID REFERENCES auth.users ON DELETE CASCADE PRIMARY KEY,
+  full_name TEXT,
+  avatar_url TEXT,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 2. API Keys (Chaves de IA)
+CREATE TABLE api_keys (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users ON DELETE CASCADE NOT NULL,
+  service_name TEXT NOT NULL, -- 'gemini', 'openai', 'claude', 'groq'
+  key_value TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 3. Branding Configs (Configurações de Marca e Supabase)
+CREATE TABLE branding_configs (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users ON DELETE CASCADE NOT NULL,
+  primary_blue TEXT DEFAULT '#004a8e',
+  primary_gold TEXT DEFAULT '#c5a059',
+  description TEXT,
+  supabase_url TEXT,
+  supabase_anon_key TEXT,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 4. Generated Materials (Histórico de Materiais)
+CREATE TABLE generated_materials (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users ON DELETE CASCADE NOT NULL,
+  title TEXT NOT NULL,
+  content TEXT NOT NULL,
+  html_code TEXT,
+  type TEXT DEFAULT 'page',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 5. Prompt Library (Biblioteca de Prompts)
+CREATE TABLE prompt_library (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users ON DELETE CASCADE NOT NULL,
+  name TEXT NOT NULL,
+  prompt_text TEXT NOT NULL,
+  is_default BOOLEAN DEFAULT false,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Habilitar RLS (Row Level Security)
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE api_keys ENABLE ROW LEVEL SECURITY;
+ALTER TABLE branding_configs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE generated_materials ENABLE ROW LEVEL SECURITY;
+ALTER TABLE prompt_library ENABLE ROW LEVEL SECURITY;
+
+-- Políticas de Acesso (Apenas o dono pode ver/editar seus dados)
+CREATE POLICY "Users can view own profile" ON profiles FOR SELECT USING (auth.uid() = id);
+CREATE POLICY "Users can update own profile" ON profiles FOR UPDATE USING (auth.uid() = id);
+
+CREATE POLICY "Users can manage own api keys" ON api_keys FOR ALL USING (auth.uid() = user_id);
+CREATE POLICY "Users can manage own branding" ON branding_configs FOR ALL USING (auth.uid() = user_id);
+CREATE POLICY "Users can manage own materials" ON generated_materials FOR ALL USING (auth.uid() = user_id);
+CREATE POLICY "Users can manage own prompts" ON prompt_library FOR ALL USING (auth.uid() = user_id);`;
+
+const LIBRARY_CSS = `/* Estilos Base da Biblioteca Interactive Builder */
+:root {
+  --primary-blue: #004a8e;
+  --primary-gold: #c5a059;
+  --bg-dark: #020617;
+  --bg-card: #0f172a;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-dark);
+  color: #f8fafc;
+}
+
+.card {
+  background-color: var(--bg-card);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.5rem;
+  padding: 2rem;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  border-color: var(--primary-blue);
+  box-shadow: 0 10px 30px -10px rgba(0, 74, 142, 0.3);
+}
+
+.btn-primary {
+  background-color: var(--primary-blue);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background-color: #005bb3;
+  transform: translateY(-2px);
+}
+
+.text-gold {
+  color: var(--primary-gold);
+}
+
+.gradient-text {
+  background: linear-gradient(to right, #fff, var(--primary-gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}`;
 
 // --- Components ---
 
@@ -759,6 +876,11 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
     groq: ''
   });
 
+  const [supabaseConfig, setSupabaseConfig] = useState({
+    url: '',
+    anonKey: ''
+  });
+
   const [rawText, setRawText] = useState<string>('');
   const [markdownText, setMarkdownText] = useState<string>(`# Diferenças entre os Implantes: Flex Gold, Flash e Torque
 
@@ -792,7 +914,15 @@ O Flex Gold é a tendência atual para clínicas que buscam um implante para tud
   const [editName, setEditName] = useState<string>('');
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [editorTab, setEditorTab] = useState<'edit' | 'preview'>('edit');
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [editorTab, setEditorTab] = useState<'edit' | 'preview' | 'style'>('edit');
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const copyToClipboard = (text: string, id: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
 
   // --- Supabase Integration ---
 
@@ -815,8 +945,37 @@ O Flex Gold é a tendência atual para clínicas que buscam um implante para tud
     } else {
       setMaterials([]);
       setApiKeys({ gemini: '', openai: '', claude: '', groq: '' });
+      setSupabaseConfig({ url: '', anonKey: '' });
+      setBrandConfig({
+        primaryBlue: '#004a8e',
+        primaryGold: '#c5a059',
+        description: 'A Conexão Sistemas de Prótese é líder em inovação para implantodontia...',
+        systemPrompt: `Gere um ÚNICO arquivo HTML autônomo contendo HTML, CSS (use Tailwind via CDN: https://cdn.tailwindcss.com) e JS (use Lucide Icons via CDN: https://unpkg.com/lucide@latest).
+NÃO inclua cabeçalhos ou rodapés externos do construtor.
+Aplique o branding fornecido de forma elegante e profissional.
+Use animações suaves (pode usar CSS puro ou bibliotecas via CDN se necessário).
+O arquivo deve ser auto-contido e pronto para ser aberto em qualquer navegador.
+Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).`
+      });
+      loadDefaultPrompts();
     }
   }, [session]);
+
+  const loadDefaultPrompts = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('prompt_library')
+        .select('*')
+        .eq('is_default', true)
+        .order('created_at', { ascending: false });
+      
+      if (data && !error) {
+        setPromptLibrary(data);
+      }
+    } catch (err) {
+      console.error('Erro ao carregar prompts padrão:', err);
+    }
+  };
 
   const loadUserData = async () => {
     if (!session) return;
@@ -855,6 +1014,14 @@ O Flex Gold é a tendência atual para clínicas que buscam um implante para tud
         setApiKeys(newKeys);
       }
 
+      // Load Supabase Config (from branding_configs or dedicated fields)
+      if (branding && !bError) {
+        setSupabaseConfig({
+          url: branding.supabase_url || '',
+          anonKey: branding.supabase_anon_key || ''
+        });
+      }
+
       // Load Materials
       const { data: mats, error: mError } = await supabase
         .from('generated_materials')
@@ -886,6 +1053,12 @@ O Flex Gold é a tendência atual para clínicas que buscam um implante para tud
     }
   };
 
+  const loadMaterial = (material: GeneratedMaterial) => {
+    setGeneratedHtml(material.html);
+    setFilename(material.name.replace('.html', ''));
+    setView('preview');
+  };
+
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -896,6 +1069,29 @@ O Flex Gold é a tendência atual para clínicas que buscam um implante para tud
       if (error) throw error;
     } catch (error: any) {
       alert(`Erro na autenticação: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const saveSupabaseConfig = async () => {
+    if (!session) return alert('Você precisa estar logado para salvar.');
+    setLoading(true);
+    setLoadingMsg('Salvando configurações do Supabase...');
+
+    try {
+      const { error } = await supabase
+        .from('branding_configs')
+        .upsert({
+          user_id: session.user.id,
+          supabase_url: supabaseConfig.url,
+          supabase_anon_key: supabaseConfig.anonKey
+        });
+      
+      if (error) throw error;
+      alert('Configurações do Supabase salvas com sucesso!');
+    } catch (error: any) {
+      alert(`Erro ao salvar: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -1333,6 +1529,7 @@ O Flex Gold é a tendência atual para clínicas que buscam um implante para tud
         <div className="max-w-7xl mx-auto flex items-center justify-center gap-1 overflow-x-auto max-w-full">
           {[
             { id: 'keys', icon: Key, label: 'API Keys' },
+            { id: 'supabase', icon: ShieldCheck, label: 'Supabase' },
             { id: 'branding', icon: Palette, label: 'Branding' },
             { id: 'converter', icon: FileText, label: 'Converter' },
             { id: 'editor', icon: Code, label: 'Editor' },
@@ -1372,7 +1569,111 @@ O Flex Gold é a tendência atual para clínicas que buscam um implante para tud
         </AnimatePresence>
 
         <AnimatePresence mode="wait">
-          {/* 1. Branding Tab */}
+          {/* 1. Supabase Tab */}
+          {view === 'supabase' && (
+            <motion.div key="supabase" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="max-w-5xl mx-auto space-y-8">
+              <div className="bg-slate-900 rounded-[2.5rem] p-10 border border-slate-800 shadow-lg shadow-black/20">
+                <div className="flex justify-between items-center mb-8">
+                  <div>
+                    <h2 className="text-3xl font-black text-white flex items-center gap-3">
+                      <ShieldCheck className="text-blue-500" /> Projeto Supabase
+                    </h2>
+                    <p className="text-slate-400 mt-2">Configure as credenciais do seu projeto Supabase para persistência de dados.</p>
+                  </div>
+                  <button onClick={saveSupabaseConfig} className="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-blue-500 shadow-lg shadow-blue-900/20 transition-all active:scale-95 text-sm">
+                    <Save size={16} /> Salvar Configuração
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="p-6 rounded-2xl border border-slate-800 bg-slate-800/30">
+                    <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Supabase URL</label>
+                    <div className="relative">
+                      <ExternalLink size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+                      <input 
+                        type="text" 
+                        value={supabaseConfig.url} 
+                        onChange={(e) => setSupabaseConfig({...supabaseConfig, url: e.target.value})}
+                        placeholder="https://your-project.supabase.co"
+                        className="w-full pl-12 pr-4 py-4 border border-slate-700 bg-slate-900 text-white rounded-xl font-mono text-sm outline-none focus:ring-2 focus:ring-blue-600"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="p-6 rounded-2xl border border-slate-800 bg-slate-800/30">
+                    <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Supabase Anon Key</label>
+                    <div className="relative">
+                      <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+                      <input 
+                        type="password" 
+                        value={supabaseConfig.anonKey} 
+                        onChange={(e) => setSupabaseConfig({...supabaseConfig, anonKey: e.target.value})}
+                        placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                        className="w-full pl-12 pr-4 py-4 border border-slate-700 bg-slate-900 text-white rounded-xl font-mono text-sm outline-none focus:ring-2 focus:ring-blue-600"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* SQL Scripts & Library Styles */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* SQL Scripts */}
+                <div className="bg-slate-900 rounded-[2.5rem] p-10 border border-slate-800 shadow-lg shadow-black/20 flex flex-col h-[600px]">
+                  <div className="flex justify-between items-center mb-6">
+                    <div>
+                      <h3 className="text-xl font-black text-white flex items-center gap-2">
+                        <FileCode className="text-emerald-500" /> Scripts SQL
+                      </h3>
+                      <p className="text-xs text-slate-500 mt-1">Execute estes scripts no SQL Editor do Supabase.</p>
+                    </div>
+                    <button 
+                      onClick={() => copyToClipboard(SUPABASE_SQL, 'sql')}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${copiedId === 'sql' ? 'bg-emerald-500 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
+                    >
+                      {copiedId === 'sql' ? <><Check size={14} /> Copiado!</> : <><Copy size={14} /> Copiar SQL</>}
+                    </button>
+                  </div>
+                  <div className="flex-1 bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden relative">
+                    <pre className="p-6 text-xs font-mono text-slate-300 overflow-auto h-full custom-scrollbar leading-relaxed">
+                      {SUPABASE_SQL}
+                    </pre>
+                  </div>
+                </div>
+
+                {/* Library Styles */}
+                <div className="bg-slate-900 rounded-[2.5rem] p-10 border border-slate-800 shadow-lg shadow-black/20 flex flex-col h-[600px]">
+                  <div className="flex justify-between items-center mb-6">
+                    <div>
+                      <h3 className="text-xl font-black text-white flex items-center gap-2">
+                        <Layers className="text-purple-500" /> Estilos da Biblioteca
+                      </h3>
+                      <p className="text-xs text-slate-500 mt-1">CSS base utilizado para a geração das páginas.</p>
+                    </div>
+                    <button 
+                      onClick={() => copyToClipboard(LIBRARY_CSS, 'css')}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${copiedId === 'css' ? 'bg-purple-500 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
+                    >
+                      {copiedId === 'css' ? <><Check size={14} /> Copiado!</> : <><Copy size={14} /> Copiar CSS</>}
+                    </button>
+                  </div>
+                  <div className="flex-1 bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden relative">
+                    <pre className="p-6 text-xs font-mono text-slate-300 overflow-auto h-full custom-scrollbar leading-relaxed">
+                      {LIBRARY_CSS}
+                    </pre>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-center pb-12">
+                <button onClick={() => setView('branding')} className="flex items-center gap-2 text-slate-500 hover:text-white transition-colors text-sm font-bold">
+                  Ir para Branding <ChevronRight size={16} />
+                </button>
+              </div>
+            </motion.div>
+          )}
+
+          {/* 2. Branding Tab */}
           {view === 'branding' && (
             <motion.div key="branding" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="space-y-6">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -1739,6 +2040,12 @@ O Flex Gold é a tendência atual para clínicas que buscam um implante para tud
                       >
                         <Eye size={14} /> Preview do Markdown
                       </button>
+                      <button 
+                        onClick={() => setEditorTab('style')}
+                        className={`pb-4 text-xs font-bold uppercase tracking-widest border-b-2 transition-colors flex items-center gap-2 ${editorTab === 'style' ? 'border-blue-500 text-white' : 'border-transparent text-slate-500 hover:text-slate-300'}`}
+                      >
+                        <Palette size={14} /> Estilo Aplicado
+                      </button>
                     </div>
 
                     {/* Tab Content */}
@@ -1749,9 +2056,47 @@ O Flex Gold é a tendência atual para clínicas que buscam um implante para tud
                           placeholder="# Digite seu conteúdo aqui..."
                           className="absolute inset-0 w-full h-full p-6 bg-transparent text-slate-200 outline-none font-mono text-sm resize-none leading-relaxed"
                         />
-                      ) : (
+                      ) : editorTab === 'preview' ? (
                         <div className="absolute inset-0 w-full h-full p-6 overflow-y-auto prose prose-invert prose-slate prose-sm max-w-none">
                           <ReactMarkdown>{markdownText}</ReactMarkdown>
+                        </div>
+                      ) : (
+                        <div className="absolute inset-0 w-full h-full p-8 overflow-y-auto custom-scrollbar">
+                          <div className="max-w-2xl mx-auto space-y-8">
+                            <div className="bg-blue-500/10 border border-blue-500/20 rounded-[2rem] p-8">
+                              <div className="flex items-center gap-4 mb-4">
+                                <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-900/20">
+                                  <Palette size={24} className="text-white" />
+                                </div>
+                                <div>
+                                  <h3 className="text-xl font-black text-white">Configuração de Estilo Ativa</h3>
+                                  <p className="text-blue-400 text-xs font-bold uppercase tracking-widest">Prompt do Sistema</p>
+                                </div>
+                              </div>
+                              <p className="text-slate-400 text-sm leading-relaxed mb-6">
+                                Este é o conjunto de instruções que a IA seguirá para transformar seu Markdown em uma página interativa. Ele define a estética, animações e estrutura.
+                              </p>
+                              <div className="bg-slate-950 rounded-2xl border border-slate-800 p-6">
+                                <pre className="text-[11px] font-mono text-slate-300 whitespace-pre-wrap leading-relaxed">
+                                  {brandConfig.systemPrompt}
+                                </pre>
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6">
+                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Cores do Branding</p>
+                                <div className="flex gap-2">
+                                  <div className="w-8 h-8 rounded-lg shadow-inner" style={{ backgroundColor: brandConfig.primaryBlue }} title={`Primária: ${brandConfig.primaryBlue}`} />
+                                  <div className="w-8 h-8 rounded-lg shadow-inner" style={{ backgroundColor: brandConfig.primaryGold }} title={`Secundária: ${brandConfig.primaryGold}`} />
+                                </div>
+                              </div>
+                              <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6">
+                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Estratégia</p>
+                                <p className="text-xs text-slate-400 truncate">{brandConfig.description || 'Nenhuma descrição definida'}</p>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -1895,11 +2240,11 @@ O Flex Gold é a tendência atual para clínicas que buscam um implante para tud
                       
                       <div className="p-6 flex-1 flex flex-col">
                         <div className="flex-1">
-                          <h3 className="text-lg font-bold text-white mb-1 truncate" title={material.filename}>
-                            {material.filename}
+                          <h3 className="text-lg font-bold text-white mb-1 truncate" title={material.name}>
+                            {material.name}
                           </h3>
                           <p className="text-xs text-slate-500 font-mono mb-4">
-                            {new Date(material.created_at).toLocaleDateString('pt-BR', {
+                            {new Date(material.timestamp).toLocaleDateString('pt-BR', {
                               day: '2-digit', month: 'long', year: 'numeric'
                             })}
                           </p>
@@ -1915,7 +2260,7 @@ O Flex Gold é a tendência atual para clínicas que buscam um implante para tud
                             <span className="text-[10px] font-bold uppercase">Editar</span>
                           </button>
                           <button 
-                            onClick={() => downloadHtml(material.content, material.filename)}
+                            onClick={() => downloadHtml(material.html, material.name)}
                             className="flex flex-col items-center justify-center gap-1 py-2 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-emerald-400 transition-colors"
                             title="Baixar"
                           >
@@ -2017,24 +2362,43 @@ O Flex Gold é a tendência atual para clínicas que buscam um implante para tud
                     type="password" placeholder="Senha" value={authPassword} onChange={e => setAuthPassword(e.target.value)}
                     className="w-full px-4 py-3 border border-slate-700 bg-slate-800 text-white rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-600 placeholder:text-slate-600" required
                   />
-                  <div className="flex gap-3 pt-2">
+                  <div className="flex flex-col gap-3 pt-2">
+                    <button 
+                      type="submit" 
+                      className="w-full px-6 py-3 rounded-xl font-bold bg-blue-600 text-white hover:bg-blue-500 shadow-lg shadow-blue-900/20 transition-all flex items-center justify-center gap-2"
+                    >
+                      <LogIn size={18} /> Entrar
+                    </button>
+                    <button 
+                      type="button"
+                      onClick={() => {
+                        setShowLoginModal(false);
+                        setShowOnboarding(true);
+                      }}
+                      className="w-full px-6 py-3 rounded-xl font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition-all flex items-center justify-center gap-2"
+                    >
+                      <User size={18} /> Criar Nova Conta
+                    </button>
                     <button 
                       type="button"
                       onClick={() => setShowLoginModal(false)}
-                      className="flex-1 px-6 py-3 rounded-xl font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all"
+                      className="w-full py-2 text-slate-500 hover:text-slate-300 text-xs transition-all"
                     >
                       Cancelar
-                    </button>
-                    <button 
-                      type="submit" 
-                      className="flex-1 px-6 py-3 rounded-xl font-bold bg-blue-600 text-white hover:bg-blue-500 shadow-lg shadow-blue-900/20 transition-all"
-                    >
-                      Entrar
                     </button>
                   </div>
                 </form>
               </motion.div>
             </div>
+          )}
+          {showOnboarding && (
+            <OnboardingWizard 
+              onComplete={() => {
+                setShowOnboarding(false);
+                loadUserData();
+              }}
+              onCancel={() => setShowOnboarding(false)}
+            />
           )}
         </AnimatePresence>
       </main>
