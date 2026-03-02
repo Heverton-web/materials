@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   User, Mail, Lock, Key, Palette, ChevronRight, ChevronLeft, 
-  CheckCircle2, Loader2, AlertTriangle, FileText, Upload, ShieldCheck
+  CheckCircle2, Loader2, AlertTriangle, FileText, Upload, ShieldCheck, Copy, Check
 } from 'lucide-react';
 import { createClient } from '@supabase/supabase-js';
 import { supabase as defaultSupabase } from '../lib/supabase';
+import { SUPABASE_TABLES_SQL } from '../constants/supabaseSql';
 
 interface OnboardingWizardProps {
   onComplete: () => void;
@@ -16,6 +17,7 @@ export default function OnboardingWizard({ onComplete, onCancel }: OnboardingWiz
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [copiedSql, setCopiedSql] = useState(false);
 
   // Step 1: Basic Info
   const [fullName, setFullName] = useState('');
@@ -38,6 +40,12 @@ export default function OnboardingWizard({ onComplete, onCancel }: OnboardingWiz
 
   const validateEmail = (email: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  const copySql = () => {
+    navigator.clipboard.writeText(SUPABASE_TABLES_SQL);
+    setCopiedSql(true);
+    setTimeout(() => setCopiedSql(false), 2000);
   };
 
   const handleNextStep = async () => {
@@ -78,7 +86,7 @@ export default function OnboardingWizard({ onComplete, onCancel }: OnboardingWiz
       const tempSupabase = createClient(supabaseConfig.url, supabaseConfig.anonKey);
 
       // 1. Sign up user
-      const { data: authData, error: authError } = await tempSupabase.auth.signUp({
+      let { data: authData, error: authError } = await tempSupabase.auth.signUp({
         email,
         password,
         options: {
@@ -88,10 +96,39 @@ export default function OnboardingWizard({ onComplete, onCancel }: OnboardingWiz
         }
       });
 
-      if (authError) throw authError;
+      if (authError) {
+        // If user already exists, try to sign in
+        if (authError.message.toLowerCase().includes('already registered') || authError.message.toLowerCase().includes('already exists')) {
+          const { data: signInData, error: signInError } = await tempSupabase.auth.signInWithPassword({
+            email,
+            password
+          });
+          if (!signInError && signInData.user) {
+            authData = signInData;
+            authError = null;
+          } else {
+            throw authError;
+          }
+        } else {
+          throw authError;
+        }
+      }
 
-      if (!authData.user) {
+      if (!authData?.user) {
         throw new Error('Erro ao criar usuário.');
+      }
+
+      // Check if we have a session. If not, email confirmation might be required.
+      if (!authData.session) {
+        // Try to sign in to get a session
+        const { data: signInData, error: signInError } = await tempSupabase.auth.signInWithPassword({
+          email,
+          password
+        });
+        
+        if (signInError || !signInData.session) {
+          throw new Error('Erro de Autenticação: O seu projeto Supabase exige confirmação de e-mail. Vá em Authentication > Providers > Email no Supabase e DESATIVE "Confirm email", depois tente novamente.');
+        }
       }
 
       const userId = authData.user.id;
@@ -321,12 +358,30 @@ export default function OnboardingWizard({ onComplete, onCancel }: OnboardingWiz
                 exit={{ opacity: 0, x: -20 }}
                 className="space-y-5"
               >
-                <div className="text-center mb-8">
+                <div className="text-center mb-6">
                   <div className="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-500/20">
                     <ShieldCheck size={32} className="text-blue-400" />
                   </div>
                   <h3 className="text-xl font-bold text-white">Projeto Supabase</h3>
                   <p className="text-slate-400 text-sm mt-2">Configure as credenciais do seu projeto Supabase.</p>
+                </div>
+
+                <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 mb-6">
+                  <div className="flex items-start gap-3">
+                    <AlertTriangle size={18} className="text-amber-500 shrink-0 mt-0.5" />
+                    <div className="space-y-2">
+                      <p className="text-xs font-bold text-amber-500 uppercase tracking-wider">Atenção: Configuração Necessária</p>
+                      <p className="text-xs text-slate-300 leading-relaxed">
+                        Antes de finalizar, você <b>DEVE</b> executar o script SQL no seu painel do Supabase (SQL Editor) para criar as tabelas necessárias.
+                      </p>
+                      <button 
+                        onClick={copySql}
+                        className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all ${copiedSql ? 'bg-emerald-500 text-white' : 'bg-amber-500/20 text-amber-500 hover:bg-amber-500/30'}`}
+                      >
+                        {copiedSql ? <><Check size={12} /> SQL Copiado!</> : <><Copy size={12} /> Copiar Script SQL</>}
+                      </button>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="space-y-4">

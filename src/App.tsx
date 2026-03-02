@@ -49,6 +49,7 @@ import { supabase } from './lib/supabase';
 import { Session } from '@supabase/supabase-js';
 import OnboardingWizard from './components/OnboardingWizard';
 import { SEED_PROMPTS_SQL } from './constants/seedSql';
+import { SUPABASE_TABLES_SQL } from './constants/supabaseSql';
 
 // --- Types & Constants ---
 
@@ -607,71 +608,7 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
   }
 ];
 
-const SUPABASE_SQL = `-- 1. Profiles (Tabela de usuários)
-CREATE TABLE profiles (
-  id UUID REFERENCES auth.users ON DELETE CASCADE PRIMARY KEY,
-  full_name TEXT,
-  avatar_url TEXT,
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- 2. API Keys (Chaves de IA)
-CREATE TABLE api_keys (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID REFERENCES auth.users ON DELETE CASCADE NOT NULL,
-  service_name TEXT NOT NULL, -- 'gemini', 'openai', 'claude', 'groq'
-  key_value TEXT NOT NULL,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- 3. Branding Configs (Configurações de Marca e Supabase)
-CREATE TABLE branding_configs (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID REFERENCES auth.users ON DELETE CASCADE NOT NULL,
-  primary_blue TEXT DEFAULT '#004a8e',
-  primary_gold TEXT DEFAULT '#c5a059',
-  description TEXT,
-  supabase_url TEXT,
-  supabase_anon_key TEXT,
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- 4. Generated Materials (Histórico de Materiais)
-CREATE TABLE generated_materials (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID REFERENCES auth.users ON DELETE CASCADE NOT NULL,
-  title TEXT NOT NULL,
-  content TEXT NOT NULL,
-  html_code TEXT,
-  type TEXT DEFAULT 'page',
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- 5. Prompt Library (Biblioteca de Prompts)
-CREATE TABLE prompt_library (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID REFERENCES auth.users ON DELETE CASCADE NOT NULL,
-  name TEXT NOT NULL,
-  prompt_text TEXT NOT NULL,
-  is_default BOOLEAN DEFAULT false,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Habilitar RLS (Row Level Security)
-ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
-ALTER TABLE api_keys ENABLE ROW LEVEL SECURITY;
-ALTER TABLE branding_configs ENABLE ROW LEVEL SECURITY;
-ALTER TABLE generated_materials ENABLE ROW LEVEL SECURITY;
-ALTER TABLE prompt_library ENABLE ROW LEVEL SECURITY;
-
--- Políticas de Acesso (Apenas o dono pode ver/editar seus dados)
-CREATE POLICY "Users can view own profile" ON profiles FOR SELECT USING (auth.uid() = id);
-CREATE POLICY "Users can update own profile" ON profiles FOR UPDATE USING (auth.uid() = id);
-
-CREATE POLICY "Users can manage own api keys" ON api_keys FOR ALL USING (auth.uid() = user_id);
-CREATE POLICY "Users can manage own branding" ON branding_configs FOR ALL USING (auth.uid() = user_id);
-CREATE POLICY "Users can manage own materials" ON generated_materials FOR ALL USING (auth.uid() = user_id);
-CREATE POLICY "Users can manage own prompts" ON prompt_library FOR ALL USING (auth.uid() = user_id);`;
+const SUPABASE_SQL = SUPABASE_TABLES_SQL;
 
 const LIBRARY_CSS = `/* Estilos Base da Biblioteca Interactive Builder */
 :root {
