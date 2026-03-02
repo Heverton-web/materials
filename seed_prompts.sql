@@ -1,10 +1,10 @@
 -- SCRIPT PARA INSERIR OS 31 MODELOS DE DESIGN NA BIBLIOTECA
--- Substitua 'SEU_USER_ID_AQUI' pelo seu ID de usuário do Supabase (encontrado em Authentication > Users)
+-- Substitua NULL pelo seu ID de usuário do Supabase (encontrado em Authentication > Users)
 
-INSERT INTO public.prompt_library (user_id, title, description, content)
+INSERT INTO public.prompt_library (user_id, title, description, content, is_default)
 VALUES 
 (
-    'SEU_USER_ID_AQUI', 
+    NULL, 
     'Padrão', 
     'Estilo que utiliza as cores do branding',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
@@ -21,10 +21,11 @@ Use animações suaves (pode usar CSS puro ou bibliotecas via CDN se necessário
 
 O arquivo deve ser auto-contido e pronto para ser aberto em qualquer navegador.
 
-Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).'
+Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).',
+    true
 ),
 (
-    'SEU_USER_ID_AQUI', 
+    NULL, 
     'Neobrutalismo + Pastel Pop', 
     'Estilo de alto contraste com bordas pretas espessas, sombras sólidas (Shadow-Pop) e paleta pastel vibrante. Ideal para fintechs e ferramentas modernas.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
@@ -39,10 +40,11 @@ Diretrizes de Design & Sofisticação:
 
 Restrições Técnicas:
 NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.'
+As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    true
 ),
 (
-    'SEU_USER_ID_AQUI', 
+    NULL, 
     'Bento Grid + Glassmorphism', 
     'Organização modular inspirada na Apple com efeitos de vidro, desfoque e profundidade. Layout assimétrico e moderno.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
@@ -57,10 +59,11 @@ Diretrizes de Design & Sofisticação:
 
 Restrições Técnicas:
 NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.'
+As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    true
 ),
 (
-    'SEU_USER_ID_AQUI', 
+    NULL, 
     'Aurora UI + Minimalismo Orgânico', 
     'Elegância etérea com fundos dinâmicos de gradiente suave e tipografia serifada premium.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
@@ -74,10 +77,11 @@ Diretrizes de Design & Sofisticação:
 
 Restrições Técnicas:
 NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.'
+As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    true
 ),
 (
-    'SEU_USER_ID_AQUI', 
+    NULL, 
     'Claymorphism + Soft 3D', 
     'Interfaces táteis e amigáveis que parecem feitas de argila ou plástico macio, com cores pastéis.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
@@ -92,10 +96,11 @@ Diretrizes de Design & Sofisticação:
 
 Restrições Técnicas:
 NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.'
+As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    true
 ),
 (
-    'SEU_USER_ID_AQUI', 
+    NULL, 
     'Retro-Futurismo Synthwave + Clean Cyberpunk', 
     'Nostalgia tecnológica com acabamento premium, luzes neon refinadas e tipografia monospace.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
@@ -110,10 +115,11 @@ Diretrizes de Design & Sofisticação:
 
 Restrições Técnicas:
 NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.'
+As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    true
 ),
 (
-    'SEU_USER_ID_AQUI', 
+    NULL, 
     'Skeuomorph Moderno (Neuomorphism 2.0)', 
     'Realismo tátil minimalista com sombras duplas precisas e sofisticação monocromática.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
@@ -128,10 +134,11 @@ Diretrizes de Design & Sofisticação:
 
 Restrições Técnicas:
 NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.'
+As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    true
 ),
 (
-    'SEU_USER_ID_AQUI', 
+    NULL, 
     'Maximalismo Tipográfico + Dark Mode', 
     'Impacto visual extremo através de fontes gigantes, alto contraste e composições dinâmicas.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
@@ -146,10 +153,11 @@ Diretrizes de Design & Sofisticação:
 
 Restrições Técnicas:
 NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.'
+As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    true
 ),
 (
-    'SEU_USER_ID_AQUI', 
+    NULL, 
     'Grainy Textures + Mono-Chrome', 
     'Visual analógico, editorial e cinematográfico com texturas de ruído e tipografia clássica.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
@@ -164,10 +172,11 @@ Diretrizes de Design & Sofisticação:
 
 Restrições Técnicas:
 NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.'
+As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    true
 ),
 (
-    'SEU_USER_ID_AQUI', 
+    NULL, 
     'Bauhaus Modernizado', 
     'Geometria pura, funcionalismo histórico e paleta primária sobre fundo papel.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
@@ -182,10 +191,11 @@ Diretrizes de Design & Sofisticação:
 
 Restrições Técnicas:
 NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.'
+As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    true
 ),
 (
-    'SEU_USER_ID_AQUI', 
+    NULL, 
     'Holographic / Iridescent Design', 
     'Visual Web3 futurista com refração de luz, gradientes complexos e efeitos 3D de inclinação.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
@@ -200,10 +210,11 @@ Diretrizes de Design & Sofisticação:
 
 Restrições Técnicas:
 NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.'
+As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    true
 ),
 (
-    'SEU_USER_ID_AQUI', 
+    NULL, 
     'Swiss Design + Grid Brutalism', 
     'Precisão suíça com estrutura industrial aparente, tipografia radical e grid modular visível.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
@@ -218,10 +229,11 @@ Diretrizes de Design & Sofisticação:
 
 Restrições Técnicas:
 NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.'
+As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    true
 ),
 (
-    'SEU_USER_ID_AQUI', 
+    NULL, 
     'Minimalismo Japonês (Zen Design)', 
     'Foco no vazio (Ma), tipografia sutil, cores naturais e assimetria equilibrada.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
@@ -234,10 +246,11 @@ Diretrizes de Design & Sofisticação:
 
 Restrições Técnicas:
 NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.'
+As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    true
 ),
 (
-    'SEU_USER_ID_AQUI', 
+    NULL, 
     'Dark Academia', 
     'Atmosfera acadêmica vintage, tons terrosos escuros, tipografia serifada clássica.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
@@ -250,10 +263,11 @@ Diretrizes de Design & Sofisticação:
 
 Restrições Técnicas:
 NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.'
+As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    true
 ),
 (
-    'SEU_USER_ID_AQUI', 
+    NULL, 
     'Y2K Cyber Web', 
     'Nostalgia dos anos 2000, cores metálicas, rosa choque, gradientes iridescentes e estética tech-pop.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
@@ -266,10 +280,11 @@ Diretrizes de Design & Sofisticação:
 
 Restrições Técnicas:
 NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.'
+As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    true
 ),
 (
-    'SEU_USER_ID_AQUI', 
+    NULL, 
     'Eco-Brutalismo', 
     'Mistura do brutalismo de concreto com elementos orgânicos e verdes vibrantes.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
@@ -282,10 +297,11 @@ Diretrizes de Design & Sofisticação:
 
 Restrições Técnicas:
 NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.'
+As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    true
 ),
 (
-    'SEU_USER_ID_AQUI', 
+    NULL, 
     'Cyber-Glass (Neon + Glassmorphism)', 
     'Painéis de vidro translúcido flutuando sobre luzes neon intensas e fundos escuros.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
@@ -298,10 +314,11 @@ Diretrizes de Design & Sofisticação:
 
 Restrições Técnicas:
 NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.'
+As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    true
 ),
 (
-    'SEU_USER_ID_AQUI', 
+    NULL, 
     'Retro 70s Groovy', 
     'Cores quentes (laranja, mostarda, marrom), formas fluidas e tipografia arredondada e espessa.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
@@ -314,10 +331,11 @@ Diretrizes de Design & Sofisticação:
 
 Restrições Técnicas:
 NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.'
+As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    true
 ),
 (
-    'SEU_USER_ID_AQUI', 
+    NULL, 
     'Geometria Lúdica (Modern Memphis)', 
     'Padrões geométricos, cores primárias brilhantes, confetes visuais e design divertido.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
@@ -330,10 +348,11 @@ Diretrizes de Design & Sofisticação:
 
 Restrições Técnicas:
 NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.'
+As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    true
 ),
 (
-    'SEU_USER_ID_AQUI', 
+    NULL, 
     'Digital Scrapbook', 
     'Visual de colagem, texturas de papel rasgado, fitas adesivas e sobreposições caóticas controladas.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
@@ -346,10 +365,11 @@ Diretrizes de Design & Sofisticação:
 
 Restrições Técnicas:
 NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.'
+As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    true
 ),
 (
-    'SEU_USER_ID_AQUI', 
+    NULL, 
     'High-Fashion Editorial', 
     'Elegância extrema, margens imensas, tipografia fina e contraste dramático.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
@@ -362,10 +382,11 @@ Diretrizes de Design & Sofisticação:
 
 Restrições Técnicas:
 NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.'
+As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    true
 ),
 (
-    'SEU_USER_ID_AQUI', 
+    NULL, 
     'Vaporwave Aesthetic', 
     'Nostalgia dos anos 80/90, gradientes rosa e ciano, estátuas clássicas (implícitas) e grids de perspectiva.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
@@ -378,10 +399,11 @@ Diretrizes de Design & Sofisticação:
 
 Restrições Técnicas:
 NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.'
+As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    true
 ),
 (
-    'SEU_USER_ID_AQUI', 
+    NULL, 
     'Monocromático Vibrante', 
     'Uso de uma única cor forte em várias tonalidades para criar uma experiência visual imersiva.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
@@ -394,10 +416,11 @@ Diretrizes de Design & Sofisticação:
 
 Restrições Técnicas:
 NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.'
+As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    true
 ),
 (
-    'SEU_USER_ID_AQUI', 
+    NULL, 
     'Soft UI Clássico (Neumorphism 1.0)', 
     'Elementos que parecem extrudados do próprio fundo, com sombras suaves e baixo contraste.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
@@ -410,10 +433,11 @@ Diretrizes de Design & Sofisticação:
 
 Restrições Técnicas:
 NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.'
+As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    true
 ),
 (
-    'SEU_USER_ID_AQUI', 
+    NULL, 
     'Industrial Tech Wear', 
     'Design utilitário, preto fosco, acentos em laranja segurança, tipografia técnica e códigos de barras.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
@@ -426,10 +450,11 @@ Diretrizes de Design & Sofisticação:
 
 Restrições Técnicas:
 NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.'
+As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    true
 ),
 (
-    'SEU_USER_ID_AQUI', 
+    NULL, 
     'Gothic / Dark Fantasy', 
     'Atmosfera sombria, elegante e misteriosa, com vermelhos profundos, dourados envelhecidos e preto.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
@@ -437,15 +462,16 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
 Diretrizes de Design & Sofisticação:
 - Estética Gótica: Fundo preto absoluto ou texturas de veludo escuro. Cores de destaque em vermelho sangue, roxo profundo ou ouro envelhecido.
 - Tipografia: Fontes serifadas dramáticas, com alto contraste entre traços finos e grossos (ex: ''Cinzel'' ou ''Cormorant'').
-- Ornamentos: Linhas divisórias elegantes, bordas finas douradas, e um layout que evoca a diagramação de um grimório ou convite de luxo obscuro.
+- Ornamentos: Linhas divisórias elegante, bordas finas douradas, e um layout que evoca a diagramação de um grimório ou convite de luxo obscuro.
 - Iluminação: Efeitos de gradiente radial sutis que parecem luz de velas iluminando o centro da tela.
 
 Restrições Técnicas:
 NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.'
+As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    true
 ),
 (
-    'SEU_USER_ID_AQUI', 
+    NULL, 
     'Pop Art / Comic Book', 
     'Estilo história em quadrinhos, padrões de retícula (halftone), cores primárias estouradas e bordas grossas.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
@@ -458,10 +484,11 @@ Diretrizes de Design & Sofisticação:
 
 Restrições Técnicas:
 NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.'
+As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    true
 ),
 (
-    'SEU_USER_ID_AQUI', 
+    NULL, 
     'Abstract Fluid Gradients', 
     'Formas orgânicas derretidas, gradientes complexos em movimento e visual onírico.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
@@ -474,10 +501,11 @@ Diretrizes de Design & Sofisticação:
 
 Restrições Técnicas:
 NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.'
+As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    true
 ),
 (
-    'SEU_USER_ID_AQUI', 
+    NULL, 
     'Terminal / Hacker UI', 
     'Visual de linha de comando, texto verde brilhante sobre fundo preto, estética de código puro.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
@@ -490,10 +518,11 @@ Diretrizes de Design & Sofisticação:
 
 Restrições Técnicas:
 NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.'
+As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    true
 ),
 (
-    'SEU_USER_ID_AQUI', 
+    NULL, 
     'Surrealist Web', 
     'Layouts oníricos, proporções distorcidas, elementos flutuantes e quebra de expectativas.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
@@ -506,10 +535,11 @@ Diretrizes de Design & Sofisticação:
 
 Restrições Técnicas:
 NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.'
+As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    true
 ),
 (
-    'SEU_USER_ID_AQUI', 
+    NULL, 
     'Art Deco Luxuoso', 
     'Glamour dos anos 1920, simetria geométrica, preto profundo e detalhes em dourado metálico.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
@@ -522,10 +552,11 @@ Diretrizes de Design & Sofisticação:
 
 Restrições Técnicas:
 NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.'
+As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    true
 ),
 (
-    'SEU_USER_ID_AQUI', 
+    NULL, 
     'Space Age / Atomic 60s', 
     'Retro-futurismo dos anos 60, formas de estrelas, órbitas, cores pastéis espaciais e design otimista.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
@@ -538,5 +569,6 @@ Diretrizes de Design & Sofisticação:
 
 Restrições Técnicas:
 NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.'
+As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    true
 );

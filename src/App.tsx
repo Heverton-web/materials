@@ -47,6 +47,7 @@ import { GoogleGenAI, Type } from "@google/genai";
 import ReactMarkdown from 'react-markdown';
 import { supabase } from './lib/supabase';
 import { Session } from '@supabase/supabase-js';
+import OnboardingWizard from './components/OnboardingWizard';
 
 // --- Types & Constants ---
 
@@ -731,7 +732,7 @@ const CalloutSection = ({ title, text, accent, colors }: { title: string, text: 
 
 export default function App() {
   // State
-  const [view, setView] = useState<ViewType>('branding');
+  const [view, setView] = useState<ViewType>('keys');
   const [loading, setLoading] = useState(false);
   const [loadingMsg, setLoadingMsg] = useState('');
   const [session, setSession] = useState<Session | null>(null);
@@ -1331,8 +1332,8 @@ O Flex Gold é a tendência atual para clínicas que buscam um implante para tud
       <nav className="bg-[#0f172a]/60 backdrop-blur-md border-b border-slate-800 sticky top-[73px] z-40 px-6 py-2">
         <div className="max-w-7xl mx-auto flex items-center justify-center gap-1 overflow-x-auto max-w-full">
           {[
-            { id: 'branding', icon: Palette, label: 'Branding' },
             { id: 'keys', icon: Key, label: 'API Keys' },
+            { id: 'branding', icon: Palette, label: 'Branding' },
             { id: 'converter', icon: FileText, label: 'Converter' },
             { id: 'editor', icon: Code, label: 'Editor' },
             { id: 'preview', icon: Eye, label: 'Preview' },
@@ -1615,7 +1616,7 @@ O Flex Gold é a tendência atual para clínicas que buscam um implante para tud
                     <select 
                       value={selectedApi} 
                       onChange={(e) => setSelectedApi(e.target.value as keyof ApiKeys)}
-                      className="bg-transparent text-white text-xs font-bold outline-none cursor-pointer"
+                      className="bg-transparent text-white text-xs font-bold outline-none cursor-pointer [&>option]:text-slate-900"
                     >
                       <option value="gemini">Google Gemini</option>
                       <option value="openai">OpenAI (GPT-4o)</option>
@@ -1629,7 +1630,7 @@ O Flex Gold é a tendência atual para clínicas que buscam um implante para tud
                     <select 
                       value={selectedLang} 
                       onChange={(e) => setSelectedLang(e.target.value as any)}
-                      className="bg-transparent text-white text-xs font-bold outline-none cursor-pointer"
+                      className="bg-transparent text-white text-xs font-bold outline-none cursor-pointer [&>option]:text-slate-900"
                     >
                       <option value="pt">Português (BR)</option>
                       <option value="en">Inglês (US)</option>
@@ -1684,7 +1685,7 @@ O Flex Gold é a tendência atual para clínicas que buscam um implante para tud
                             setBrandConfig({ ...brandConfig, systemPrompt: prompt.content });
                           }
                         }}
-                        className="w-full px-4 py-3 border border-slate-700 bg-slate-800 text-white rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer hover:bg-slate-700/50 transition-colors"
+                        className="w-full px-4 py-3 border border-slate-700 bg-slate-800 text-white rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer hover:bg-slate-700/50 transition-colors [&>option]:text-slate-900 [&>option]:bg-white"
                       >
                         <option value="">Selecione um estilo...</option>
                         {promptLibrary.map(p => (
