@@ -4,7 +4,8 @@ import {
   User, Mail, Lock, Key, Palette, ChevronRight, ChevronLeft, 
   CheckCircle2, Loader2, AlertTriangle, FileText, Upload, ShieldCheck
 } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { createClient } from '@supabase/supabase-js';
+import { supabase as defaultSupabase } from '../lib/supabase';
 
 interface OnboardingWizardProps {
   onComplete: () => void;
@@ -73,8 +74,11 @@ export default function OnboardingWizard({ onComplete, onCancel }: OnboardingWiz
     setError('');
 
     try {
+      // 0. Create a temporary client with the provided credentials
+      const tempSupabase = createClient(supabaseConfig.url, supabaseConfig.anonKey);
+
       // 1. Sign up user
-      const { data: authData, error: authError } = await supabase.auth.signUp({
+      const { data: authData, error: authError } = await tempSupabase.auth.signUp({
         email,
         password,
         options: {
@@ -92,6 +96,10 @@ export default function OnboardingWizard({ onComplete, onCancel }: OnboardingWiz
 
       const userId = authData.user.id;
 
+      // Save credentials to localStorage for the rest of the app
+      localStorage.setItem('supabase_url', supabaseConfig.url);
+      localStorage.setItem('supabase_anon_key', supabaseConfig.anonKey);
+
       // Wait a moment for the trigger to create the profile
       await new Promise(resolve => setTimeout(resolve, 1000));
 
@@ -103,12 +111,12 @@ export default function OnboardingWizard({ onComplete, onCancel }: OnboardingWiz
       if (apiKeys.groq) keysToInsert.push({ user_id: userId, service_name: 'groq', key_value: apiKeys.groq });
 
       if (keysToInsert.length > 0) {
-        const { error: keysError } = await supabase.from('api_keys').insert(keysToInsert);
+        const { error: keysError } = await tempSupabase.from('api_keys').insert(keysToInsert);
         if (keysError) throw keysError;
       }
 
       // 3. Save Supabase Config (in branding_configs table for now as it's the general config table)
-      const { error: configError } = await supabase.from('branding_configs').insert({
+      const { error: configError } = await tempSupabase.from('branding_configs').insert({
         user_id: userId,
         supabase_url: supabaseConfig.url,
         supabase_anon_key: supabaseConfig.anonKey,
@@ -121,6 +129,8 @@ export default function OnboardingWizard({ onComplete, onCancel }: OnboardingWiz
       if (configError) throw configError;
 
       // Success!
+      // We need to reload to ensure the default supabase client uses the new credentials
+      window.location.reload();
       onComplete();
 
     } catch (err: any) {

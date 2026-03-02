@@ -48,6 +48,7 @@ import ReactMarkdown from 'react-markdown';
 import { supabase } from './lib/supabase';
 import { Session } from '@supabase/supabase-js';
 import OnboardingWizard from './components/OnboardingWizard';
+import { SEED_PROMPTS_SQL } from './constants/seedSql';
 
 // --- Types & Constants ---
 
@@ -1641,25 +1642,25 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                   </div>
                 </div>
 
-                {/* Library Styles */}
+                {/* Seed Prompts */}
                 <div className="bg-slate-900 rounded-[2.5rem] p-10 border border-slate-800 shadow-lg shadow-black/20 flex flex-col h-[600px]">
                   <div className="flex justify-between items-center mb-6">
                     <div>
                       <h3 className="text-xl font-black text-white flex items-center gap-2">
-                        <Layers className="text-purple-500" /> Estilos da Biblioteca
+                        <Palette className="text-purple-500" /> Modelos de Design (Seed)
                       </h3>
-                      <p className="text-xs text-slate-500 mt-1">CSS base utilizado para a geração das páginas.</p>
+                      <p className="text-xs text-slate-500 mt-1">SQL para popular sua biblioteca com 31 estilos exclusivos.</p>
                     </div>
                     <button 
-                      onClick={() => copyToClipboard(LIBRARY_CSS, 'css')}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${copiedId === 'css' ? 'bg-purple-500 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
+                      onClick={() => copyToClipboard(SEED_PROMPTS_SQL, 'seed')}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${copiedId === 'seed' ? 'bg-purple-500 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
                     >
-                      {copiedId === 'css' ? <><Check size={14} /> Copiado!</> : <><Copy size={14} /> Copiar CSS</>}
+                      {copiedId === 'seed' ? <><Check size={14} /> Copiado!</> : <><Copy size={14} /> Copiar Seed SQL</>}
                     </button>
                   </div>
                   <div className="flex-1 bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden relative">
                     <pre className="p-6 text-xs font-mono text-slate-300 overflow-auto h-full custom-scrollbar leading-relaxed">
-                      {LIBRARY_CSS}
+                      {SEED_PROMPTS_SQL}
                     </pre>
                   </div>
                 </div>
