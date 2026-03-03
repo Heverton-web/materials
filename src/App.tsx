@@ -58,11 +58,25 @@ import { SUPABASE_TABLES_SQL } from './constants/supabaseSql';
 type ViewType = 'keys' | 'supabase' | 'branding' | 'converter' | 'editor' | 'preview' | 'materials';
 type ComponentType = 'hero' | 'grid' | 'comparison' | 'callout' | 'list';
 
+interface MetadataItem {
+  title: string;
+  filename: string;
+  description: string;
+  tags: string[];
+}
+
+interface SuggestedMetadata {
+  pt: MetadataItem;
+  en: MetadataItem;
+  es: MetadataItem;
+}
+
 interface GeneratedMaterial {
   id: string;
   name: string;
   html: string;
   timestamp: number;
+  metadata?: MetadataItem;
 }
 
 interface PageSection {
@@ -863,7 +877,9 @@ O Flex Gold é a tendência atual para clínicas que buscam um implante para tud
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const [editorTab, setEditorTab] = useState<'edit' | 'preview' | 'style'>('edit');
+  const [editorTab, setEditorTab] = useState<'edit' | 'preview' | 'style' | 'metadata'>('edit');
+  const [suggestedMetadata, setSuggestedMetadata] = useState<SuggestedMetadata | null>(null);
+  const [metadataLang, setMetadataLang] = useState<'pt' | 'en' | 'es'>('pt');
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const copyToClipboard = (text: string, id: string) => {
@@ -991,7 +1007,8 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
           id: m.id,
           name: m.name,
           html: m.html_content,
-          timestamp: new Date(m.created_at).getTime()
+          timestamp: new Date(m.created_at).getTime(),
+          metadata: m.metadata
         })));
       }
 
@@ -1340,6 +1357,65 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
     }
   };
 
+  const generateMetadataSuggestions = async () => {
+    if (!markdownText.trim()) return;
+
+    const steps: LoadingStep[] = [
+      { id: 'analyze', label: 'Analisando conteúdo', status: 'loading' },
+      { id: 'creative', label: 'Criando títulos e slugs', status: 'pending' },
+      { id: 'translate', label: 'Traduzindo para 3 idiomas', status: 'pending' }
+    ];
+
+    setLoading(true);
+    setLoadingMsg('Gerador de Metadados');
+    setLoadingSteps(steps);
+
+    try {
+      const apiKey = apiKeys.gemini || process.env.GEMINI_API_KEY;
+      if (!apiKey) throw new Error("API Key do Gemini não encontrada.");
+
+      const ai = new GoogleGenAI({ apiKey });
+      
+      setLoadingSteps(prev => prev.map(s => s.id === 'analyze' ? { ...s, status: 'completed' } : s.id === 'creative' ? { ...s, status: 'loading' } : s));
+
+      const response = await ai.models.generateContent({
+        model: "gemini-3-flash-preview",
+        contents: `Analise o seguinte Markdown e sugira metadados estratégicos para uma landing page.
+        Retorne APENAS um JSON válido seguindo exatamente esta estrutura:
+        {
+          "pt": { "title": "...", "filename": "...", "description": "...", "tags": ["...", "..."] },
+          "en": { "title": "...", "filename": "...", "description": "...", "tags": ["...", "..."] },
+          "es": { "title": "...", "filename": "...", "description": "...", "tags": ["...", "..."] }
+        }
+        
+        Regras:
+        - filename deve ser um slug (ex: meu-produto-novo) sem extensão.
+        - description deve ser curta e persuasiva (máx 160 caracteres).
+        - tags devem ser relevantes para SEO.
+        
+        Markdown:
+        ${markdownText}`,
+        config: {
+          responseMimeType: "application/json",
+          systemInstruction: "Você é um especialista em SEO e Copywriting multilíngue."
+        }
+      });
+
+      setLoadingSteps(prev => prev.map(s => s.id === 'creative' ? { ...s, status: 'completed' } : s.id === 'translate' ? { ...s, status: 'loading' } : s));
+
+      if (!response.text) throw new Error("Sem resposta do modelo.");
+      const data = JSON.parse(response.text);
+      setSuggestedMetadata(data);
+      setEditorTab('metadata');
+      
+      setLoadingSteps(prev => prev.map(s => ({ ...s, status: 'completed' })));
+    } catch (error: any) {
+      alert(`Erro ao gerar metadados: ${error.message}`);
+    } finally {
+      setTimeout(() => setLoading(false), 500);
+    }
+  };
+
   const generateSinglePage = async (lang: 'pt' | 'en' | 'es', customFilename: string) => {
     const apiKey = apiKeys[selectedApi] || (selectedApi === 'gemini' ? process.env.GEMINI_API_KEY : '');
     if (!apiKey) throw new Error(`API Key para ${selectedApi.toUpperCase()} não encontrada na aba API Keys.`);
@@ -1400,7 +1476,8 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
         .insert({
           user_id: session.user.id,
           name: customFilename,
-          html_content: html
+          html_content: html,
+          metadata: suggestedMetadata ? suggestedMetadata[lang] : null
         })
         .select()
         .single();
@@ -1410,7 +1487,8 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
           id: data.id,
           name: data.name,
           html: data.html_content,
-          timestamp: new Date(data.created_at).getTime()
+          timestamp: new Date(data.created_at).getTime(),
+          metadata: data.metadata
         };
         setMaterials(prev => [newMaterial, ...prev]);
       }
@@ -1419,7 +1497,8 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
         id: Math.random().toString(36).substr(2, 9),
         name: customFilename,
         html: html,
-        timestamp: Date.now()
+        timestamp: Date.now(),
+        metadata: suggestedMetadata ? suggestedMetadata[lang] : undefined
       };
       setMaterials(prev => [newMaterial, ...prev]);
     }
@@ -2195,21 +2274,37 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                       >
                         <Palette size={14} /> Estilo Aplicado
                       </button>
+                      <button 
+                        onClick={() => setEditorTab('metadata')}
+                        className={`pb-4 text-xs font-bold uppercase tracking-widest border-b-2 transition-colors flex items-center gap-2 ${editorTab === 'metadata' ? 'border-blue-500 text-white' : 'border-transparent text-slate-500 hover:text-slate-300'}`}
+                      >
+                        <LayoutTemplate size={14} /> Metadados & SEO
+                      </button>
                     </div>
 
                     {/* Tab Content */}
                     <div className="flex-1 relative">
                       {editorTab === 'edit' ? (
-                        <textarea 
-                          value={markdownText} onChange={(e) => setMarkdownText(e.target.value)}
-                          placeholder="# Digite seu conteúdo aqui..."
-                          className="absolute inset-0 w-full h-full p-6 bg-transparent text-slate-200 outline-none font-mono text-sm resize-none leading-relaxed"
-                        />
+                        <div className="absolute inset-0 flex flex-col">
+                          <textarea 
+                            value={markdownText} onChange={(e) => setMarkdownText(e.target.value)}
+                            placeholder="# Digite seu conteúdo aqui..."
+                            className="flex-1 w-full p-6 bg-transparent text-slate-200 outline-none font-mono text-sm resize-none leading-relaxed"
+                          />
+                          <div className="p-4 border-t border-slate-800 flex justify-end">
+                            <button 
+                              onClick={generateMetadataSuggestions}
+                              className="bg-blue-600/10 hover:bg-blue-600/20 text-blue-400 px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all border border-blue-500/20"
+                            >
+                              <Wand2 size={14} /> Gerar Sugestões de Metadados
+                            </button>
+                          </div>
+                        </div>
                       ) : editorTab === 'preview' ? (
                         <div className="absolute inset-0 w-full h-full p-6 overflow-y-auto prose prose-invert prose-slate prose-sm max-w-none">
                           <ReactMarkdown>{markdownText}</ReactMarkdown>
                         </div>
-                      ) : (
+                      ) : editorTab === 'style' ? (
                         <div className="absolute inset-0 w-full h-full p-8 overflow-y-auto custom-scrollbar">
                           <div className="max-w-2xl mx-auto space-y-8">
                             <div className="bg-blue-500/10 border border-blue-500/20 rounded-[2rem] p-8">
@@ -2261,6 +2356,103 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                                 <p className="text-xs text-slate-400 truncate">{brandConfig.description || 'Nenhuma descrição definida'}</p>
                               </div>
                             </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="absolute inset-0 w-full h-full p-8 overflow-y-auto custom-scrollbar">
+                          <div className="max-w-3xl mx-auto">
+                            <div className="flex justify-between items-center mb-8">
+                              <div>
+                                <h3 className="text-xl font-black text-white">Textos Sugeridos & SEO</h3>
+                                <p className="text-slate-500 text-xs mt-1">Metadados otimizados para sua landing page em 3 idiomas.</p>
+                              </div>
+                              <button 
+                                onClick={generateMetadataSuggestions}
+                                className="bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 hover:bg-blue-500 transition-all shadow-lg shadow-blue-900/20"
+                              >
+                                <Wand2 size={14} /> Atualizar Sugestões
+                              </button>
+                            </div>
+
+                            {!suggestedMetadata ? (
+                              <div className="bg-slate-800/30 border border-dashed border-slate-700 rounded-[2rem] p-12 text-center">
+                                <div className="w-16 h-16 bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                  <LayoutTemplate size={32} className="text-slate-600" />
+                                </div>
+                                <h4 className="text-white font-bold mb-2">Nenhuma sugestão gerada</h4>
+                                <p className="text-slate-500 text-sm max-w-xs mx-auto mb-6">Clique no botão acima para que nossa IA analise seu conteúdo e sugira os melhores textos.</p>
+                              </div>
+                            ) : (
+                              <div className="space-y-6">
+                                {/* Language Switcher */}
+                                <div className="flex gap-2 p-1 bg-slate-800 rounded-xl w-fit">
+                                  {(['pt', 'en', 'es'] as const).map(lang => (
+                                    <button
+                                      key={lang}
+                                      onClick={() => setMetadataLang(lang)}
+                                      className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${metadataLang === lang ? 'bg-blue-600 text-white shadow-md' : 'text-slate-500 hover:text-slate-300'}`}
+                                    >
+                                      {lang === 'pt' ? 'Português' : lang === 'en' ? 'English' : 'Español'}
+                                    </button>
+                                  ))}
+                                </div>
+
+                                <div className="grid grid-cols-1 gap-4">
+                                  {/* Title */}
+                                  <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+                                    <div className="flex justify-between items-center mb-3">
+                                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Título da Página</label>
+                                      <button onClick={() => copyToClipboard(suggestedMetadata[metadataLang].title, 'meta-title')} className="text-slate-500 hover:text-white transition-colors">
+                                        {copiedId === 'meta-title' ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
+                                      </button>
+                                    </div>
+                                    <p className="text-white font-bold">{suggestedMetadata[metadataLang].title}</p>
+                                  </div>
+
+                                  {/* Filename */}
+                                  <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+                                    <div className="flex justify-between items-center mb-3">
+                                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Nome do Arquivo (Slug)</label>
+                                      <div className="flex items-center gap-3">
+                                        <button 
+                                          onClick={() => setFilename(suggestedMetadata[metadataLang].filename)}
+                                          className="text-[10px] font-bold text-blue-400 hover:text-blue-300"
+                                        >
+                                          Aplicar ao Projeto
+                                        </button>
+                                        <button onClick={() => copyToClipboard(suggestedMetadata[metadataLang].filename, 'meta-file')} className="text-slate-500 hover:text-white transition-colors">
+                                          {copiedId === 'meta-file' ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
+                                        </button>
+                                      </div>
+                                    </div>
+                                    <p className="text-blue-400 font-mono text-sm">{suggestedMetadata[metadataLang].filename}.html</p>
+                                  </div>
+
+                                  {/* Description */}
+                                  <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+                                    <div className="flex justify-between items-center mb-3">
+                                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Breve Descrição (SEO)</label>
+                                      <button onClick={() => copyToClipboard(suggestedMetadata[metadataLang].description, 'meta-desc')} className="text-slate-500 hover:text-white transition-colors">
+                                        {copiedId === 'meta-desc' ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
+                                      </button>
+                                    </div>
+                                    <p className="text-slate-300 text-sm leading-relaxed">{suggestedMetadata[metadataLang].description}</p>
+                                  </div>
+
+                                  {/* Tags */}
+                                  <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 block">Tags do Material</label>
+                                    <div className="flex flex-wrap gap-2">
+                                      {suggestedMetadata[metadataLang].tags.map((tag, i) => (
+                                        <span key={i} className="px-3 py-1 bg-slate-800 text-slate-400 text-[10px] font-bold rounded-lg border border-slate-700">
+                                          {tag}
+                                        </span>
+                                      ))}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </div>
                       )}

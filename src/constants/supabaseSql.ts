@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS generated_materials (
   user_id UUID REFERENCES auth.users ON DELETE CASCADE NOT NULL,
   name TEXT NOT NULL,
   html_content TEXT NOT NULL,
+  metadata JSONB,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -118,6 +119,11 @@ BEGIN
     END IF;
     IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='prompt_library' AND column_name='description') THEN
         ALTER TABLE prompt_library ADD COLUMN description TEXT;
+    END IF;
+
+    -- Migração para generated_materials
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='generated_materials' AND column_name='metadata') THEN
+        ALTER TABLE generated_materials ADD COLUMN metadata JSONB;
     END IF;
 END
 $$;
