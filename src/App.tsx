@@ -877,7 +877,7 @@ O Flex Gold é a tendência atual para clínicas que buscam um implante para tud
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const [editorTab, setEditorTab] = useState<'content' | 'style' | 'metadata' | 'converter'>('content');
+  const [editorTab, setEditorTab] = useState<'content' | 'style' | 'metadata'>('content');
   const [suggestedMetadata, setSuggestedMetadata] = useState<SuggestedMetadata | null>(null);
   const [metadataLang, setMetadataLang] = useState<'pt' | 'en' | 'es'>('pt');
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -2208,13 +2208,6 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                 {/* Narrow Left Sidebar */}
                 <div className="w-16 bg-slate-900 border-r border-slate-800 flex flex-col items-center py-6 gap-6 shrink-0">
                   <button 
-                    onClick={() => setEditorTab('converter')}
-                    className={`p-3 rounded-xl transition-all ${editorTab === 'converter' ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'}`}
-                    title="Conversor Rápido"
-                  >
-                    <ArrowRightLeft size={20} />
-                  </button>
-                  <button 
                     onClick={() => setEditorTab('content')}
                     className={`p-3 rounded-xl transition-all ${editorTab === 'content' ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'}`}
                     title="Markdown Editor"
@@ -2240,88 +2233,6 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                 {/* Content Area */}
                 <div className="flex-1 overflow-hidden relative bg-slate-950">
                   {editorTab === 'content' ? (
-                    <div className="flex h-full divide-x divide-slate-800">
-                      {/* Editor Pane */}
-                      <div className="flex-1 flex flex-col min-w-0">
-                        <div className="h-10 bg-slate-900/50 flex items-center px-4 justify-between border-b border-slate-800">
-                          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Markdown Editor</span>
-                          <div className="flex items-center gap-2">
-                            <button onClick={() => setMarkdownText('')} className="text-[10px] font-bold text-slate-500 hover:text-red-400 transition-colors">Limpar</button>
-                          </div>
-                        </div>
-                        <textarea 
-                          value={markdownText} 
-                          onChange={(e) => setMarkdownText(e.target.value)}
-                          placeholder="# Comece a escrever seu conteúdo aqui..."
-                          className="flex-1 w-full p-8 bg-transparent text-slate-200 outline-none font-mono text-sm resize-none leading-relaxed custom-scrollbar"
-                        />
-                      </div>
-
-                      {/* Preview Pane */}
-                      <div className="flex-1 flex flex-col min-w-0 bg-slate-900/20">
-                        <div className="h-10 bg-slate-900/50 flex items-center px-4 justify-between border-b border-slate-800">
-                          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Live Preview</span>
-                        </div>
-                        <div className="flex-1 p-8 overflow-y-auto custom-scrollbar prose prose-invert prose-slate prose-sm max-w-none">
-                          <ReactMarkdown>{markdownText}</ReactMarkdown>
-                        </div>
-                      </div>
-                    </div>
-                  ) : editorTab === 'converter' ? (
-                    <div className="h-full flex flex-col overflow-hidden">
-                      <div className="h-10 bg-slate-900/50 flex items-center px-4 justify-between border-b border-slate-800">
-                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Conversor Rápido de Conteúdo</span>
-                      </div>
-                      <div className="flex-1 flex divide-x divide-slate-800 overflow-hidden">
-                        <div className="flex-1 flex flex-col">
-                          <div className="p-4 bg-slate-900/30 border-b border-slate-800 flex justify-between items-center">
-                            <p className="text-[10px] text-slate-500 font-bold uppercase">Texto Bruto / Rascunho</p>
-                            <button onClick={() => setRawText('')} className="text-[10px] text-slate-500 hover:text-white">Limpar</button>
-                          </div>
-                          <textarea 
-                            value={rawText}
-                            onChange={(e) => setRawText(e.target.value)}
-                            placeholder="Cole aqui o conteúdo que deseja converter para Markdown..."
-                            className="flex-1 p-6 bg-transparent text-slate-300 outline-none font-mono text-sm resize-none leading-relaxed custom-scrollbar"
-                          />
-                          <div className="p-4 border-t border-slate-800 flex justify-center">
-                            <button 
-                              onClick={convertToMarkdown}
-                              disabled={!rawText.trim()}
-                              className="bg-purple-600 text-white px-8 py-3 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-purple-500 transition-all shadow-lg shadow-purple-900/20 disabled:opacity-50 flex items-center gap-2"
-                            >
-                              <Sparkles size={14} /> Converter para Markdown
-                            </button>
-                          </div>
-                        </div>
-                        <div className="flex-1 flex flex-col bg-slate-900/20">
-                          <div className="p-4 bg-slate-900/30 border-b border-slate-800">
-                            <p className="text-[10px] text-slate-500 font-bold uppercase">Resultado da Conversão</p>
-                          </div>
-                          <div className="flex-1 p-8 overflow-y-auto custom-scrollbar prose prose-invert prose-slate prose-sm max-w-none">
-                            {markdownText ? (
-                              <ReactMarkdown>{markdownText}</ReactMarkdown>
-                            ) : (
-                              <div className="h-full flex flex-col items-center justify-center text-slate-600 opacity-50">
-                                <ArrowRightLeft size={48} className="mb-4" />
-                                <p className="text-sm">O resultado aparecerá aqui após a conversão.</p>
-                              </div>
-                            )}
-                          </div>
-                          {markdownText && (
-                            <div className="p-4 border-t border-slate-800 flex justify-end">
-                              <button 
-                                onClick={() => setEditorTab('content')}
-                                className="text-[10px] font-black text-blue-400 hover:text-blue-300 uppercase tracking-widest flex items-center gap-2"
-                              >
-                                Voltar para o Editor <ChevronRight size={12} />
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ) : editorTab === 'style' ? (
                     <div className="h-full flex divide-x divide-slate-800">
                       {/* Style Settings Pane */}
                       <div className="w-96 flex flex-col shrink-0 bg-slate-900/30">
