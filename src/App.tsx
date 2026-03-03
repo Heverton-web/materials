@@ -877,7 +877,7 @@ O Flex Gold é a tendência atual para clínicas que buscam um implante para tud
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const [editorTab, setEditorTab] = useState<'edit' | 'preview' | 'style' | 'metadata'>('edit');
+  const [editorTab, setEditorTab] = useState<'content' | 'style' | 'metadata' | 'converter'>('content');
   const [suggestedMetadata, setSuggestedMetadata] = useState<SuggestedMetadata | null>(null);
   const [metadataLang, setMetadataLang] = useState<'pt' | 'en' | 'es'>('pt');
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -1346,7 +1346,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
       text = text.replace(/^```markdown\n?/, '').replace(/```$/, '').trim();
       
       setMarkdownText(text);
-      setEditorTab('edit');
+      setEditorTab('content');
       setView('editor');
       
       setLoadingSteps(prev => prev.map(s => ({ ...s, status: 'completed' })));
@@ -2125,13 +2125,18 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
 
           {/* 4. Editor Tab */}
           {view === 'editor' && (
-            <motion.div key="editor" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="space-y-6">
-              
-              {/* Top Bar: Settings */}
-              <div className="bg-slate-900 rounded-2xl p-4 border border-slate-800 shadow-lg shadow-black/20 flex flex-col md:flex-row gap-4 items-center justify-between">
-                <div className="flex items-center gap-4 w-full md:w-auto">
-                  <div className="flex items-center gap-2 px-3 py-2 bg-slate-800 rounded-xl border border-slate-700">
-                    <Settings size={14} className="text-slate-400" />
+            <motion.div 
+              key="editor" 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              exit={{ opacity: 0 }} 
+              className="fixed inset-0 top-[72px] bg-slate-950 flex flex-col overflow-hidden"
+            >
+              {/* Top Bar: Compact Settings */}
+              <div className="h-14 bg-slate-900 border-b border-slate-800 flex items-center justify-between px-6 shrink-0">
+                <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-3">
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">IA:</span>
                     <select 
                       value={selectedApi} 
                       onChange={(e) => setSelectedApi(e.target.value as keyof ApiKeys)}
@@ -2144,8 +2149,10 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                     </select>
                   </div>
 
-                  <div className="flex items-center gap-2 px-3 py-2 bg-slate-800 rounded-xl border border-slate-700">
-                    <ArrowRightLeft size={14} className="text-slate-400" />
+                  <div className="h-4 w-px bg-slate-800" />
+
+                  <div className="flex items-center gap-3">
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Idioma:</span>
                     <select 
                       value={selectedLang} 
                       onChange={(e) => setSelectedLang(e.target.value as any)}
@@ -2158,290 +2165,342 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                     </select>
                   </div>
 
+                  <div className="h-4 w-px bg-slate-800" />
+
+                  <div className="flex items-center gap-3">
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Arquivo:</span>
+                    <div className="flex items-center gap-1">
+                      <input 
+                        type="text" 
+                        value={filename} 
+                        onChange={(e) => setFilename(e.target.value)}
+                        placeholder="nome-do-arquivo"
+                        className="bg-transparent text-white text-xs font-mono outline-none w-32 focus:w-48 transition-all border-b border-transparent focus:border-blue-500/50"
+                      />
+                      <span className="text-slate-500 text-xs font-mono">.html</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4">
                   <button 
                     onClick={() => {
                       navigator.clipboard.writeText(markdownText);
                       alert('Markdown copiado!');
                     }}
-                    className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-xl border border-slate-700 transition-all text-xs font-bold"
+                    className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all"
+                    title="Copiar Markdown"
                   >
-                    <Copy size={14} /> Copiar Markdown
+                    <Copy size={16} />
                   </button>
-                </div>
-
-                <div className="flex items-center gap-2 w-full md:w-auto">
-                  <span className="text-xs font-black text-slate-500 uppercase tracking-widest hidden md:block">Arquivo:</span>
-                  <div className="relative flex-1 md:w-64">
-                    <input 
-                      type="text" 
-                      value={filename} 
-                      onChange={(e) => setFilename(e.target.value)}
-                      placeholder="nome-do-arquivo"
-                      className="w-full px-4 py-2 border border-slate-700 bg-slate-800 text-white rounded-xl text-xs font-mono outline-none focus:ring-2 focus:ring-blue-600 pr-12 placeholder:text-slate-600"
-                    />
-                    <span className="absolute right-3 top-2 text-slate-500 text-xs font-mono">.html</span>
-                  </div>
+                  <button 
+                    onClick={generatePage} 
+                    disabled={!markdownText.trim() || !filename.trim()} 
+                    className="bg-blue-600 text-white px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest flex items-center gap-2 hover:bg-blue-500 shadow-lg shadow-blue-900/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
+                  >
+                    <Wand2 size={14} /> Gerar Página
+                  </button>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-280px)] min-h-[600px]">
-                
-                {/* Left Panel: The Brain (System Prompt & Library) */}
-                <div className="lg:col-span-4 flex flex-col gap-4 h-full">
-                  <div className="bg-slate-900 rounded-[2rem] p-6 border border-slate-800 shadow-lg shadow-black/20 flex flex-col h-full">
-                    <div className="flex justify-between items-center mb-4">
-                      <h3 className="text-sm font-black text-white uppercase tracking-wide flex items-center gap-2">
-                        <Sparkles size={14} className="text-amber-400" /> Direção de Arte
-                      </h3>
-                      <button 
-                        onClick={seedPromptLibrary}
-                        className="text-[10px] font-bold text-slate-500 hover:text-white transition-colors"
-                        title="Importar Padrões"
-                      >
-                        <Download size={12} />
-                      </button>
-                    </div>
-
-                    <div className="mb-4">
-                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2 block">Biblioteca de Estilos</label>
-                      <select 
-                        value={selectedPromptId}
-                        onChange={(e) => {
-                          const id = e.target.value;
-                          setSelectedPromptId(id);
-                          const prompt = promptLibrary.find(p => p.id === id);
-                          if (prompt) {
-                            setBrandConfig({ ...brandConfig, systemPrompt: prompt.content });
-                          }
-                        }}
-                        className="w-full px-4 py-3 border border-slate-700 bg-slate-800 text-white rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer hover:bg-slate-700/50 transition-colors [&>option]:text-slate-900 [&>option]:bg-white"
-                      >
-                        <option value="">Selecione um estilo...</option>
-                        {promptLibrary.map(p => (
-                          <option key={p.id} value={p.id}>{p.title}</option>
-                        ))}
-                      </select>
-                      {selectedPromptId && promptLibrary.find(p => p.id === selectedPromptId)?.description && (
-                        <p className="text-[10px] text-slate-400 mt-2 leading-relaxed bg-slate-800/50 p-3 rounded-lg border border-slate-800">
-                          {promptLibrary.find(p => p.id === selectedPromptId)?.description}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="flex-1 flex flex-col">
-                      <div className="flex justify-between items-end mb-2">
-                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
-                          Prompt do Sistema
-                        </label>
-                        <button 
-                          onClick={savePromptToLibrary}
-                          className="text-[10px] font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1 transition-colors"
-                        >
-                          <Plus size={10} /> Salvar
-                        </button>
-                      </div>
-                      <textarea 
-                        value={brandConfig.systemPrompt}
-                        onChange={(e) => setBrandConfig({ ...brandConfig, systemPrompt: e.target.value })}
-                        placeholder="Instruções para a IA..."
-                        className="flex-1 w-full p-4 border border-slate-700 bg-slate-800 text-slate-300 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-600 font-mono leading-relaxed resize-none placeholder:text-slate-600"
-                      />
-                    </div>
-                  </div>
+              {/* Main Workspace */}
+              <div className="flex-1 flex overflow-hidden">
+                {/* Narrow Left Sidebar */}
+                <div className="w-16 bg-slate-900 border-r border-slate-800 flex flex-col items-center py-6 gap-6 shrink-0">
+                  <button 
+                    onClick={() => setEditorTab('converter')}
+                    className={`p-3 rounded-xl transition-all ${editorTab === 'converter' ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'}`}
+                    title="Conversor Rápido"
+                  >
+                    <ArrowRightLeft size={20} />
+                  </button>
+                  <button 
+                    onClick={() => setEditorTab('content')}
+                    className={`p-3 rounded-xl transition-all ${editorTab === 'content' ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'}`}
+                    title="Markdown Editor"
+                  >
+                    <Pencil size={20} />
+                  </button>
+                  <button 
+                    onClick={() => setEditorTab('style')}
+                    className={`p-3 rounded-xl transition-all ${editorTab === 'style' ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'}`}
+                    title="Biblioteca de Estilos"
+                  >
+                    <Palette size={20} />
+                  </button>
+                  <button 
+                    onClick={() => setEditorTab('metadata')}
+                    className={`p-3 rounded-xl transition-all ${editorTab === 'metadata' ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'}`}
+                    title="SEO & Metadados"
+                  >
+                    <LayoutTemplate size={20} />
+                  </button>
                 </div>
 
-                {/* Right Panel: Content & Preview */}
-                <div className="lg:col-span-8 flex flex-col gap-4 h-full">
-                  <div className="bg-slate-900 rounded-[2rem] border border-slate-800 shadow-lg shadow-black/20 flex flex-col h-full overflow-hidden">
-                    
-                    {/* Tabs Header */}
-                    <div className="flex items-center border-b border-slate-800 px-6 pt-4 gap-4">
-                      <button 
-                        onClick={() => setEditorTab('edit')}
-                        className={`pb-4 text-xs font-bold uppercase tracking-widest border-b-2 transition-colors flex items-center gap-2 ${editorTab === 'edit' ? 'border-blue-500 text-white' : 'border-transparent text-slate-500 hover:text-slate-300'}`}
-                      >
-                        <Pencil size={14} /> Editor de Conteúdo
-                      </button>
-                      <button 
-                        onClick={() => setEditorTab('preview')}
-                        className={`pb-4 text-xs font-bold uppercase tracking-widest border-b-2 transition-colors flex items-center gap-2 ${editorTab === 'preview' ? 'border-blue-500 text-white' : 'border-transparent text-slate-500 hover:text-slate-300'}`}
-                      >
-                        <Eye size={14} /> Preview do Markdown
-                      </button>
-                      <button 
-                        onClick={() => setEditorTab('style')}
-                        className={`pb-4 text-xs font-bold uppercase tracking-widest border-b-2 transition-colors flex items-center gap-2 ${editorTab === 'style' ? 'border-blue-500 text-white' : 'border-transparent text-slate-500 hover:text-slate-300'}`}
-                      >
-                        <Palette size={14} /> Estilo Aplicado
-                      </button>
-                      <button 
-                        onClick={() => setEditorTab('metadata')}
-                        className={`pb-4 text-xs font-bold uppercase tracking-widest border-b-2 transition-colors flex items-center gap-2 ${editorTab === 'metadata' ? 'border-blue-500 text-white' : 'border-transparent text-slate-500 hover:text-slate-300'}`}
-                      >
-                        <LayoutTemplate size={14} /> Metadados & SEO
-                      </button>
-                    </div>
+                {/* Content Area */}
+                <div className="flex-1 overflow-hidden relative bg-slate-950">
+                  {editorTab === 'content' ? (
+                    <div className="flex h-full divide-x divide-slate-800">
+                      {/* Editor Pane */}
+                      <div className="flex-1 flex flex-col min-w-0">
+                        <div className="h-10 bg-slate-900/50 flex items-center px-4 justify-between border-b border-slate-800">
+                          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Markdown Editor</span>
+                          <div className="flex items-center gap-2">
+                            <button onClick={() => setMarkdownText('')} className="text-[10px] font-bold text-slate-500 hover:text-red-400 transition-colors">Limpar</button>
+                          </div>
+                        </div>
+                        <textarea 
+                          value={markdownText} 
+                          onChange={(e) => setMarkdownText(e.target.value)}
+                          placeholder="# Comece a escrever seu conteúdo aqui..."
+                          className="flex-1 w-full p-8 bg-transparent text-slate-200 outline-none font-mono text-sm resize-none leading-relaxed custom-scrollbar"
+                        />
+                      </div>
 
-                    {/* Tab Content */}
-                    <div className="flex-1 relative">
-                      {editorTab === 'edit' ? (
-                        <div className="absolute inset-0 flex flex-col">
+                      {/* Preview Pane */}
+                      <div className="flex-1 flex flex-col min-w-0 bg-slate-900/20">
+                        <div className="h-10 bg-slate-900/50 flex items-center px-4 justify-between border-b border-slate-800">
+                          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Live Preview</span>
+                        </div>
+                        <div className="flex-1 p-8 overflow-y-auto custom-scrollbar prose prose-invert prose-slate prose-sm max-w-none">
+                          <ReactMarkdown>{markdownText}</ReactMarkdown>
+                        </div>
+                      </div>
+                    </div>
+                  ) : editorTab === 'converter' ? (
+                    <div className="h-full flex flex-col overflow-hidden">
+                      <div className="h-10 bg-slate-900/50 flex items-center px-4 justify-between border-b border-slate-800">
+                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Conversor Rápido de Conteúdo</span>
+                      </div>
+                      <div className="flex-1 flex divide-x divide-slate-800 overflow-hidden">
+                        <div className="flex-1 flex flex-col">
+                          <div className="p-4 bg-slate-900/30 border-b border-slate-800 flex justify-between items-center">
+                            <p className="text-[10px] text-slate-500 font-bold uppercase">Texto Bruto / Rascunho</p>
+                            <button onClick={() => setRawText('')} className="text-[10px] text-slate-500 hover:text-white">Limpar</button>
+                          </div>
                           <textarea 
-                            value={markdownText} onChange={(e) => setMarkdownText(e.target.value)}
-                            placeholder="# Digite seu conteúdo aqui..."
-                            className="flex-1 w-full p-6 bg-transparent text-slate-200 outline-none font-mono text-sm resize-none leading-relaxed"
+                            value={rawText}
+                            onChange={(e) => setRawText(e.target.value)}
+                            placeholder="Cole aqui o conteúdo que deseja converter para Markdown..."
+                            className="flex-1 p-6 bg-transparent text-slate-300 outline-none font-mono text-sm resize-none leading-relaxed custom-scrollbar"
                           />
-                          <div className="p-4 border-t border-slate-800 flex justify-end">
+                          <div className="p-4 border-t border-slate-800 flex justify-center">
                             <button 
-                              onClick={generateMetadataSuggestions}
-                              className="bg-blue-600/10 hover:bg-blue-600/20 text-blue-400 px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all border border-blue-500/20"
+                              onClick={convertToMarkdown}
+                              disabled={!rawText.trim()}
+                              className="bg-purple-600 text-white px-8 py-3 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-purple-500 transition-all shadow-lg shadow-purple-900/20 disabled:opacity-50 flex items-center gap-2"
                             >
-                              <Wand2 size={14} /> Gerar Sugestões de Metadados
+                              <Sparkles size={14} /> Converter para Markdown
                             </button>
                           </div>
                         </div>
-                      ) : editorTab === 'preview' ? (
-                        <div className="absolute inset-0 w-full h-full p-6 overflow-y-auto prose prose-invert prose-slate prose-sm max-w-none">
-                          <ReactMarkdown>{markdownText}</ReactMarkdown>
-                        </div>
-                      ) : editorTab === 'style' ? (
-                        <div className="absolute inset-0 w-full h-full p-8 overflow-y-auto custom-scrollbar">
-                          <div className="max-w-2xl mx-auto space-y-8">
-                            <div className="bg-blue-500/10 border border-blue-500/20 rounded-[2rem] p-8">
-                              <div className="flex items-center gap-4 mb-4">
-                                <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-900/20">
-                                  <Palette size={24} className="text-white" />
-                                </div>
-                                <div>
-                                  <h3 className="text-xl font-black text-white">Configuração de Estilo Ativa</h3>
-                                  <p className="text-blue-400 text-xs font-bold uppercase tracking-widest">Prompt do Sistema</p>
-                                </div>
+                        <div className="flex-1 flex flex-col bg-slate-900/20">
+                          <div className="p-4 bg-slate-900/30 border-b border-slate-800">
+                            <p className="text-[10px] text-slate-500 font-bold uppercase">Resultado da Conversão</p>
+                          </div>
+                          <div className="flex-1 p-8 overflow-y-auto custom-scrollbar prose prose-invert prose-slate prose-sm max-w-none">
+                            {markdownText ? (
+                              <ReactMarkdown>{markdownText}</ReactMarkdown>
+                            ) : (
+                              <div className="h-full flex flex-col items-center justify-center text-slate-600 opacity-50">
+                                <ArrowRightLeft size={48} className="mb-4" />
+                                <p className="text-sm">O resultado aparecerá aqui após a conversão.</p>
                               </div>
-                              <p className="text-slate-400 text-sm leading-relaxed mb-6">
-                                Este é o conjunto de instruções que a IA seguirá para transformar seu Markdown em uma página interativa. Ele define a estética, animações e estrutura.
-                              </p>
-                              <div className="bg-slate-950 rounded-2xl border border-slate-800 p-6 mb-8">
-                                <pre className="text-[11px] font-mono text-slate-300 whitespace-pre-wrap leading-relaxed">
-                                  {brandConfig.systemPrompt}
-                                </pre>
-                              </div>
-
-                              {/* Style Preview Section */}
-                              <div className="bg-slate-900/50 border border-slate-800 rounded-[2rem] p-8 overflow-hidden relative">
-                                <div className="absolute top-0 right-0 p-4">
-                                  <span className="px-3 py-1 bg-blue-500/10 text-blue-400 text-[10px] font-black uppercase tracking-widest rounded-full border border-blue-500/20">
-                                    Preview do Estilo
-                                  </span>
-                                </div>
-                                <h4 className="text-white font-bold mb-6 flex items-center gap-2">
-                                  <Eye size={16} className="text-blue-500" /> Exemplo de Renderização
-                                </h4>
-                                
-                                <div className="min-h-[300px] w-full bg-slate-950 rounded-2xl border border-slate-800 p-6 overflow-hidden">
-                                  <StylePreview styleTitle={promptLibrary.find(p => p.id === selectedPromptId)?.title || 'Padrão'} brandConfig={brandConfig} />
-                                </div>
-                              </div>
+                            )}
+                          </div>
+                          {markdownText && (
+                            <div className="p-4 border-t border-slate-800 flex justify-end">
+                              <button 
+                                onClick={() => setEditorTab('content')}
+                                className="text-[10px] font-black text-blue-400 hover:text-blue-300 uppercase tracking-widest flex items-center gap-2"
+                              >
+                                Voltar para o Editor <ChevronRight size={12} />
+                              </button>
                             </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ) : editorTab === 'style' ? (
+                    <div className="h-full flex divide-x divide-slate-800">
+                      {/* Style Settings Pane */}
+                      <div className="w-96 flex flex-col shrink-0 bg-slate-900/30">
+                        <div className="h-10 bg-slate-900/50 flex items-center px-4 border-b border-slate-800">
+                          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Biblioteca de Estilos</span>
+                        </div>
+                        <div className="p-6 space-y-8 overflow-y-auto custom-scrollbar">
+                          <div>
+                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 block">Selecionar Template Visual</label>
+                            <select 
+                              value={selectedPromptId}
+                              onChange={(e) => {
+                                const id = e.target.value;
+                                setSelectedPromptId(id);
+                                const prompt = promptLibrary.find(p => p.id === id);
+                                if (prompt) {
+                                  setBrandConfig({ ...brandConfig, systemPrompt: prompt.content });
+                                }
+                              }}
+                              className="w-full px-4 py-3 border border-slate-700 bg-slate-800 text-white rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer appearance-none"
+                            >
+                              <option value="">Selecione um estilo...</option>
+                              {promptLibrary.map(p => (
+                                <option key={p.id} value={p.id}>{p.title}</option>
+                              ))}
+                            </select>
+                          </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6">
-                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Cores do Branding</p>
-                                <div className="flex gap-2">
-                                  <div className="w-8 h-8 rounded-lg shadow-inner" style={{ backgroundColor: brandConfig.primaryBlue }} title={`Primária: ${brandConfig.primaryBlue}`} />
-                                  <div className="w-8 h-8 rounded-lg shadow-inner" style={{ backgroundColor: brandConfig.primaryGold }} title={`Secundária: ${brandConfig.primaryGold}`} />
+                          {/* Style Preview Component */}
+                          <div className="space-y-3">
+                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Preview do Estilo Aplicado</label>
+                            <div className="aspect-video w-full rounded-2xl overflow-hidden border border-slate-800 shadow-2xl shadow-black/40">
+                              <StylePreview 
+                                styleTitle={promptLibrary.find(p => p.id === selectedPromptId)?.title || 'Branding Padrão'} 
+                                brandConfig={{
+                                  primaryBlue: brandConfig.primaryBlue,
+                                  primaryGold: brandConfig.primaryGold
+                                }}
+                              />
+                            </div>
+                            <p className="text-[10px] text-slate-500 leading-relaxed italic">
+                              * Este é um componente modelo demonstrando como o estilo visual será interpretado pela IA.
+                            </p>
+                          </div>
+
+                          <div className="pt-6 border-t border-slate-800">
+                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 block">Cores da Marca</label>
+                            <div className="grid grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                <span className="text-[10px] text-slate-500">Primária</span>
+                                <div className="flex items-center gap-2">
+                                  <div className="w-8 h-8 rounded-lg border border-slate-700" style={{ backgroundColor: brandConfig.primaryBlue }} />
+                                  <span className="text-[10px] font-mono text-slate-400 uppercase">{brandConfig.primaryBlue}</span>
                                 </div>
                               </div>
-                              <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6">
-                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Estratégia</p>
-                                <p className="text-xs text-slate-400 truncate">{brandConfig.description || 'Nenhuma descrição definida'}</p>
+                              <div className="space-y-2">
+                                <span className="text-[10px] text-slate-500">Destaque</span>
+                                <div className="flex items-center gap-2">
+                                  <div className="w-8 h-8 rounded-lg border border-slate-700" style={{ backgroundColor: brandConfig.primaryGold }} />
+                                  <span className="text-[10px] font-mono text-slate-400 uppercase">{brandConfig.primaryGold}</span>
+                                </div>
                               </div>
                             </div>
                           </div>
+
+                          <button 
+                            onClick={seedPromptLibrary}
+                            className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest border border-slate-700 transition-all flex items-center justify-center gap-2"
+                          >
+                            <Download size={12} /> Importar Padrões
+                          </button>
                         </div>
-                      ) : (
-                        <div className="absolute inset-0 w-full h-full p-8 overflow-y-auto custom-scrollbar">
-                          <div className="max-w-3xl mx-auto">
-                            <div className="flex justify-between items-center mb-8">
-                              <div>
-                                <h3 className="text-xl font-black text-white">Textos Sugeridos & SEO</h3>
-                                <p className="text-slate-500 text-xs mt-1">Metadados otimizados para sua landing page em 3 idiomas.</p>
+                      </div>
+
+                      {/* Prompt Editor Pane */}
+                      <div className="flex-1 flex flex-col min-w-0 bg-slate-900/10">
+                        <div className="h-10 bg-slate-900/50 flex items-center px-4 justify-between border-b border-slate-800">
+                          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">System Prompt (Direção de Arte)</span>
+                          <button 
+                            onClick={savePromptToLibrary}
+                            className="text-[10px] font-black text-blue-400 hover:text-blue-300 flex items-center gap-1 uppercase tracking-widest"
+                          >
+                            <Plus size={12} /> Salvar na Biblioteca
+                          </button>
+                        </div>
+                        <textarea 
+                          value={brandConfig.systemPrompt}
+                          onChange={(e) => setBrandConfig({ ...brandConfig, systemPrompt: e.target.value })}
+                          className="flex-1 w-full p-8 bg-transparent text-slate-300 outline-none font-mono text-xs resize-none leading-relaxed custom-scrollbar"
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="h-full flex flex-col overflow-hidden">
+                      <div className="h-10 bg-slate-900/50 flex items-center px-4 justify-between border-b border-slate-800">
+                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Sugestões de Metadados & SEO</span>
+                        <button 
+                          onClick={generateMetadataSuggestions}
+                          className="text-[10px] font-black text-blue-400 hover:text-blue-300 flex items-center gap-1 uppercase tracking-widest"
+                        >
+                          <Wand2 size={12} /> Atualizar IA
+                        </button>
+                      </div>
+                      
+                      <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
+                        <div className="max-w-4xl mx-auto">
+                          {!suggestedMetadata ? (
+                            <div className="bg-slate-900/50 border border-dashed border-slate-800 rounded-[2rem] p-16 text-center">
+                              <div className="w-20 h-20 bg-slate-800 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                                <LayoutTemplate size={40} className="text-slate-600" />
                               </div>
+                              <h4 className="text-xl font-black text-white mb-2">Nenhuma sugestão gerada</h4>
+                              <p className="text-slate-500 text-sm max-w-xs mx-auto mb-8">Nossa IA pode analisar seu conteúdo e sugerir os melhores textos para SEO.</p>
                               <button 
                                 onClick={generateMetadataSuggestions}
-                                className="bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 hover:bg-blue-500 transition-all shadow-lg shadow-blue-900/20"
+                                className="bg-blue-600 text-white px-8 py-3 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-blue-500 transition-all"
                               >
-                                <Wand2 size={14} /> Atualizar Sugestões
+                                Gerar Sugestões Agora
                               </button>
                             </div>
-
-                            {!suggestedMetadata ? (
-                              <div className="bg-slate-800/30 border border-dashed border-slate-700 rounded-[2rem] p-12 text-center">
-                                <div className="w-16 h-16 bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                  <LayoutTemplate size={32} className="text-slate-600" />
-                                </div>
-                                <h4 className="text-white font-bold mb-2">Nenhuma sugestão gerada</h4>
-                                <p className="text-slate-500 text-sm max-w-xs mx-auto mb-6">Clique no botão acima para que nossa IA analise seu conteúdo e sugira os melhores textos.</p>
+                          ) : (
+                            <div className="space-y-8">
+                              {/* Language Switcher */}
+                              <div className="flex gap-2 p-1 bg-slate-900 border border-slate-800 rounded-2xl w-fit">
+                                {(['pt', 'en', 'es'] as const).map(lang => (
+                                  <button
+                                    key={lang}
+                                    onClick={() => setMetadataLang(lang)}
+                                    className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${metadataLang === lang ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-slate-500 hover:text-slate-300'}`}
+                                  >
+                                    {lang === 'pt' ? 'Português' : lang === 'en' ? 'English' : 'Español'}
+                                  </button>
+                                ))}
                               </div>
-                            ) : (
-                              <div className="space-y-6">
-                                {/* Language Switcher */}
-                                <div className="flex gap-2 p-1 bg-slate-800 rounded-xl w-fit">
-                                  {(['pt', 'en', 'es'] as const).map(lang => (
-                                    <button
-                                      key={lang}
-                                      onClick={() => setMetadataLang(lang)}
-                                      className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${metadataLang === lang ? 'bg-blue-600 text-white shadow-md' : 'text-slate-500 hover:text-slate-300'}`}
-                                    >
-                                      {lang === 'pt' ? 'Português' : lang === 'en' ? 'English' : 'Español'}
-                                    </button>
-                                  ))}
-                                </div>
 
-                                <div className="grid grid-cols-1 gap-4">
-                                  {/* Title */}
-                                  <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-                                    <div className="flex justify-between items-center mb-3">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-6">
+                                  <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8">
+                                    <div className="flex justify-between items-center mb-4">
                                       <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Título da Página</label>
                                       <button onClick={() => copyToClipboard(suggestedMetadata[metadataLang].title, 'meta-title')} className="text-slate-500 hover:text-white transition-colors">
-                                        {copiedId === 'meta-title' ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
+                                        {copiedId === 'meta-title' ? <Check size={16} className="text-emerald-500" /> : <Copy size={16} />}
                                       </button>
                                     </div>
-                                    <p className="text-white font-bold">{suggestedMetadata[metadataLang].title}</p>
+                                    <p className="text-xl font-black text-white leading-tight">{suggestedMetadata[metadataLang].title}</p>
                                   </div>
 
-                                  {/* Filename */}
-                                  <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-                                    <div className="flex justify-between items-center mb-3">
+                                  <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8">
+                                    <div className="flex justify-between items-center mb-4">
                                       <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Nome do Arquivo (Slug)</label>
-                                      <div className="flex items-center gap-3">
+                                      <div className="flex items-center gap-4">
                                         <button 
                                           onClick={() => setFilename(suggestedMetadata[metadataLang].filename)}
-                                          className="text-[10px] font-bold text-blue-400 hover:text-blue-300"
+                                          className="text-[10px] font-black text-blue-400 hover:text-blue-300 uppercase tracking-widest"
                                         >
-                                          Aplicar ao Projeto
+                                          Aplicar
                                         </button>
                                         <button onClick={() => copyToClipboard(suggestedMetadata[metadataLang].filename, 'meta-file')} className="text-slate-500 hover:text-white transition-colors">
-                                          {copiedId === 'meta-file' ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
+                                          {copiedId === 'meta-file' ? <Check size={16} className="text-emerald-500" /> : <Copy size={16} />}
                                         </button>
                                       </div>
                                     </div>
                                     <p className="text-blue-400 font-mono text-sm">{suggestedMetadata[metadataLang].filename}.html</p>
                                   </div>
+                                </div>
 
-                                  {/* Description */}
-                                  <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-                                    <div className="flex justify-between items-center mb-3">
-                                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Breve Descrição (SEO)</label>
+                                <div className="space-y-6">
+                                  <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8">
+                                    <div className="flex justify-between items-center mb-4">
+                                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Meta Descrição</label>
                                       <button onClick={() => copyToClipboard(suggestedMetadata[metadataLang].description, 'meta-desc')} className="text-slate-500 hover:text-white transition-colors">
-                                        {copiedId === 'meta-desc' ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
+                                        {copiedId === 'meta-desc' ? <Check size={16} className="text-emerald-500" /> : <Copy size={16} />}
                                       </button>
                                     </div>
-                                    <p className="text-slate-300 text-sm leading-relaxed">{suggestedMetadata[metadataLang].description}</p>
+                                    <p className="text-slate-400 text-sm leading-relaxed">{suggestedMetadata[metadataLang].description}</p>
                                   </div>
 
-                                  {/* Tags */}
-                                  <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 block">Tags do Material</label>
+                                  <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8">
+                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 block">Tags Sugeridas</label>
                                     <div className="flex flex-wrap gap-2">
                                       {suggestedMetadata[metadataLang].tags.map((tag, i) => (
                                         <span key={i} className="px-3 py-1 bg-slate-800 text-slate-400 text-[10px] font-bold rounded-lg border border-slate-700">
@@ -2452,25 +2511,13 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                                   </div>
                                 </div>
                               </div>
-                            )}
-                          </div>
+                            </div>
+                          )}
                         </div>
-                      )}
+                      </div>
                     </div>
-
-                    {/* Action Bar */}
-                    <div className="p-4 border-t border-slate-800 bg-slate-900/50 backdrop-blur-sm flex justify-end">
-                      <button 
-                        onClick={generatePage} 
-                        disabled={!markdownText.trim() || !filename.trim()} 
-                        className="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-blue-500 shadow-lg shadow-blue-900/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
-                      >
-                        <Wand2 size={18} /> Gerar Página Interativa
-                      </button>
-                    </div>
-                  </div>
+                  )}
                 </div>
-
               </div>
             </motion.div>
           )}
