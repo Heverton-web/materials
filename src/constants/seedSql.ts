@@ -1,11 +1,12 @@
 export const SEED_PROMPTS_SQL = `-- SCRIPT PARA INSERIR OS 31 MODELOS DE DESIGN NA BIBLIOTECA
 -- Substitua NULL pelo seu ID de usuário do Supabase (encontrado em Authentication > Users)
 
-INSERT INTO public.prompt_library (user_id, name, prompt_text, is_default)
+INSERT INTO public.prompt_library (user_id, title, description, content, is_default)
 VALUES 
 (
     NULL, 
     'Padrão', 
+    'Estilo que utiliza as cores do branding',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
 Diretrizes de Design
@@ -26,6 +27,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
 (
     NULL, 
     'Neobrutalismo + Pastel Pop', 
+    'Estilo de alto contraste com bordas pretas espessas, sombras sólidas (Shadow-Pop) e paleta pastel vibrante. Ideal para fintechs e ferramentas modernas.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
 Diretrizes de Design & Sofisticação:
@@ -44,6 +46,7 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
 (
     NULL, 
     'Bento Grid + Glassmorphism', 
+    'Organização modular inspirada na Apple com efeitos de vidro, desfoque e profundidade. Layout assimétrico e moderno.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
 Diretrizes de Design & Sofisticação:
@@ -62,6 +65,7 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
 (
     NULL, 
     'Aurora UI + Minimalismo Orgânico', 
+    'Elegância etérea com fundos dinâmicos de gradiente suave e tipografia serifada premium.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
 Diretrizes de Design & Sofisticação:
@@ -79,6 +83,7 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
 (
     NULL, 
     'Claymorphism + Soft 3D', 
+    'Interfaces táteis e amigáveis que parecem feitas de argila ou plástico macio, com cores pastéis.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
 Diretrizes de Design & Sofisticação:
@@ -97,6 +102,7 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
 (
     NULL, 
     'Retro-Futurismo Synthwave + Clean Cyberpunk', 
+    'Nostalgia tecnológica com acabamento premium, luzes neon refinadas e tipografia monospace.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
 Diretrizes de Design & Sofisticação:
@@ -115,6 +121,7 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
 (
     NULL, 
     'Skeuomorph Moderno (Neuomorphism 2.0)', 
+    'Realismo tátil minimalista com sombras duplas precisas e sofisticação monocromática.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
 Diretrizes de Design & Sofisticação:
@@ -133,6 +140,7 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
 (
     NULL, 
     'Maximalismo Tipográfico + Dark Mode', 
+    'Impacto visual extremo através de fontes gigantes, alto contraste e composições dinâmicas.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
 Diretrizes de Design & Sofisticação:
@@ -151,6 +159,7 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
 (
     NULL, 
     'Grainy Textures + Mono-Chrome', 
+    'Visual analógico, editorial e cinematográfico com texturas de ruído e tipografia clássica.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
 Diretrizes de Design & Sofisticação:
@@ -169,6 +178,7 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
 (
     NULL, 
     'Bauhaus Modernizado', 
+    'Geometria pura, funcionalismo histórico e paleta primária sobre fundo papel.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
 Diretrizes de Design & Sofisticação:
@@ -187,6 +197,7 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
 (
     NULL, 
     'Holographic / Iridescent Design', 
+    'Visual Web3 futurista com refração de luz, gradientes complexos e efeitos 3D de inclinação.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
 Diretrizes de Design & Sofisticação:
@@ -205,6 +216,7 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
 (
     NULL, 
     'Swiss Design + Grid Brutalism', 
+    'Precisão suíça com estrutura industrial aparente, tipografia radical e grid modular visível.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
 Diretrizes de Design & Sofisticação:
@@ -223,6 +235,7 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
 (
     NULL, 
     'Minimalismo Japonês (Zen Design)', 
+    'Foco no vazio (Ma), tipografia sutil, cores naturais e assimetria equilibrada.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
 Diretrizes de Design & Sofisticação:
@@ -239,6 +252,7 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
 (
     NULL, 
     'Dark Academia', 
+    'Atmosfera acadêmica vintage, tons terrosos escuros, tipografia serifada clássica.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
 Diretrizes de Design & Sofisticação:
@@ -255,6 +269,7 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
 (
     NULL, 
     'Y2K Cyber Web', 
+    'Nostalgia dos anos 2000, cores metálicas, rosa choque, gradientes iridescentes e estética tech-pop.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
 Diretrizes de Design & Sofisticação:
@@ -271,6 +286,7 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
 (
     NULL, 
     'Eco-Brutalismo', 
+    'Mistura do brutalismo de concreto com elementos orgânicos e verdes vibrantes.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
 Diretrizes de Design & Sofisticação:
@@ -287,6 +303,7 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
 (
     NULL, 
     'Cyber-Glass (Neon + Glassmorphism)', 
+    'Painéis de vidro translúcido flutuando sobre luzes neon intensas e fundos escuros.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
 Diretrizes de Design & Sofisticação:
@@ -303,6 +320,7 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
 (
     NULL, 
     'Retro 70s Groovy', 
+    'Cores quentes (laranja, mostarda, marrom), formas fluidas e tipografia arredondada e espessa.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
 Diretrizes de Design & Sofisticação:
@@ -319,6 +337,7 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
 (
     NULL, 
     'Geometria Lúdica (Modern Memphis)', 
+    'Padrões geométricos, cores primárias brilhantes, confetes visuais e design divertido.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
 Diretrizes de Design & Sofisticação:
@@ -335,6 +354,7 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
 (
     NULL, 
     'Digital Scrapbook', 
+    'Visual de colagem, texturas de papel rasgado, fitas adesivas e sobreposições caóticas controladas.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
 Diretrizes de Design & Sofisticação:
@@ -351,6 +371,7 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
 (
     NULL, 
     'High-Fashion Editorial', 
+    'Elegância extrema, margens imensas, tipografia fina e contraste dramático.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
 Diretrizes de Design & Sofisticação:
@@ -361,12 +382,13 @@ Diretrizes de Design & Sofisticação:
 
 Restrições Técnicas:
 NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).
-As páginas interativas criadas NÃO terão botões, íicons no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
     true
 ),
 (
     NULL, 
     'Vaporwave Aesthetic', 
+    'Nostalgia dos anos 80/90, gradientes rosa e ciano, estátuas clássicas (implícitas) e grids de perspectiva.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
 Diretrizes de Design & Sofisticação:
@@ -383,6 +405,7 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
 (
     NULL, 
     'Monocromático Vibrante', 
+    'Uso de uma única cor forte em várias tonalidades para criar uma experiência visual imersiva.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
 Diretrizes de Design & Sofisticação:
@@ -399,6 +422,7 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
 (
     NULL, 
     'Soft UI Clássico (Neumorphism 1.0)', 
+    'Elementos que parecem extrudados do próprio fundo, com sombras suaves e baixo contraste.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
 Diretrizes de Design & Sofisticação:
@@ -415,6 +439,7 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
 (
     NULL, 
     'Industrial Tech Wear', 
+    'Design utilitário, preto fosco, acentos em laranja segurança, tipografia técnica e códigos de barras.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
 Diretrizes de Design & Sofisticação:
@@ -431,6 +456,7 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
 (
     NULL, 
     'Gothic / Dark Fantasy', 
+    'Atmosfera sombria, elegante e misteriosa, com vermelhos profundos, dourados envelhecidos e preto.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
 Diretrizes de Design & Sofisticação:
@@ -447,6 +473,7 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
 (
     NULL, 
     'Pop Art / Comic Book', 
+    'Estilo história em quadrinhos, padrões de retícula (halftone), cores primárias estouradas e bordas grossas.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
 Diretrizes de Design & Sofisticação:
@@ -463,6 +490,7 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
 (
     NULL, 
     'Abstract Fluid Gradients', 
+    'Formas orgânicas derretidas, gradientes complexos em movimento e visual onírico.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
 Diretrizes de Design & Sofisticação:
@@ -479,6 +507,7 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
 (
     NULL, 
     'Terminal / Hacker UI', 
+    'Visual de linha de comando, texto verde brilhante sobre fundo preto, estética de código puro.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
 Diretrizes de Design & Sofisticação:
@@ -495,6 +524,7 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
 (
     NULL, 
     'Surrealist Web', 
+    'Layouts oníricos, proporções distorcidas, elementos flutuantes e quebra de expectativas.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
 Diretrizes de Design & Sofisticação:
@@ -511,6 +541,7 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
 (
     NULL, 
     'Art Deco Luxuoso', 
+    'Glamour dos anos 1920, simetria geométrica, preto profundo e detalhes em dourado metálico.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
 Diretrizes de Design & Sofisticação:
@@ -527,6 +558,7 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
 (
     NULL, 
     'Space Age / Atomic 60s', 
+    'Retro-futurismo dos anos 60, formas de estrelas, órbitas, cores pastéis espaciais e design otimista.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
 Diretrizes de Design & Sofisticação:

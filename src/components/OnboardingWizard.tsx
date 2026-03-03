@@ -7,6 +7,7 @@ import {
 import { createClient } from '@supabase/supabase-js';
 import { supabase as defaultSupabase } from '../lib/supabase';
 import { SUPABASE_TABLES_SQL } from '../constants/supabaseSql';
+import { SEED_PROMPTS_SQL } from '../constants/seedSql';
 
 interface OnboardingWizardProps {
   onComplete: () => void;
@@ -18,6 +19,7 @@ export default function OnboardingWizard({ onComplete, onCancel }: OnboardingWiz
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [copiedSql, setCopiedSql] = useState(false);
+  const [copiedSeedSql, setCopiedSeedSql] = useState(false);
 
   // Step 1: Basic Info
   const [fullName, setFullName] = useState('');
@@ -46,6 +48,12 @@ export default function OnboardingWizard({ onComplete, onCancel }: OnboardingWiz
     navigator.clipboard.writeText(SUPABASE_TABLES_SQL);
     setCopiedSql(true);
     setTimeout(() => setCopiedSql(false), 2000);
+  };
+
+  const copySeedSql = () => {
+    navigator.clipboard.writeText(SEED_PROMPTS_SQL);
+    setCopiedSeedSql(true);
+    setTimeout(() => setCopiedSeedSql(false), 2000);
   };
 
   const handleNextStep = async () => {
@@ -374,12 +382,20 @@ export default function OnboardingWizard({ onComplete, onCancel }: OnboardingWiz
                       <p className="text-xs text-slate-300 leading-relaxed">
                         Antes de finalizar, você <b>DEVE</b> executar o script SQL no seu painel do Supabase (SQL Editor) para criar as tabelas necessárias.
                       </p>
-                      <button 
-                        onClick={copySql}
-                        className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all ${copiedSql ? 'bg-emerald-500 text-white' : 'bg-amber-500/20 text-amber-500 hover:bg-amber-500/30'}`}
-                      >
-                        {copiedSql ? <><Check size={12} /> SQL Copiado!</> : <><Copy size={12} /> Copiar Script SQL</>}
-                      </button>
+                      <div className="flex flex-wrap gap-2">
+                        <button 
+                          onClick={copySql}
+                          className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all ${copiedSql ? 'bg-emerald-500 text-white' : 'bg-amber-500/20 text-amber-500 hover:bg-amber-500/30'}`}
+                        >
+                          {copiedSql ? <><Check size={12} /> SQL Tabelas Copiado!</> : <><Copy size={12} /> Copiar Script Tabelas</>}
+                        </button>
+                        <button 
+                          onClick={copySeedSql}
+                          className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all ${copiedSeedSql ? 'bg-emerald-500 text-white' : 'bg-blue-500/20 text-blue-400 hover:bg-blue-500/30'}`}
+                        >
+                          {copiedSeedSql ? <><Check size={12} /> SQL Estilos Copiado!</> : <><Copy size={12} /> Copiar Script Estilos</>}
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>

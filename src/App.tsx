@@ -48,6 +48,8 @@ import ReactMarkdown from 'react-markdown';
 import { supabase } from './lib/supabase';
 import { Session } from '@supabase/supabase-js';
 import OnboardingWizard from './components/OnboardingWizard';
+import StylePreview from './components/StylePreview';
+import MaterialPreviewModal from './components/MaterialPreviewModal';
 import { SEED_PROMPTS_SQL } from './constants/seedSql';
 import { SUPABASE_TABLES_SQL } from './constants/supabaseSql';
 
@@ -785,11 +787,18 @@ const CalloutSection = ({ title, text, accent, colors }: { title: string, text: 
 
 // --- Main App ---
 
+interface LoadingStep {
+  id: string;
+  label: string;
+  status: 'pending' | 'loading' | 'completed';
+}
+
 export default function App() {
   // State
   const [view, setView] = useState<ViewType>('keys');
   const [loading, setLoading] = useState(false);
   const [loadingMsg, setLoadingMsg] = useState('');
+  const [loadingSteps, setLoadingSteps] = useState<LoadingStep[]>([]);
   const [session, setSession] = useState<Session | null>(null);
   const [authEmail, setAuthEmail] = useState('conexaosistemasdeprotese@gmail.com');
   const [authPassword, setAuthPassword] = useState('@#1984198720042009@#');
@@ -847,6 +856,7 @@ O Flex Gold é a tendência atual para clínicas que buscam um implante para tud
   const [generatedHtml, setGeneratedHtml] = useState<string>('');
   const [materials, setMaterials] = useState<GeneratedMaterial[]>([]);
   const [promptLibrary, setPromptLibrary] = useState<PromptLibraryEntry[]>([]);
+  const [viewingMaterial, setViewingMaterial] = useState<GeneratedMaterial | null>(null);
   const [selectedPromptId, setSelectedPromptId] = useState<string>('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState<string>('');
@@ -917,8 +927,17 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
 
   const loadUserData = async () => {
     if (!session) return;
+    
+    const steps: LoadingStep[] = [
+      { id: 'branding', label: 'Configurações de Branding', status: 'loading' },
+      { id: 'keys', label: 'Chaves de API', status: 'pending' },
+      { id: 'materials', label: 'Biblioteca de Materiais', status: 'pending' },
+      { id: 'prompts', label: 'Modelos de Design', status: 'pending' }
+    ];
+
     setLoading(true);
-    setLoadingMsg('Carregando seus dados do Supabase...');
+    setLoadingMsg('Sincronizando Dados');
+    setLoadingSteps(steps);
 
     try {
       // Load Branding
@@ -935,7 +954,14 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
           pdfName: branding.pdf_name,
           systemPrompt: branding.system_prompt || brandConfig.systemPrompt
         });
+        
+        setSupabaseConfig({
+          url: branding.supabase_url || '',
+          anonKey: branding.supabase_anon_key || ''
+        });
       }
+
+      setLoadingSteps(prev => prev.map(s => s.id === 'branding' ? { ...s, status: 'completed' } : s.id === 'keys' ? { ...s, status: 'loading' } : s));
 
       // Load API Keys
       const { data: keys, error: kError } = await supabase
@@ -952,13 +978,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
         setApiKeys(newKeys);
       }
 
-      // Load Supabase Config (from branding_configs or dedicated fields)
-      if (branding && !bError) {
-        setSupabaseConfig({
-          url: branding.supabase_url || '',
-          anonKey: branding.supabase_anon_key || ''
-        });
-      }
+      setLoadingSteps(prev => prev.map(s => s.id === 'keys' ? { ...s, status: 'completed' } : s.id === 'materials' ? { ...s, status: 'loading' } : s));
 
       // Load Materials
       const { data: mats, error: mError } = await supabase
@@ -975,6 +995,8 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
         })));
       }
 
+      setLoadingSteps(prev => prev.map(s => s.id === 'materials' ? { ...s, status: 'completed' } : s.id === 'prompts' ? { ...s, status: 'loading' } : s));
+
       // Load Prompt Library
       const { data: prompts, error: pError } = await supabase
         .from('prompt_library')
@@ -984,10 +1006,12 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
       if (prompts && !pError) {
         setPromptLibrary(prompts);
       }
+      
+      setLoadingSteps(prev => prev.map(s => ({ ...s, status: 'completed' })));
     } catch (err) {
       console.error('Erro ao carregar dados:', err);
     } finally {
-      setLoading(false);
+      setTimeout(() => setLoading(false), 500);
     }
   };
 
@@ -1119,11 +1143,21 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
 
   const seedPromptLibrary = async () => {
     if (!session) return alert('Você precisa estar logado.');
-    if (!confirm('Deseja importar os 11 estilos de design padrão para sua biblioteca?')) return;
+    if (!confirm('Deseja importar os estilos de design padrão para sua biblioteca?')) return;
+
+    const steps: LoadingStep[] = [
+      { id: 'prepare', label: 'Preparando modelos', status: 'loading' },
+      { id: 'import', label: 'Importando para o Supabase', status: 'pending' },
+      { id: 'refresh', label: 'Atualizando biblioteca local', status: 'pending' }
+    ];
 
     setLoading(true);
-    setLoadingMsg('Importando biblioteca de estilos...');
+    setLoadingMsg('Importação de Estilos');
+    setLoadingSteps(steps);
+
     try {
+      setLoadingSteps(prev => prev.map(s => s.id === 'prepare' ? { ...s, status: 'completed' } : s.id === 'import' ? { ...s, status: 'loading' } : s));
+      
       const promptsToInsert = DEFAULT_PROMPTS.map(p => ({
         user_id: session.user.id,
         title: p.title,
@@ -1137,14 +1171,19 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
         .select();
       
       if (error) throw error;
+
+      setLoadingSteps(prev => prev.map(s => s.id === 'import' ? { ...s, status: 'completed' } : s.id === 'refresh' ? { ...s, status: 'loading' } : s));
+      
       if (data) {
         setPromptLibrary(prev => [...data, ...prev]);
       }
+      
+      setLoadingSteps(prev => prev.map(s => ({ ...s, status: 'completed' })));
       alert('Biblioteca de estilos importada com sucesso!');
     } catch (err: any) {
       alert(`Erro ao importar: ${err.message}`);
     } finally {
-      setLoading(false);
+      setTimeout(() => setLoading(false), 500);
     }
   };
 
@@ -1240,14 +1279,24 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
 
   const convertToMarkdown = async () => {
     if (!rawText.trim()) return;
+    
+    const steps: LoadingStep[] = [
+      { id: 'analyze', label: 'Analisando texto bruto', status: 'loading' },
+      { id: 'structure', label: 'Estruturando Markdown', status: 'pending' },
+      { id: 'clean', label: 'Limpando formatação', status: 'pending' }
+    ];
+    
     setLoading(true);
-    setLoadingMsg('Transformando texto em Markdown estruturado...');
+    setLoadingMsg('Conversor Inteligente');
+    setLoadingSteps(steps);
     
     try {
       const apiKey = apiKeys.gemini || process.env.GEMINI_API_KEY;
       if (!apiKey) throw new Error("API Key do Gemini não encontrada.");
 
       const ai = new GoogleGenAI({ apiKey });
+      
+      setLoadingSteps(prev => prev.map(s => s.id === 'analyze' ? { ...s, status: 'completed' } : s.id === 'structure' ? { ...s, status: 'loading' } : s));
       
       const contents: any[] = [
         { text: `Transforme o seguinte texto em um Markdown bem estruturado, com títulos, listas e tabelas se necessário:\n\n${rawText}` }
@@ -1272,12 +1321,22 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
       });
 
       if (!response.text) throw new Error("Sem resposta do modelo.");
-      setMarkdownText(response.text);
+      
+      setLoadingSteps(prev => prev.map(s => s.id === 'structure' ? { ...s, status: 'completed' } : s.id === 'clean' ? { ...s, status: 'loading' } : s));
+      
+      let text = response.text;
+      // Limpar blocos de código markdown se o modelo retornar
+      text = text.replace(/^```markdown\n?/, '').replace(/```$/, '').trim();
+      
+      setMarkdownText(text);
+      setEditorTab('edit');
       setView('editor');
+      
+      setLoadingSteps(prev => prev.map(s => ({ ...s, status: 'completed' })));
     } catch (error: any) {
       alert(`Erro: ${error.message}`);
     } finally {
-      setLoading(false);
+      setTimeout(() => setLoading(false), 500);
     }
   };
 
@@ -1286,6 +1345,8 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
     if (!apiKey) throw new Error(`API Key para ${selectedApi.toUpperCase()} não encontrada na aba API Keys.`);
 
     const ai = new GoogleGenAI({ apiKey: selectedApi === 'gemini' ? apiKey : (apiKeys.gemini || process.env.GEMINI_API_KEY || '') });
+    
+    setLoadingSteps(prev => prev.map(s => s.id === 'analyze' ? { ...s, status: 'completed' } : s.id === 'style' ? { ...s, status: 'loading' } : s));
     
     const langNames = { pt: 'Português (Brasil)', en: 'Inglês (EN-US)', es: 'Espanhol (ES-ES)' };
     
@@ -1316,6 +1377,8 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
       parts[0].text += "\n\nIMPORTANTE: Siga rigorosamente a identidade visual e diretrizes contidas no PDF de branding anexado.";
     }
 
+    setLoadingSteps(prev => prev.map(s => s.id === 'style' ? { ...s, status: 'completed' } : s.id === 'branding' ? { ...s, status: 'loading' } : s));
+
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: { parts },
@@ -1324,9 +1387,13 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
       }
     });
 
+    setLoadingSteps(prev => prev.map(s => s.id === 'branding' ? { ...s, status: 'completed' } : s.id === 'generate' ? { ...s, status: 'loading' } : s));
+
     let html = response.text || '';
     html = html.replace(/^```html/, '').replace(/```$/, '').trim();
     
+    setLoadingSteps(prev => prev.map(s => s.id === 'generate' ? { ...s, status: 'completed' } : s.id === 'finalize' ? { ...s, status: 'loading' } : s));
+
     if (session) {
       const { data, error } = await supabase
         .from('generated_materials')
@@ -1357,12 +1424,25 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
       setMaterials(prev => [newMaterial, ...prev]);
     }
 
+    setLoadingSteps(prev => prev.map(s => s.id === 'finalize' ? { ...s, status: 'completed' } : s));
+
     return html;
   };
 
   const generatePage = async () => {
     if (!markdownText.trim()) return;
+    
+    const steps: LoadingStep[] = [
+      { id: 'analyze', label: 'Analisando Markdown', status: 'loading' },
+      { id: 'style', label: 'Aplicando Direção de Arte', status: 'pending' },
+      { id: 'branding', label: 'Injetando Branding', status: 'pending' },
+      { id: 'generate', label: 'Gerando Código HTML', status: 'pending' },
+      { id: 'finalize', label: 'Finalizando Material', status: 'pending' }
+    ];
+    
     setLoading(true);
+    setLoadingMsg('Gerador de Páginas');
+    setLoadingSteps(steps);
     
     try {
       if (selectedLang === 'all') {
@@ -1370,12 +1450,13 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
         let lastHtml = '';
         for (const lang of langs) {
           setLoadingMsg(`Gerando versão ${lang.toUpperCase()}...`);
+          // Reset steps for each language to show progress
+          setLoadingSteps(steps.map(s => s.id === 'analyze' ? { ...s, status: 'loading' } : { ...s, status: 'pending' }));
           lastHtml = await generateSinglePage(lang, `${filename}-${lang}`);
         }
         setGeneratedHtml(lastHtml);
         setFilename(`${filename}-es`); // Show the last one in preview
       } else {
-        setLoadingMsg(`Gerando página interativa (${selectedLang.toUpperCase()})...`);
         const html = await generateSinglePage(selectedLang, filename);
         setGeneratedHtml(html);
       }
@@ -1384,7 +1465,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
     } catch (error: any) {
       alert(`Erro: ${error.message}`);
     } finally {
-      setLoading(false);
+      setTimeout(() => setLoading(false), 500);
     }
   };
 
@@ -1491,16 +1572,84 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
           {loading && (
             <motion.div 
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center p-6"
+              className="fixed inset-0 bg-black/90 backdrop-blur-xl z-[100] flex items-center justify-center p-6"
             >
               <motion.div 
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
-                className="bg-slate-900 rounded-[3rem] p-16 text-center max-w-lg shadow-2xl shadow-blue-900/20 border border-slate-800"
+                className="bg-slate-900 rounded-[3rem] p-12 text-center w-full max-w-xl shadow-2xl shadow-blue-900/20 border border-slate-800 relative overflow-hidden"
               >
-                <h3 className="text-4xl font-black text-white mb-6 tracking-tight">Processando...</h3>
-                <p className="text-slate-400 font-medium text-lg leading-relaxed">{loadingMsg || 'Carregando seus dados do Supabase...'}</p>
+                {/* Animated Background Scanner */}
+                <motion.div 
+                  animate={{ 
+                    top: ['-100%', '200%'],
+                  }}
+                  transition={{ 
+                    duration: 3, 
+                    repeat: Infinity, 
+                    ease: "linear" 
+                  }}
+                  className="absolute left-0 right-0 h-32 bg-gradient-to-b from-transparent via-blue-500/5 to-transparent pointer-events-none"
+                />
+
+                <div className="relative z-10">
+                  <div className="w-20 h-20 bg-blue-600/20 rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-inner border border-blue-500/30">
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                    >
+                      <Sparkles size={40} className="text-blue-400" />
+                    </motion.div>
+                  </div>
+
+                  <h3 className="text-3xl font-black text-white mb-2 tracking-tight">
+                    {loadingMsg || 'Processando...'}
+                  </h3>
+                  <p className="text-slate-500 text-sm mb-10">Isso pode levar alguns segundos enquanto nossa IA refina seu conteúdo.</p>
+
+                  <div className="space-y-3 text-left max-w-sm mx-auto">
+                    {loadingSteps.map((step, idx) => (
+                      <motion.div 
+                        key={step.id}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: idx * 0.1 }}
+                        className="flex items-center gap-3"
+                      >
+                        <div className={`w-5 h-5 rounded-full flex items-center justify-center border transition-colors ${
+                          step.status === 'completed' ? 'bg-emerald-500 border-emerald-500' : 
+                          step.status === 'loading' ? 'bg-blue-500/20 border-blue-500 animate-pulse' : 
+                          'border-slate-700'
+                        }`}>
+                          {step.status === 'completed' ? (
+                            <Check size={12} className="text-white" />
+                          ) : step.status === 'loading' ? (
+                            <div className="w-1.5 h-1.5 bg-blue-400 rounded-full" />
+                          ) : null}
+                        </div>
+                        <span className={`text-xs font-bold uppercase tracking-widest transition-colors ${
+                          step.status === 'completed' ? 'text-emerald-400' : 
+                          step.status === 'loading' ? 'text-blue-400' : 
+                          'text-slate-600'
+                        }`}>
+                          {step.label}
+                        </span>
+                      </motion.div>
+                    ))}
+                  </div>
+
+                  {/* Progress Bar */}
+                  <div className="mt-12 h-1.5 w-full bg-slate-800 rounded-full overflow-hidden border border-slate-700/50">
+                    <motion.div 
+                      className="h-full bg-gradient-to-r from-blue-600 to-indigo-500"
+                      initial={{ width: "0%" }}
+                      animate={{ 
+                        width: `${(loadingSteps.filter(s => s.status === 'completed').length / loadingSteps.length) * 100}%` 
+                      }}
+                    />
+                  </div>
+                </div>
               </motion.div>
             </motion.div>
           )}
@@ -1789,10 +1938,10 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
 
           {/* 3. Converter Tab */}
           {view === 'converter' && (
-            <motion.div key="converter" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="h-[calc(100vh-200px)] min-h-[600px] flex flex-col">
-              <div className="bg-slate-900 rounded-[2rem] border border-slate-800 shadow-lg shadow-black/20 flex-1 flex flex-col overflow-hidden">
+            <motion.div key="converter" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="flex flex-col gap-6">
+              <div className="bg-slate-900 rounded-[2rem] border border-slate-800 shadow-lg shadow-black/20 overflow-hidden flex flex-col">
                 {/* Header */}
-                <div className="px-8 py-6 border-b border-slate-800 flex justify-between items-center bg-slate-900/50 backdrop-blur-md">
+                <div className="px-8 py-6 border-b border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4 bg-slate-900/50 backdrop-blur-md">
                   <div>
                     <h2 className="text-2xl font-black text-white flex items-center gap-3">
                       <Wand2 className="text-purple-500" /> Conversor Inteligente
@@ -1802,19 +1951,39 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                   <button 
                     onClick={convertToMarkdown} 
                     disabled={!rawText.trim()} 
-                    className="bg-purple-600 text-white px-8 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-purple-500 shadow-lg shadow-purple-900/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
+                    className="w-full md:w-auto bg-purple-600 text-white px-10 py-4 rounded-2xl font-black flex items-center justify-center gap-3 hover:bg-purple-500 shadow-xl shadow-purple-900/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 group"
                   >
-                    <Sparkles size={18} /> Converter Agora
+                    <Sparkles size={20} className="group-hover:rotate-12 transition-transform" /> 
+                    <span>CONVERTER AGORA</span>
                   </button>
                 </div>
 
                 {/* Content Area */}
-                <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-slate-800">
+                <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-slate-800 min-h-[500px]">
                   {/* Input */}
                   <div className="flex flex-col p-6">
-                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
-                      <FileText size={14} /> Entrada de Texto
-                    </label>
+                    <div className="flex justify-between items-center mb-4">
+                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                        <FileText size={14} /> Entrada de Texto
+                      </label>
+                      <div className="flex items-center gap-4">
+                        {rawText && (
+                          <button 
+                            onClick={() => setRawText('')}
+                            className="text-[10px] font-bold text-slate-500 hover:text-white transition-colors"
+                          >
+                            Limpar
+                          </button>
+                        )}
+                        <button 
+                          onClick={convertToMarkdown}
+                          disabled={!rawText.trim()}
+                          className="text-[10px] font-bold text-purple-400 hover:text-purple-300 flex items-center gap-1 transition-colors disabled:opacity-30"
+                        >
+                          <Sparkles size={10} /> Converter
+                        </button>
+                      </div>
+                    </div>
                     <textarea 
                       value={rawText} 
                       onChange={(e) => setRawText(e.target.value)}
@@ -1824,19 +1993,51 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                   </div>
 
                   {/* Info / Output Placeholder */}
-                  <div className="flex flex-col items-center justify-center p-12 text-center bg-slate-900/50">
-                    <div className="w-24 h-24 bg-slate-800 rounded-full flex items-center justify-center mb-6 shadow-xl shadow-black/20">
-                      <ArrowRightLeft size={40} className="text-slate-600" />
-                    </div>
-                    <h3 className="text-xl font-bold text-white mb-2">Pronto para Processar</h3>
-                    <p className="text-slate-500 max-w-sm leading-relaxed">
-                      Nossa IA irá analisar seu texto, identificar títulos, listas e tabelas, e gerar um Markdown limpo para uso no Editor.
-                    </p>
-                    <div className="mt-8 flex gap-2">
-                      <span className="px-3 py-1 rounded-lg bg-slate-800 text-slate-500 text-xs font-mono border border-slate-700">Estruturação</span>
-                      <span className="px-3 py-1 rounded-lg bg-slate-800 text-slate-500 text-xs font-mono border border-slate-700">Limpeza</span>
-                      <span className="px-3 py-1 rounded-lg bg-slate-800 text-slate-500 text-xs font-mono border border-slate-700">Formatação</span>
-                    </div>
+                  <div className="flex flex-col p-6 bg-slate-900/50">
+                    {markdownText && markdownText.length > 100 ? (
+                      <div className="flex flex-col h-full">
+                        <div className="flex justify-between items-center mb-4">
+                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                            <CheckCircle2 size={14} className="text-emerald-500" /> Último Resultado Convertido
+                          </label>
+                          <button 
+                            onClick={() => setView('editor')}
+                            className="text-[10px] font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1 transition-colors"
+                          >
+                            Abrir no Editor <ChevronRight size={10} />
+                          </button>
+                        </div>
+                        <div className="flex-1 bg-slate-950 rounded-2xl border border-slate-800 p-6 overflow-y-auto custom-scrollbar prose prose-invert prose-slate prose-xs max-w-none">
+                          <ReactMarkdown>{markdownText}</ReactMarkdown>
+                        </div>
+                        <div className="mt-4 flex justify-end">
+                          <button 
+                            onClick={() => {
+                              navigator.clipboard.writeText(markdownText);
+                              alert('Markdown copiado!');
+                            }}
+                            className="text-[10px] font-bold text-slate-400 hover:text-white flex items-center gap-1 transition-colors"
+                          >
+                            <Copy size={12} /> Copiar Markdown
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center h-full text-center py-12">
+                        <div className="w-24 h-24 bg-slate-800 rounded-full flex items-center justify-center mb-6 shadow-xl shadow-black/20">
+                          <ArrowRightLeft size={40} className="text-slate-600" />
+                        </div>
+                        <h3 className="text-xl font-bold text-white mb-2">Pronto para Processar</h3>
+                        <p className="text-slate-500 max-w-sm leading-relaxed">
+                          Nossa IA irá analisar seu texto, identificar títulos, listas e tabelas, e gerar um Markdown limpo para uso no Editor.
+                        </p>
+                        <div className="mt-8 flex gap-2">
+                          <span className="px-3 py-1 rounded-lg bg-slate-800 text-slate-500 text-xs font-mono border border-slate-700">Estruturação</span>
+                          <span className="px-3 py-1 rounded-lg bg-slate-800 text-slate-500 text-xs font-mono border border-slate-700">Limpeza</span>
+                          <span className="px-3 py-1 rounded-lg bg-slate-800 text-slate-500 text-xs font-mono border border-slate-700">Formatação</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -1877,6 +2078,16 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                       <option value="all">Todos (3 langs)</option>
                     </select>
                   </div>
+
+                  <button 
+                    onClick={() => {
+                      navigator.clipboard.writeText(markdownText);
+                      alert('Markdown copiado!');
+                    }}
+                    className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-xl border border-slate-700 transition-all text-xs font-bold"
+                  >
+                    <Copy size={14} /> Copiar Markdown
+                  </button>
                 </div>
 
                 <div className="flex items-center gap-2 w-full md:w-auto">
@@ -2014,10 +2225,26 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                               <p className="text-slate-400 text-sm leading-relaxed mb-6">
                                 Este é o conjunto de instruções que a IA seguirá para transformar seu Markdown em uma página interativa. Ele define a estética, animações e estrutura.
                               </p>
-                              <div className="bg-slate-950 rounded-2xl border border-slate-800 p-6">
+                              <div className="bg-slate-950 rounded-2xl border border-slate-800 p-6 mb-8">
                                 <pre className="text-[11px] font-mono text-slate-300 whitespace-pre-wrap leading-relaxed">
                                   {brandConfig.systemPrompt}
                                 </pre>
+                              </div>
+
+                              {/* Style Preview Section */}
+                              <div className="bg-slate-900/50 border border-slate-800 rounded-[2rem] p-8 overflow-hidden relative">
+                                <div className="absolute top-0 right-0 p-4">
+                                  <span className="px-3 py-1 bg-blue-500/10 text-blue-400 text-[10px] font-black uppercase tracking-widest rounded-full border border-blue-500/20">
+                                    Preview do Estilo
+                                  </span>
+                                </div>
+                                <h4 className="text-white font-bold mb-6 flex items-center gap-2">
+                                  <Eye size={16} className="text-blue-500" /> Exemplo de Renderização
+                                </h4>
+                                
+                                <div className="min-h-[300px] w-full bg-slate-950 rounded-2xl border border-slate-800 p-6 overflow-hidden">
+                                  <StylePreview styleTitle={promptLibrary.find(p => p.id === selectedPromptId)?.title || 'Padrão'} brandConfig={brandConfig} />
+                                </div>
                               </div>
                             </div>
 
@@ -2190,6 +2417,14 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
 
                         <div className="grid grid-cols-3 gap-2 pt-4 border-t border-slate-800">
                           <button 
+                            onClick={() => setViewingMaterial(material)}
+                            className="flex flex-col items-center justify-center gap-1 py-2 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-blue-400 transition-colors"
+                            title="Visualizar"
+                          >
+                            <Eye size={16} />
+                            <span className="text-[10px] font-bold uppercase">Ver</span>
+                          </button>
+                          <button 
                             onClick={() => loadMaterial(material)}
                             className="flex flex-col items-center justify-center gap-1 py-2 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-blue-400 transition-colors"
                             title="Editar"
@@ -2340,6 +2575,10 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
           )}
         </AnimatePresence>
       </main>
+      <MaterialPreviewModal 
+        material={viewingMaterial} 
+        onClose={() => setViewingMaterial(null)} 
+      />
     </div>
   );
 }

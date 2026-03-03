@@ -22,19 +22,20 @@ CREATE TABLE IF NOT EXISTS branding_configs (
   primary_blue TEXT DEFAULT '#004a8e',
   primary_gold TEXT DEFAULT '#c5a059',
   description TEXT,
+  pdf_name TEXT,
+  system_prompt TEXT,
   supabase_url TEXT,
   supabase_anon_key TEXT,
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(user_id)
 );
 
 -- 4. Generated Materials (Histórico de Materiais)
 CREATE TABLE IF NOT EXISTS generated_materials (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID REFERENCES auth.users ON DELETE CASCADE NOT NULL,
-  title TEXT NOT NULL,
-  content TEXT NOT NULL,
-  html_code TEXT,
-  type TEXT DEFAULT 'page',
+  name TEXT NOT NULL,
+  html_content TEXT NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -74,8 +75,20 @@ BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_policy WHERE polname = 'Users can manage own materials') THEN
         CREATE POLICY "Users can manage own materials" ON generated_materials FOR ALL USING (auth.uid() = user_id);
     END IF;
-    IF NOT EXISTS (SELECT 1 FROM pg_policy WHERE polname = 'Users can manage own prompts') THEN
-        CREATE POLICY "Users can manage own prompts" ON prompt_library FOR ALL USING (auth.uid() = user_id);
+    -- Remover política antiga se existir
+    DROP POLICY IF EXISTS "Users can manage own prompts" ON prompt_library;
+
+    IF NOT EXISTS (SELECT 1 FROM pg_policy WHERE polname = 'Users can select own or default prompts') THEN
+        CREATE POLICY "Users can select own or default prompts" ON prompt_library FOR SELECT USING (is_default = true OR auth.uid() = user_id);
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_policy WHERE polname = 'Users can insert own prompts') THEN
+        CREATE POLICY "Users can insert own prompts" ON prompt_library FOR INSERT WITH CHECK (auth.uid() = user_id);
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_policy WHERE polname = 'Users can update own prompts') THEN
+        CREATE POLICY "Users can update own prompts" ON prompt_library FOR UPDATE USING (auth.uid() = user_id);
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_policy WHERE polname = 'Users can delete own prompts') THEN
+        CREATE POLICY "Users can delete own prompts" ON prompt_library FOR DELETE USING (auth.uid() = user_id);
     END IF;
 END
 $$;
@@ -83,6 +96,12 @@ $$;
 -- Script para adicionar colunas se a tabela já existir sem elas
 DO $$
 BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='branding_configs' AND column_name='pdf_name') THEN
+        ALTER TABLE branding_configs ADD COLUMN pdf_name TEXT;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='branding_configs' AND column_name='system_prompt') THEN
+        ALTER TABLE branding_configs ADD COLUMN system_prompt TEXT;
+    END IF;
     IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='branding_configs' AND column_name='supabase_url') THEN
         ALTER TABLE branding_configs ADD COLUMN supabase_url TEXT;
     END IF;
