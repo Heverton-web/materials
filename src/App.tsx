@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
+import {
   Palette,
   Key,
   FileText,
@@ -681,7 +681,7 @@ body {
 
 const HeroSection = ({ title, subtitle, colors }: { title: string, subtitle: string, colors: BrandConfig }) => (
   <section className="text-center mb-16 animate-fade-in">
-    <div 
+    <div
       className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] mb-6 border"
       style={{ backgroundColor: `${colors.primaryBlue}20`, color: colors.primaryBlue, borderColor: `${colors.primaryBlue}40` }}
     >
@@ -710,7 +710,7 @@ const GridSection = ({ title, items, colors }: { title?: string, items: any[], c
           className="bg-slate-900 rounded-[2.5rem] p-8 border border-slate-800 shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/40 transition-all duration-500 group"
           style={{ borderLeft: item.color === 'gold' ? `4px solid ${colors.primaryGold}` : '1px solid #1e293b' }}
         >
-          <div 
+          <div
             className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 shadow-lg transition-transform group-hover:scale-110 text-white"
             style={{ backgroundColor: item.color === 'gold' ? colors.primaryGold : item.color === 'blue' ? colors.primaryBlue : '#0f172a' }}
           >
@@ -746,10 +746,10 @@ const ComparisonSection = ({ title, headers, rows, colors }: { title?: string, h
             {rows?.map((row, i) => (
               <tr key={i} className="hover:bg-slate-800/50 transition-colors">
                 {row?.map((cell, j) => (
-                  <td 
-                    key={j} 
+                  <td
+                    key={j}
                     className={`px-8 py-6 text-sm ${j === 0 ? 'font-bold text-slate-200' : 'text-slate-400'}`}
-                    style={{ 
+                    style={{
                       color: j > 0 && headers.length > 2 && j === headers.length - 1 ? colors.primaryGold : undefined,
                       backgroundColor: j > 0 && headers.length > 2 && j === headers.length - 1 ? `${colors.primaryGold}10` : undefined,
                       fontWeight: j > 0 && headers.length > 2 && j === headers.length - 1 ? '900' : undefined
@@ -768,13 +768,13 @@ const ComparisonSection = ({ title, headers, rows, colors }: { title?: string, h
 );
 
 const CalloutSection = ({ title, text, accent, colors }: { title: string, text: string, accent: 'gold' | 'blue', colors: BrandConfig }) => (
-  <section 
+  <section
     className="rounded-[3rem] overflow-hidden text-white mb-20 shadow-2xl shadow-black/40"
     style={{ backgroundColor: accent === 'gold' ? '#0f172a' : colors.primaryBlue }}
   >
     <div className="flex flex-col lg:flex-row">
       <div className="p-10 lg:p-16 lg:w-3/5">
-        <span 
+        <span
           className="font-bold text-[11px] uppercase tracking-[0.4em] mb-6 block"
           style={{ color: accent === 'gold' ? colors.primaryGold : '#bfdbfe' }}
         >
@@ -783,7 +783,7 @@ const CalloutSection = ({ title, text, accent, colors }: { title: string, text: 
         <h3 className="text-3xl md:text-4xl font-black mb-8 leading-tight text-white">{title}</h3>
         <p className="text-slate-300 text-base md:text-lg leading-relaxed">{text}</p>
       </div>
-      <div 
+      <div
         className="lg:w-2/5 flex flex-col items-center justify-center p-16 text-center relative overflow-hidden"
         style={{ backgroundColor: accent === 'gold' ? colors.primaryGold : '#2563eb' }}
       >
@@ -829,7 +829,7 @@ Use animações suaves (pode usar CSS puro ou bibliotecas via CDN se necessário
 O arquivo deve ser auto-contido e pronto para ser aberto em qualquer navegador.
 Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).`
   });
-  
+
   const [apiKeys, setApiKeys] = useState<ApiKeys>({
     gemini: '',
     openai: '',
@@ -862,11 +862,13 @@ As diferenças entre os implantes Flex Gold, Flash e Torque estão principalment
 | Complexidade | Alta em osso duro | Fluida em mandíbula | Simplificada |
 
 O Flex Gold é a tendência atual para clínicas que buscam um implante para tudo.`);
-  
+
   const [pageData, setPageData] = useState<PageData | null>(null);
   const [selectedApi, setSelectedApi] = useState<keyof ApiKeys>('gemini');
   const [selectedLang, setSelectedLang] = useState<'pt' | 'en' | 'es' | 'all'>('pt');
   const [filename, setFilename] = useState<string>('minha-pagina');
+  const [filenameEn, setFilenameEn] = useState<string>('my-page');
+  const [filenameEs, setFilenameEs] = useState<string>('mi-pagina');
   const [generatedHtml, setGeneratedHtml] = useState<string>('');
   const [materials, setMaterials] = useState<GeneratedMaterial[]>([]);
   const [promptLibrary, setPromptLibrary] = useState<PromptLibraryEntry[]>([]);
@@ -932,7 +934,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
         .select('*')
         .eq('is_default', true)
         .order('created_at', { ascending: false });
-      
+
       if (data && !error) {
         setPromptLibrary(data);
       }
@@ -943,7 +945,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
 
   const loadUserData = async () => {
     if (!session) return;
-    
+
     const steps: LoadingStep[] = [
       { id: 'branding', label: 'Configurações de Branding', status: 'loading' },
       { id: 'keys', label: 'Chaves de API', status: 'pending' },
@@ -961,7 +963,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
         .from('branding_configs')
         .select('*')
         .single();
-      
+
       if (branding && !bError) {
         setBrandConfig({
           primaryBlue: branding.primary_blue,
@@ -970,7 +972,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
           pdfName: branding.pdf_name,
           systemPrompt: branding.system_prompt || brandConfig.systemPrompt
         });
-        
+
         setSupabaseConfig({
           url: branding.supabase_url || '',
           anonKey: branding.supabase_anon_key || ''
@@ -983,7 +985,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
       const { data: keys, error: kError } = await supabase
         .from('api_keys')
         .select('*');
-      
+
       if (keys && !kError) {
         const newKeys = { ...apiKeys };
         keys.forEach(k => {
@@ -1001,7 +1003,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
         .from('generated_materials')
         .select('*')
         .order('created_at', { ascending: false });
-      
+
       if (mats && !mError) {
         setMaterials(mats.map(m => ({
           id: m.id,
@@ -1019,11 +1021,11 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
         .from('prompt_library')
         .select('*')
         .order('created_at', { ascending: false });
-      
+
       if (prompts && !pError) {
         setPromptLibrary(prompts);
       }
-      
+
       setLoadingSteps(prev => prev.map(s => ({ ...s, status: 'completed' })));
     } catch (err) {
       console.error('Erro ao carregar dados:', err);
@@ -1066,7 +1068,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
           supabase_url: supabaseConfig.url,
           supabase_anon_key: supabaseConfig.anonKey
         });
-      
+
       if (error) throw error;
       alert('Configurações do Supabase salvas com sucesso!');
     } catch (error: any) {
@@ -1092,7 +1094,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
           pdf_name: brandConfig.pdfName,
           system_prompt: brandConfig.systemPrompt
         });
-      
+
       if (error) throw error;
       alert('Branding salvo com sucesso!');
     } catch (error: any) {
@@ -1117,7 +1119,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
       const { error } = await supabase
         .from('api_keys')
         .upsert(keysToSave, { onConflict: 'user_id,service_name' });
-      
+
       if (error) throw error;
       alert('Chaves de API salvas com sucesso!');
     } catch (error: any) {
@@ -1144,7 +1146,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
           description
         })
         .select();
-      
+
       if (error) throw error;
       if (data) {
         setPromptLibrary(prev => [data[0], ...prev]);
@@ -1174,7 +1176,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
 
     try {
       setLoadingSteps(prev => prev.map(s => s.id === 'prepare' ? { ...s, status: 'completed' } : s.id === 'import' ? { ...s, status: 'loading' } : s));
-      
+
       const promptsToInsert = DEFAULT_PROMPTS.map(p => ({
         user_id: session.user.id,
         title: p.title,
@@ -1186,15 +1188,15 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
         .from('prompt_library')
         .insert(promptsToInsert)
         .select();
-      
+
       if (error) throw error;
 
       setLoadingSteps(prev => prev.map(s => s.id === 'import' ? { ...s, status: 'completed' } : s.id === 'refresh' ? { ...s, status: 'loading' } : s));
-      
+
       if (data) {
         setPromptLibrary(prev => [...data, ...prev]);
       }
-      
+
       setLoadingSteps(prev => prev.map(s => ({ ...s, status: 'completed' })));
       alert('Biblioteca de estilos importada com sucesso!');
     } catch (err: any) {
@@ -1224,7 +1226,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
 
   const confirmDelete = async () => {
     if (!deleteConfirmId) return;
-    
+
     setLoading(true);
     setLoadingMsg('Excluindo material...');
 
@@ -1258,10 +1260,10 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
       setEditingId(null);
       return;
     }
-    
+
     // Guardar estado anterior para rollback em caso de erro
     const previousMaterials = [...materials];
-    
+
     // 1. Atualização Otimista (Front-end reflete na hora)
     setMaterials(prev => prev.map(m => m.id === id ? { ...m, name: nameToSave } : m));
     setEditingId(null);
@@ -1277,7 +1279,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
           .eq('id', id)
           .eq('user_id', session.user.id)
           .select();
-        
+
         if (error) throw error;
 
         // Se data estiver vazio, significa que nenhuma linha foi atualizada (ID não encontrado ou RLS bloqueou)
@@ -1296,25 +1298,25 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
 
   const convertToMarkdown = async () => {
     if (!rawText.trim()) return;
-    
+
     const steps: LoadingStep[] = [
       { id: 'analyze', label: 'Analisando texto bruto', status: 'loading' },
       { id: 'structure', label: 'Estruturando Markdown', status: 'pending' },
       { id: 'clean', label: 'Limpando formatação', status: 'pending' }
     ];
-    
+
     setLoading(true);
     setLoadingMsg('Conversor Inteligente');
     setLoadingSteps(steps);
-    
+
     try {
       const apiKey = apiKeys.gemini || process.env.GEMINI_API_KEY;
       if (!apiKey) throw new Error("API Key do Gemini não encontrada.");
 
       const ai = new GoogleGenAI({ apiKey });
-      
+
       setLoadingSteps(prev => prev.map(s => s.id === 'analyze' ? { ...s, status: 'completed' } : s.id === 'structure' ? { ...s, status: 'loading' } : s));
-      
+
       const contents: any[] = [
         { text: `Transforme o seguinte texto em um Markdown bem estruturado, com títulos, listas e tabelas se necessário:\n\n${rawText}` }
       ];
@@ -1330,7 +1332,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
       }
 
       const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
+        model: "gemini-2.0-flash",
         contents: { parts: contents },
         config: {
           systemInstruction: "Você é um assistente especializado em estruturação de conteúdo técnico em Markdown."
@@ -1338,17 +1340,17 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
       });
 
       if (!response.text) throw new Error("Sem resposta do modelo.");
-      
+
       setLoadingSteps(prev => prev.map(s => s.id === 'structure' ? { ...s, status: 'completed' } : s.id === 'clean' ? { ...s, status: 'loading' } : s));
-      
+
       let text = response.text;
       // Limpar blocos de código markdown se o modelo retornar
       text = text.replace(/^```markdown\n?/, '').replace(/```$/, '').trim();
-      
+
       setMarkdownText(text);
       setEditorTab('content');
       setView('editor');
-      
+
       setLoadingSteps(prev => prev.map(s => ({ ...s, status: 'completed' })));
     } catch (error: any) {
       alert(`Erro: ${error.message}`);
@@ -1375,11 +1377,11 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
       if (!apiKey) throw new Error("API Key do Gemini não encontrada.");
 
       const ai = new GoogleGenAI({ apiKey });
-      
+
       setLoadingSteps(prev => prev.map(s => s.id === 'analyze' ? { ...s, status: 'completed' } : s.id === 'creative' ? { ...s, status: 'loading' } : s));
 
       const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
+        model: "gemini-2.0-flash",
         contents: `Analise o seguinte Markdown e sugira metadados estratégicos para uma landing page.
         Retorne APENAS um JSON válido seguindo exatamente esta estrutura:
         {
@@ -1407,7 +1409,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
       const data = JSON.parse(response.text);
       setSuggestedMetadata(data);
       setEditorTab('metadata');
-      
+
       setLoadingSteps(prev => prev.map(s => ({ ...s, status: 'completed' })));
     } catch (error: any) {
       alert(`Erro ao gerar metadados: ${error.message}`);
@@ -1421,13 +1423,14 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
     if (!apiKey) throw new Error(`API Key para ${selectedApi.toUpperCase()} não encontrada na aba API Keys.`);
 
     const ai = new GoogleGenAI({ apiKey: selectedApi === 'gemini' ? apiKey : (apiKeys.gemini || process.env.GEMINI_API_KEY || '') });
-    
+
     setLoadingSteps(prev => prev.map(s => s.id === 'analyze' ? { ...s, status: 'completed' } : s.id === 'style' ? { ...s, status: 'loading' } : s));
-    
+
     const langNames = { pt: 'Português (Brasil)', en: 'Inglês (EN-US)', es: 'Espanhol (ES-ES)' };
-    
+
     const parts: any[] = [
-      { text: `
+      {
+        text: `
         Markdown de entrada:
         ${markdownText}
 
@@ -1456,7 +1459,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
     setLoadingSteps(prev => prev.map(s => s.id === 'style' ? { ...s, status: 'completed' } : s.id === 'branding' ? { ...s, status: 'loading' } : s));
 
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-2.0-flash",
       contents: { parts },
       config: {
         systemInstruction: "Você é um desenvolvedor front-end sênior e tradutor técnico especializado em criar páginas de destino (landing pages) de alta conversão."
@@ -1467,7 +1470,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
 
     let html = response.text || '';
     html = html.replace(/^```html/, '').replace(/```$/, '').trim();
-    
+
     setLoadingSteps(prev => prev.map(s => s.id === 'generate' ? { ...s, status: 'completed' } : s.id === 'finalize' ? { ...s, status: 'loading' } : s));
 
     if (session) {
@@ -1481,7 +1484,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
         })
         .select()
         .single();
-      
+
       if (data && !error) {
         const newMaterial: GeneratedMaterial = {
           id: data.id,
@@ -1510,7 +1513,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
 
   const generatePage = async () => {
     if (!markdownText.trim()) return;
-    
+
     const steps: LoadingStep[] = [
       { id: 'analyze', label: 'Analisando Markdown', status: 'loading' },
       { id: 'style', label: 'Aplicando Direção de Arte', status: 'pending' },
@@ -1518,23 +1521,24 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
       { id: 'generate', label: 'Gerando Código HTML', status: 'pending' },
       { id: 'finalize', label: 'Finalizando Material', status: 'pending' }
     ];
-    
+
     setLoading(true);
     setLoadingMsg('Gerador de Páginas');
     setLoadingSteps(steps);
-    
+
     try {
       if (selectedLang === 'all') {
         const langs: ('pt' | 'en' | 'es')[] = ['pt', 'en', 'es'];
+        const names: Record<'pt' | 'en' | 'es', string> = { pt: filename, en: filenameEn, es: filenameEs };
         let lastHtml = '';
         for (const lang of langs) {
           setLoadingMsg(`Gerando versão ${lang.toUpperCase()}...`);
           // Reset steps for each language to show progress
           setLoadingSteps(steps.map(s => s.id === 'analyze' ? { ...s, status: 'loading' } : { ...s, status: 'pending' }));
-          lastHtml = await generateSinglePage(lang, `${filename}-${lang}`);
+          lastHtml = await generateSinglePage(lang, names[lang]);
         }
         setGeneratedHtml(lastHtml);
-        setFilename(`${filename}-es`); // Show the last one in preview
+        setFilename(filenameEs); // Show the last one in preview
       } else {
         const html = await generateSinglePage(selectedLang, filename);
         setGeneratedHtml(html);
@@ -1602,7 +1606,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                   <p className="text-[10px] font-black text-slate-500 uppercase leading-none mb-1">Usuário</p>
                   <p className="text-xs font-bold text-slate-300 truncate max-w-[180px]">{session.user.email}</p>
                 </div>
-                <button 
+                <button
                   onClick={() => supabase.auth.signOut()}
                   className="p-2 text-slate-500 hover:text-red-400 transition-colors"
                   title="Sair"
@@ -1611,7 +1615,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                 </button>
               </div>
             ) : (
-              <button 
+              <button
                 onClick={() => setShowLoginModal(true)}
                 className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-blue-500 transition-all shadow-lg shadow-blue-900/20"
               >
@@ -1629,12 +1633,11 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
             { id: 'keys', icon: Key, label: 'API Keys' },
             { id: 'supabase', icon: ShieldCheck, label: 'Supabase' },
             { id: 'branding', icon: Palette, label: 'Branding' },
-            { id: 'converter', icon: FileText, label: 'Converter' },
             { id: 'editor', icon: Code, label: 'Editor' },
             { id: 'preview', icon: Eye, label: 'Preview' },
             { id: 'materials', icon: History, label: 'Materiais' }
           ].map((tab) => (
-            <button 
+            <button
               key={tab.id}
               onClick={() => setView(tab.id as ViewType)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${view === tab.id ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'}`}
@@ -1649,25 +1652,25 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
         {/* Loading Overlay */}
         <AnimatePresence>
           {loading && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               className="fixed inset-0 bg-black/90 backdrop-blur-xl z-[100] flex items-center justify-center p-6"
             >
-              <motion.div 
+              <motion.div
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
                 className="bg-slate-900 rounded-[3rem] p-12 text-center w-full max-w-xl shadow-2xl shadow-blue-900/20 border border-slate-800 relative overflow-hidden"
               >
                 {/* Animated Background Scanner */}
-                <motion.div 
-                  animate={{ 
+                <motion.div
+                  animate={{
                     top: ['-100%', '200%'],
                   }}
-                  transition={{ 
-                    duration: 3, 
-                    repeat: Infinity, 
-                    ease: "linear" 
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "linear"
                   }}
                   className="absolute left-0 right-0 h-32 bg-gradient-to-b from-transparent via-blue-500/5 to-transparent pointer-events-none"
                 />
@@ -1689,29 +1692,27 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
 
                   <div className="space-y-3 text-left max-w-sm mx-auto">
                     {loadingSteps.map((step, idx) => (
-                      <motion.div 
+                      <motion.div
                         key={step.id}
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: idx * 0.1 }}
                         className="flex items-center gap-3"
                       >
-                        <div className={`w-5 h-5 rounded-full flex items-center justify-center border transition-colors ${
-                          step.status === 'completed' ? 'bg-emerald-500 border-emerald-500' : 
-                          step.status === 'loading' ? 'bg-blue-500/20 border-blue-500 animate-pulse' : 
-                          'border-slate-700'
-                        }`}>
+                        <div className={`w-5 h-5 rounded-full flex items-center justify-center border transition-colors ${step.status === 'completed' ? 'bg-emerald-500 border-emerald-500' :
+                            step.status === 'loading' ? 'bg-blue-500/20 border-blue-500 animate-pulse' :
+                              'border-slate-700'
+                          }`}>
                           {step.status === 'completed' ? (
                             <Check size={12} className="text-white" />
                           ) : step.status === 'loading' ? (
                             <div className="w-1.5 h-1.5 bg-blue-400 rounded-full" />
                           ) : null}
                         </div>
-                        <span className={`text-xs font-bold uppercase tracking-widest transition-colors ${
-                          step.status === 'completed' ? 'text-emerald-400' : 
-                          step.status === 'loading' ? 'text-blue-400' : 
-                          'text-slate-600'
-                        }`}>
+                        <span className={`text-xs font-bold uppercase tracking-widest transition-colors ${step.status === 'completed' ? 'text-emerald-400' :
+                            step.status === 'loading' ? 'text-blue-400' :
+                              'text-slate-600'
+                          }`}>
                           {step.label}
                         </span>
                       </motion.div>
@@ -1720,11 +1721,11 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
 
                   {/* Progress Bar */}
                   <div className="mt-12 h-1.5 w-full bg-slate-800 rounded-full overflow-hidden border border-slate-700/50">
-                    <motion.div 
+                    <motion.div
                       className="h-full bg-gradient-to-r from-blue-600 to-indigo-500"
                       initial={{ width: "0%" }}
-                      animate={{ 
-                        width: `${(loadingSteps.filter(s => s.status === 'completed').length / loadingSteps.length) * 100}%` 
+                      animate={{
+                        width: `${(loadingSteps.filter(s => s.status === 'completed').length / loadingSteps.length) * 100}%`
                       }}
                     />
                   </div>
@@ -1756,10 +1757,10 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                     <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Supabase URL</label>
                     <div className="relative">
                       <ExternalLink size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
-                      <input 
-                        type="text" 
-                        value={supabaseConfig.url} 
-                        onChange={(e) => setSupabaseConfig({...supabaseConfig, url: e.target.value})}
+                      <input
+                        type="text"
+                        value={supabaseConfig.url}
+                        onChange={(e) => setSupabaseConfig({ ...supabaseConfig, url: e.target.value })}
                         placeholder="https://your-project.supabase.co"
                         className="w-full pl-12 pr-4 py-4 border border-slate-700 bg-slate-900 text-white rounded-xl font-mono text-sm outline-none focus:ring-2 focus:ring-blue-600"
                       />
@@ -1770,10 +1771,10 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                     <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Supabase Anon Key</label>
                     <div className="relative">
                       <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
-                      <input 
-                        type="password" 
-                        value={supabaseConfig.anonKey} 
-                        onChange={(e) => setSupabaseConfig({...supabaseConfig, anonKey: e.target.value})}
+                      <input
+                        type="password"
+                        value={supabaseConfig.anonKey}
+                        onChange={(e) => setSupabaseConfig({ ...supabaseConfig, anonKey: e.target.value })}
                         placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
                         className="w-full pl-12 pr-4 py-4 border border-slate-700 bg-slate-900 text-white rounded-xl font-mono text-sm outline-none focus:ring-2 focus:ring-blue-600"
                       />
@@ -1793,7 +1794,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                       </h3>
                       <p className="text-xs text-slate-500 mt-1">Execute estes scripts no SQL Editor do Supabase.</p>
                     </div>
-                    <button 
+                    <button
                       onClick={() => copyToClipboard(SUPABASE_SQL, 'sql')}
                       className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${copiedId === 'sql' ? 'bg-emerald-500 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
                     >
@@ -1816,7 +1817,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                       </h3>
                       <p className="text-xs text-slate-500 mt-1">SQL para popular sua biblioteca com 31 estilos exclusivos.</p>
                     </div>
-                    <button 
+                    <button
                       onClick={() => copyToClipboard(SEED_PROMPTS_SQL, 'seed')}
                       className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${copiedId === 'seed' ? 'bg-purple-500 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
                     >
@@ -1843,30 +1844,30 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
           {view === 'branding' && (
             <motion.div key="branding" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="space-y-6">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                
+
                 {/* Left Panel: Visual Identity */}
                 <div className="lg:col-span-4 space-y-6">
                   <div className="bg-slate-900 rounded-[2rem] p-8 border border-slate-800 shadow-lg shadow-black/20 h-full">
                     <h2 className="text-xl font-black text-white mb-6 flex items-center gap-3">
                       <Palette className="text-blue-500" /> Identidade Visual
                     </h2>
-                    
+
                     <div className="space-y-6">
                       <div className="space-y-3">
                         <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Cor Primária (Azul)</label>
                         <div className="flex items-center gap-4 bg-slate-800/50 p-3 rounded-2xl border border-slate-800">
-                          <input 
-                            type="color" 
-                            value={brandConfig.primaryBlue} 
-                            onChange={(e) => setBrandConfig({...brandConfig, primaryBlue: e.target.value})} 
-                            className="w-12 h-12 rounded-xl cursor-pointer bg-transparent border-none p-0" 
+                          <input
+                            type="color"
+                            value={brandConfig.primaryBlue}
+                            onChange={(e) => setBrandConfig({ ...brandConfig, primaryBlue: e.target.value })}
+                            className="w-12 h-12 rounded-xl cursor-pointer bg-transparent border-none p-0"
                           />
                           <div className="flex-1">
-                            <input 
-                              type="text" 
-                              value={brandConfig.primaryBlue} 
-                              onChange={(e) => setBrandConfig({...brandConfig, primaryBlue: e.target.value})} 
-                              className="w-full bg-transparent text-white font-mono text-sm font-bold outline-none uppercase" 
+                            <input
+                              type="text"
+                              value={brandConfig.primaryBlue}
+                              onChange={(e) => setBrandConfig({ ...brandConfig, primaryBlue: e.target.value })}
+                              className="w-full bg-transparent text-white font-mono text-sm font-bold outline-none uppercase"
                             />
                             <p className="text-[10px] text-slate-500">Brand Blue</p>
                           </div>
@@ -1876,18 +1877,18 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                       <div className="space-y-3">
                         <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Cor Secundária (Dourado)</label>
                         <div className="flex items-center gap-4 bg-slate-800/50 p-3 rounded-2xl border border-slate-800">
-                          <input 
-                            type="color" 
-                            value={brandConfig.primaryGold} 
-                            onChange={(e) => setBrandConfig({...brandConfig, primaryGold: e.target.value})} 
-                            className="w-12 h-12 rounded-xl cursor-pointer bg-transparent border-none p-0" 
+                          <input
+                            type="color"
+                            value={brandConfig.primaryGold}
+                            onChange={(e) => setBrandConfig({ ...brandConfig, primaryGold: e.target.value })}
+                            className="w-12 h-12 rounded-xl cursor-pointer bg-transparent border-none p-0"
                           />
                           <div className="flex-1">
-                            <input 
-                              type="text" 
-                              value={brandConfig.primaryGold} 
-                              onChange={(e) => setBrandConfig({...brandConfig, primaryGold: e.target.value})} 
-                              className="w-full bg-transparent text-white font-mono text-sm font-bold outline-none uppercase" 
+                            <input
+                              type="text"
+                              value={brandConfig.primaryGold}
+                              onChange={(e) => setBrandConfig({ ...brandConfig, primaryGold: e.target.value })}
+                              className="w-full bg-transparent text-white font-mono text-sm font-bold outline-none uppercase"
                             />
                             <p className="text-[10px] text-slate-500">Accent Gold</p>
                           </div>
@@ -1907,9 +1908,9 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1">
                       <div className="space-y-2 flex flex-col">
                         <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Descrição da Marca</label>
-                        <textarea 
-                          value={brandConfig.description} 
-                          onChange={(e) => setBrandConfig({...brandConfig, description: e.target.value})}
+                        <textarea
+                          value={brandConfig.description}
+                          onChange={(e) => setBrandConfig({ ...brandConfig, description: e.target.value })}
                           className="flex-1 w-full p-4 border border-slate-700 bg-slate-800 text-slate-300 rounded-2xl outline-none focus:ring-2 focus:ring-blue-600 placeholder:text-slate-600 resize-none text-sm leading-relaxed"
                           placeholder="Descreva o tom de voz, valores e diretrizes da marca..."
                         />
@@ -1933,8 +1934,8 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                             <FileText size={48} className="text-red-500/50 mb-4" />
                             <p className="text-sm font-bold text-white text-center break-all px-4">{brandConfig.pdfName}</p>
                             <p className="text-[10px] text-slate-500 uppercase font-bold mt-1">Documento Carregado</p>
-                            <button 
-                              onClick={removePdf} 
+                            <button
+                              onClick={removePdf}
                               className="absolute top-4 right-4 p-2 bg-slate-700 text-slate-400 rounded-xl hover:bg-red-500 hover:text-white transition-all opacity-0 group-hover:opacity-100"
                             >
                               <X size={14} />
@@ -1989,10 +1990,10 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                         <span className="font-bold text-slate-200">{service.label}</span>
                       </div>
                       <div className="relative">
-                        <input 
-                          type="password" 
-                          value={(apiKeys as any)[service.id]} 
-                          onChange={(e) => setApiKeys({...apiKeys, [service.id]: e.target.value})}
+                        <input
+                          type="password"
+                          value={(apiKeys as any)[service.id]}
+                          onChange={(e) => setApiKeys({ ...apiKeys, [service.id]: e.target.value })}
                           placeholder={`Cole sua chave ${service.label} aqui...`}
                           className="w-full px-4 py-3 border border-slate-700 bg-slate-900 text-white rounded-xl font-mono text-xs outline-none focus:ring-2 focus:ring-blue-600 placeholder:text-slate-600 transition-all"
                         />
@@ -2027,12 +2028,12 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                     </h2>
                     <p className="text-slate-400 text-sm mt-1">Transforme textos brutos, anotações ou PDFs em Markdown estruturado.</p>
                   </div>
-                  <button 
-                    onClick={convertToMarkdown} 
-                    disabled={!rawText.trim()} 
+                  <button
+                    onClick={convertToMarkdown}
+                    disabled={!rawText.trim()}
                     className="w-full md:w-auto bg-purple-600 text-white px-10 py-4 rounded-2xl font-black flex items-center justify-center gap-3 hover:bg-purple-500 shadow-xl shadow-purple-900/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 group"
                   >
-                    <Sparkles size={20} className="group-hover:rotate-12 transition-transform" /> 
+                    <Sparkles size={20} className="group-hover:rotate-12 transition-transform" />
                     <span>CONVERTER AGORA</span>
                   </button>
                 </div>
@@ -2047,14 +2048,14 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                       </label>
                       <div className="flex items-center gap-4">
                         {rawText && (
-                          <button 
+                          <button
                             onClick={() => setRawText('')}
                             className="text-[10px] font-bold text-slate-500 hover:text-white transition-colors"
                           >
                             Limpar
                           </button>
                         )}
-                        <button 
+                        <button
                           onClick={convertToMarkdown}
                           disabled={!rawText.trim()}
                           className="text-[10px] font-bold text-purple-400 hover:text-purple-300 flex items-center gap-1 transition-colors disabled:opacity-30"
@@ -2063,8 +2064,8 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                         </button>
                       </div>
                     </div>
-                    <textarea 
-                      value={rawText} 
+                    <textarea
+                      value={rawText}
                       onChange={(e) => setRawText(e.target.value)}
                       placeholder="Cole aqui suas anotações, e-mails, rascunhos ou conteúdo de PDF..."
                       className="flex-1 w-full p-6 border border-slate-700 bg-slate-800/50 text-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-purple-600 resize-none placeholder:text-slate-600 font-mono text-sm leading-relaxed"
@@ -2079,7 +2080,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                           <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
                             <CheckCircle2 size={14} className="text-emerald-500" /> Último Resultado Convertido
                           </label>
-                          <button 
+                          <button
                             onClick={() => setView('editor')}
                             className="text-[10px] font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1 transition-colors"
                           >
@@ -2090,7 +2091,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                           <ReactMarkdown>{markdownText}</ReactMarkdown>
                         </div>
                         <div className="mt-4 flex justify-end">
-                          <button 
+                          <button
                             onClick={() => {
                               navigator.clipboard.writeText(markdownText);
                               alert('Markdown copiado!');
@@ -2125,110 +2126,160 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
 
           {/* 4. Editor Tab */}
           {view === 'editor' && (
-            <motion.div 
-              key="editor" 
-              initial={{ opacity: 0 }} 
-              animate={{ opacity: 1 }} 
-              exit={{ opacity: 0 }} 
+            <motion.div
+              key="editor"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               className="fixed inset-0 top-[72px] bg-slate-950 flex flex-col overflow-hidden"
             >
-              {/* Top Bar: Compact Settings */}
-              <div className="h-16 bg-slate-900 border-b border-slate-800 flex items-center justify-between px-8 shrink-0 shadow-lg z-10">
-                <div className="flex items-center gap-8">
-                  <div className="flex flex-col gap-1">
-                    <span className="text-[9px] font-black text-blue-500 uppercase tracking-[0.2em]">Modelo de IA</span>
-                    <select 
-                      value={selectedApi} 
-                      onChange={(e) => setSelectedApi(e.target.value as keyof ApiKeys)}
-                      className="bg-transparent text-white text-xs font-bold outline-none cursor-pointer [&>option]:text-slate-900 border-b border-slate-700 pb-0.5 hover:border-blue-500 transition-colors"
-                    >
-                      <option value="gemini">Google Gemini</option>
-                      <option value="openai">OpenAI (GPT-4o)</option>
-                      <option value="claude">Anthropic Claude</option>
-                      <option value="groq">Groq (Llama 3)</option>
-                    </select>
-                  </div>
-
-                  <div className="w-px h-8 bg-slate-800" />
-
-                  <div className="flex flex-col gap-1">
-                    <span className="text-[9px] font-black text-blue-500 uppercase tracking-[0.2em]">Idioma da Página</span>
-                    <select 
-                      value={selectedLang} 
-                      onChange={(e) => setSelectedLang(e.target.value as any)}
-                      className="bg-transparent text-white text-xs font-bold outline-none cursor-pointer [&>option]:text-slate-900 border-b border-slate-700 pb-0.5 hover:border-blue-500 transition-colors"
-                    >
-                      <option value="pt">Português (Brasil)</option>
-                      <option value="en">English (US)</option>
-                      <option value="es">Español (ES)</option>
-                      <option value="all">Todos (3 Idiomas)</option>
-                    </select>
-                  </div>
-
-                  <div className="w-px h-8 bg-slate-800" />
-
-                  <div className="flex flex-col gap-1">
-                    <span className="text-[9px] font-black text-blue-500 uppercase tracking-[0.2em]">Nome do Arquivo</span>
-                    <div className="flex items-center gap-1 border-b border-slate-700 pb-0.5 hover:border-blue-500 transition-colors group">
-                      <input 
-                        type="text" 
-                        value={filename}
-                        onChange={(e) => setFilename(e.target.value)}
-                        placeholder="nome-do-arquivo"
-                        className="bg-transparent text-white text-xs font-bold outline-none w-40 placeholder:text-slate-600"
-                      />
-                      <span className="text-slate-500 text-[10px] font-mono">.html</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <button 
-                    onClick={() => {
-                      navigator.clipboard.writeText(markdownText);
-                      setCopiedId('editor-copy');
-                      setTimeout(() => setCopiedId(null), 2000);
-                    }}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white transition-all text-[10px] font-black uppercase tracking-widest border border-slate-700"
-                  >
-                    {copiedId === 'editor-copy' ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
-                    Copiar MD
-                  </button>
-                  <button 
-                    onClick={generatePage}
-                    disabled={!markdownText.trim() || !filename.trim()}
-                    className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-blue-600 text-white hover:bg-blue-500 transition-all text-[10px] font-black uppercase tracking-widest shadow-lg shadow-blue-900/40 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <Wand2 size={14} /> Gerar Página Interativa
-                  </button>
-                </div>
-              </div>
-
               {/* Main Workspace */}
               <div className="flex-1 flex overflow-hidden">
-                {/* Narrow Left Sidebar */}
-                <div className="w-16 bg-slate-900 border-r border-slate-800 flex flex-col items-center py-6 gap-6 shrink-0">
-                  <button 
-                    onClick={() => setEditorTab('content')}
-                    className={`p-3 rounded-xl transition-all ${editorTab === 'content' ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'}`}
-                    title="Markdown Editor"
-                  >
-                    <Pencil size={20} />
-                  </button>
-                  <button 
-                    onClick={() => setEditorTab('style')}
-                    className={`p-3 rounded-xl transition-all ${editorTab === 'style' ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'}`}
-                    title="Biblioteca de Estilos"
-                  >
-                    <Palette size={20} />
-                  </button>
-                  <button 
-                    onClick={() => setEditorTab('metadata')}
-                    className={`p-3 rounded-xl transition-all ${editorTab === 'metadata' ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'}`}
-                    title="SEO & Metadados"
-                  >
-                    <LayoutTemplate size={20} />
-                  </button>
+                {/* Expanded Left Sidebar */}
+                <div className="w-56 bg-slate-900 border-r border-slate-800 flex flex-col shrink-0 overflow-hidden">
+                  {/* Header */}
+                  <div className="px-4 py-4 border-b border-slate-800">
+                    <p className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em]">Editor</p>
+                  </div>
+
+                  {/* Nav Tabs */}
+                  <div className="flex flex-col gap-1 p-3">
+                    <button
+                      onClick={() => setEditorTab('converter')}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all text-left ${editorTab === 'converter' ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                        }`}
+                    >
+                      <ArrowRightLeft size={15} className="shrink-0" />
+                      Conversor Rápido
+                    </button>
+                    <button
+                      onClick={() => setEditorTab('content')}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all text-left ${editorTab === 'content' ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                        }`}
+                    >
+                      <Pencil size={15} className="shrink-0" />
+                      Markdown Editor
+                    </button>
+                    <button
+                      onClick={() => setEditorTab('style')}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all text-left ${editorTab === 'style' ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                        }`}
+                    >
+                      <Palette size={15} className="shrink-0" />
+                      Biblioteca de Estilos
+                    </button>
+                    <button
+                      onClick={() => setEditorTab('metadata')}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all text-left ${editorTab === 'metadata' ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                        }`}
+                    >
+                      <LayoutTemplate size={15} className="shrink-0" />
+                      Metadados & SEO
+                    </button>
+                  </div>
+
+                  {/* Spacer */}
+                  <div className="flex-1" />
+
+                  {/* Generate Section */}
+                  <div className="border-t border-slate-800 p-4 space-y-4">
+                    <p className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
+                      <Wand2 size={10} /> Gerar Página
+                    </p>
+
+                    {/* IA selector */}
+                    <div className="space-y-1">
+                      <label className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">IA</label>
+                      <select
+                        value={selectedApi}
+                        onChange={(e) => setSelectedApi(e.target.value as keyof ApiKeys)}
+                        className="w-full px-2.5 py-2 bg-slate-800 border border-slate-700 text-white text-xs font-bold rounded-lg outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer [&>option]:text-slate-900"
+                      >
+                        <option value="gemini">Google Gemini</option>
+                        <option value="openai">OpenAI (GPT-4o)</option>
+                        <option value="claude">Anthropic Claude</option>
+                        <option value="groq">Groq (Llama 3)</option>
+                      </select>
+                      {selectedApi !== 'gemini' && (
+                        <p className="text-[9px] text-amber-400">⚠️ Usa Gemini internamente</p>
+                      )}
+                    </div>
+
+                    {/* Idioma selector */}
+                    <div className="space-y-1">
+                      <label className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Idioma</label>
+                      <select
+                        value={selectedLang}
+                        onChange={(e) => setSelectedLang(e.target.value as any)}
+                        className="w-full px-2.5 py-2 bg-slate-800 border border-slate-700 text-white text-xs font-bold rounded-lg outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer [&>option]:text-slate-900"
+                      >
+                        <option value="pt">🇧🇷 Português (BR)</option>
+                        <option value="en">🇺🇸 Inglês (US)</option>
+                        <option value="es">🇪🇸 Espanhol (ES)</option>
+                        <option value="all">🌐 Todos (3 langs)</option>
+                      </select>
+                    </div>
+
+                    {/* Arquivo input(s) */}
+                    <div className="space-y-1">
+                      <label className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Arquivo</label>
+                      {selectedLang !== 'all' ? (
+                        <div className="flex items-center gap-1">
+                          <input
+                            type="text"
+                            value={filename}
+                            onChange={(e) => setFilename(e.target.value)}
+                            placeholder="nome-do-arquivo"
+                            className="flex-1 px-2.5 py-2 bg-slate-800 border border-slate-700 text-white text-xs font-mono rounded-lg outline-none focus:ring-1 focus:ring-blue-500 min-w-0"
+                          />
+                          <span className="text-slate-500 text-[10px] font-mono shrink-0">.html</span>
+                        </div>
+                      ) : (
+                        <div className="space-y-1.5">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[9px] font-black text-blue-400 w-5 shrink-0">PT</span>
+                            <input
+                              type="text"
+                              value={filename}
+                              onChange={(e) => setFilename(e.target.value)}
+                              placeholder="minha-pagina"
+                              className="flex-1 px-2 py-1.5 bg-slate-800 border border-slate-700 text-white text-[10px] font-mono rounded-lg outline-none focus:ring-1 focus:ring-blue-500 min-w-0"
+                            />
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[9px] font-black text-emerald-400 w-5 shrink-0">EN</span>
+                            <input
+                              type="text"
+                              value={filenameEn}
+                              onChange={(e) => setFilenameEn(e.target.value)}
+                              placeholder="my-page"
+                              className="flex-1 px-2 py-1.5 bg-slate-800 border border-slate-700 text-white text-[10px] font-mono rounded-lg outline-none focus:ring-1 focus:ring-emerald-500 min-w-0"
+                            />
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[9px] font-black text-purple-400 w-5 shrink-0">ES</span>
+                            <input
+                              type="text"
+                              value={filenameEs}
+                              onChange={(e) => setFilenameEs(e.target.value)}
+                              placeholder="mi-pagina"
+                              className="flex-1 px-2 py-1.5 bg-slate-800 border border-slate-700 text-white text-[10px] font-mono rounded-lg outline-none focus:ring-1 focus:ring-purple-500 min-w-0"
+                            />
+                          </div>
+                          <span className="text-slate-500 text-[9px] font-mono">.html cada</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Generate button */}
+                    <button
+                      onClick={generatePage}
+                      disabled={!markdownText.trim() || !filename.trim() || (selectedLang === 'all' && (!filenameEn.trim() || !filenameEs.trim()))}
+                      className="w-full bg-blue-600 text-white py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-blue-500 shadow-lg shadow-blue-900/20 transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-95"
+                    >
+                      <Wand2 size={13} /> Gerar Página Interativa
+                    </button>
+                  </div>
                 </div>
 
                 {/* Content Area */}
@@ -2243,8 +2294,8 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                             <button onClick={() => setMarkdownText('')} className="text-[10px] font-bold text-slate-500 hover:text-red-400 transition-colors">Limpar</button>
                           </div>
                         </div>
-                        <textarea 
-                          value={markdownText} 
+                        <textarea
+                          value={markdownText}
                           onChange={(e) => setMarkdownText(e.target.value)}
                           placeholder="# Comece a escrever seu conteúdo aqui..."
                           className="flex-1 w-full p-8 bg-transparent text-slate-200 outline-none font-mono text-sm resize-none leading-relaxed custom-scrollbar"
@@ -2271,7 +2322,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                         <div className="p-6 space-y-8 overflow-y-auto custom-scrollbar">
                           <div>
                             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 block">Selecionar Template Visual</label>
-                            <select 
+                            <select
                               value={selectedPromptId}
                               onChange={(e) => {
                                 const id = e.target.value;
@@ -2294,8 +2345,8 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                           <div className="space-y-3">
                             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Preview do Estilo Aplicado</label>
                             <div className="aspect-video w-full rounded-2xl overflow-hidden border border-slate-800 shadow-2xl shadow-black/40">
-                              <StylePreview 
-                                styleTitle={promptLibrary.find(p => p.id === selectedPromptId)?.title || 'Branding Padrão'} 
+                              <StylePreview
+                                styleTitle={promptLibrary.find(p => p.id === selectedPromptId)?.title || 'Branding Padrão'}
                                 brandConfig={{
                                   primaryBlue: brandConfig.primaryBlue,
                                   primaryGold: brandConfig.primaryGold
@@ -2327,7 +2378,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                             </div>
                           </div>
 
-                          <button 
+                          <button
                             onClick={seedPromptLibrary}
                             className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest border border-slate-700 transition-all flex items-center justify-center gap-2"
                           >
@@ -2340,14 +2391,14 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                       <div className="flex-1 flex flex-col min-w-0 bg-slate-900/10">
                         <div className="h-10 bg-slate-900/50 flex items-center px-4 justify-between border-b border-slate-800">
                           <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">System Prompt (Direção de Arte)</span>
-                          <button 
+                          <button
                             onClick={savePromptToLibrary}
                             className="text-[10px] font-black text-blue-400 hover:text-blue-300 flex items-center gap-1 uppercase tracking-widest"
                           >
                             <Plus size={12} /> Salvar na Biblioteca
                           </button>
                         </div>
-                        <textarea 
+                        <textarea
                           value={brandConfig.systemPrompt}
                           onChange={(e) => setBrandConfig({ ...brandConfig, systemPrompt: e.target.value })}
                           className="flex-1 w-full p-8 bg-transparent text-slate-300 outline-none font-mono text-xs resize-none leading-relaxed custom-scrollbar"
@@ -2358,14 +2409,14 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                     <div className="h-full flex flex-col overflow-hidden">
                       <div className="h-10 bg-slate-900/50 flex items-center px-4 justify-between border-b border-slate-800">
                         <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Sugestões de Metadados & SEO</span>
-                        <button 
+                        <button
                           onClick={generateMetadataSuggestions}
                           className="text-[10px] font-black text-blue-400 hover:text-blue-300 flex items-center gap-1 uppercase tracking-widest"
                         >
                           <Wand2 size={12} /> Atualizar IA
                         </button>
                       </div>
-                      
+
                       <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
                         <div className="max-w-4xl mx-auto">
                           {!suggestedMetadata ? (
@@ -2375,7 +2426,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                               </div>
                               <h4 className="text-xl font-black text-white mb-2">Nenhuma sugestão gerada</h4>
                               <p className="text-slate-500 text-sm max-w-xs mx-auto mb-8">Nossa IA pode analisar seu conteúdo e sugerir os melhores textos para SEO.</p>
-                              <button 
+                              <button
                                 onClick={generateMetadataSuggestions}
                                 className="bg-blue-600 text-white px-8 py-3 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-blue-500 transition-all"
                               >
@@ -2413,7 +2464,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                                     <div className="flex justify-between items-center mb-4">
                                       <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Nome do Arquivo (Slug)</label>
                                       <div className="flex items-center gap-4">
-                                        <button 
+                                        <button
                                           onClick={() => setFilename(suggestedMetadata[metadataLang].filename)}
                                           className="text-[10px] font-black text-blue-400 hover:text-blue-300 uppercase tracking-widest"
                                         >
@@ -2474,7 +2525,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                       <div className="w-3 h-3 rounded-full bg-amber-500/20 border border-amber-500/50" />
                       <div className="w-3 h-3 rounded-full bg-green-500/20 border border-green-500/50" />
                     </div>
-                    
+
                     <div className="flex-1 bg-slate-800 rounded-xl px-4 py-2 flex items-center gap-3 border border-slate-700/50 mx-4">
                       <Lock size={12} className="text-emerald-500" />
                       <span className="text-xs font-mono text-slate-400 truncate">
@@ -2483,14 +2534,14 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <button 
+                      <button
                         onClick={() => downloadHtml(generatedHtml, filename)}
                         className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
                         title="Baixar HTML"
                       >
                         <Download size={18} />
                       </button>
-                      <button 
+                      <button
                         onClick={() => setView('editor')}
                         className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
                         title="Voltar para Editor"
@@ -2502,10 +2553,10 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
 
                   {/* Iframe Container */}
                   <div className="flex-1 bg-white relative">
-                    <iframe 
-                      srcDoc={generatedHtml} 
+                    <iframe
+                      srcDoc={generatedHtml}
                       className="absolute inset-0 w-full h-full border-none"
-                      title="Preview" 
+                      title="Preview"
                       sandbox="allow-scripts"
                     />
                   </div>
@@ -2519,7 +2570,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                   <p className="text-slate-500 max-w-sm mb-8">
                     Gere uma página na aba Editor para visualizar o resultado aqui.
                   </p>
-                  <button 
+                  <button
                     onClick={() => setView('editor')}
                     className="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-500 transition-all shadow-lg shadow-blue-900/20"
                   >
@@ -2556,7 +2607,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                   <p className="text-slate-500 max-w-md mb-8">
                     Comece convertendo um texto ou criando um prompt para gerar sua primeira página interativa.
                   </p>
-                  <button 
+                  <button
                     onClick={() => setView('converter')}
                     className="bg-blue-600 text-white px-8 py-4 rounded-2xl font-bold hover:bg-blue-500 transition-all shadow-lg shadow-blue-900/20 active:scale-95"
                   >
@@ -2566,7 +2617,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {materials.map((material) => (
-                    <motion.div 
+                    <motion.div
                       key={material.id}
                       layout
                       initial={{ opacity: 0, scale: 0.9 }}
@@ -2581,7 +2632,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                           </span>
                         </div>
                       </div>
-                      
+
                       <div className="p-6 flex-1 flex flex-col">
                         <div className="flex-1">
                           <h3 className="text-lg font-bold text-white mb-1 truncate" title={material.name}>
@@ -2595,7 +2646,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                         </div>
 
                         <div className="grid grid-cols-3 gap-2 pt-4 border-t border-slate-800">
-                          <button 
+                          <button
                             onClick={() => setViewingMaterial(material)}
                             className="flex flex-col items-center justify-center gap-1 py-2 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-blue-400 transition-colors"
                             title="Visualizar"
@@ -2603,7 +2654,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                             <Eye size={16} />
                             <span className="text-[10px] font-bold uppercase">Ver</span>
                           </button>
-                          <button 
+                          <button
                             onClick={() => loadMaterial(material)}
                             className="flex flex-col items-center justify-center gap-1 py-2 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-blue-400 transition-colors"
                             title="Editar"
@@ -2611,7 +2662,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                             <Pencil size={16} />
                             <span className="text-[10px] font-bold uppercase">Editar</span>
                           </button>
-                          <button 
+                          <button
                             onClick={() => downloadHtml(material.html, material.name)}
                             className="flex flex-col items-center justify-center gap-1 py-2 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-emerald-400 transition-colors"
                             title="Baixar"
@@ -2619,7 +2670,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                             <Download size={16} />
                             <span className="text-[10px] font-bold uppercase">Baixar</span>
                           </button>
-                          <button 
+                          <button
                             onClick={() => setDeleteConfirmId(material.id)}
                             className="flex flex-col items-center justify-center gap-1 py-2 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-red-400 transition-colors"
                             title="Excluir"
@@ -2641,14 +2692,14 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
         <AnimatePresence>
           {deleteConfirmId && (
             <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={() => setDeleteConfirmId(null)}
                 className="absolute inset-0 bg-black/80 backdrop-blur-sm"
               />
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -2662,13 +2713,13 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                   Esta ação não pode ser desfeita. O arquivo será removido permanentemente do seu histórico e do banco de dados.
                 </p>
                 <div className="flex gap-3">
-                  <button 
+                  <button
                     onClick={() => setDeleteConfirmId(null)}
                     className="flex-1 px-6 py-4 rounded-2xl font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all"
                   >
                     Cancelar
                   </button>
-                  <button 
+                  <button
                     onClick={confirmDelete}
                     className="flex-1 px-6 py-4 rounded-2xl font-bold bg-red-600 text-white hover:bg-red-500 shadow-lg shadow-red-900/20 transition-all"
                   >
@@ -2684,14 +2735,14 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
         <AnimatePresence>
           {showLoginModal && (
             <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={() => setShowLoginModal(false)}
                 className="absolute inset-0 bg-black/80 backdrop-blur-sm"
               />
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -2704,24 +2755,24 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                 <p className="text-slate-400 mb-8 text-center text-sm">
                   Utilize as credenciais mestre para acessar a plataforma.
                 </p>
-                
+
                 <form onSubmit={handleAuth} className="space-y-4">
-                  <input 
+                  <input
                     type="email" placeholder="E-mail" value={authEmail} onChange={e => setAuthEmail(e.target.value)}
                     className="w-full px-4 py-3 border border-slate-700 bg-slate-800 text-white rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-600 placeholder:text-slate-600" required
                   />
-                  <input 
+                  <input
                     type="password" placeholder="Senha" value={authPassword} onChange={e => setAuthPassword(e.target.value)}
                     className="w-full px-4 py-3 border border-slate-700 bg-slate-800 text-white rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-600 placeholder:text-slate-600" required
                   />
                   <div className="flex flex-col gap-3 pt-2">
-                    <button 
-                      type="submit" 
+                    <button
+                      type="submit"
                       className="w-full px-6 py-3 rounded-xl font-bold bg-blue-600 text-white hover:bg-blue-500 shadow-lg shadow-blue-900/20 transition-all flex items-center justify-center gap-2"
                     >
                       <LogIn size={18} /> Entrar
                     </button>
-                    <button 
+                    <button
                       type="button"
                       onClick={() => {
                         setShowLoginModal(false);
@@ -2731,7 +2782,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                     >
                       <User size={18} /> Criar Nova Conta
                     </button>
-                    <button 
+                    <button
                       type="button"
                       onClick={() => setShowLoginModal(false)}
                       className="w-full py-2 text-slate-500 hover:text-slate-300 text-xs transition-all"
@@ -2744,7 +2795,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
             </div>
           )}
           {showOnboarding && (
-            <OnboardingWizard 
+            <OnboardingWizard
               onComplete={() => {
                 setShowOnboarding(false);
                 loadUserData();
@@ -2754,9 +2805,9 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
           )}
         </AnimatePresence>
       </main>
-      <MaterialPreviewModal 
-        material={viewingMaterial} 
-        onClose={() => setViewingMaterial(null)} 
+      <MaterialPreviewModal
+        material={viewingMaterial}
+        onClose={() => setViewingMaterial(null)}
       />
     </div>
   );
