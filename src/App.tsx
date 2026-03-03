@@ -879,7 +879,7 @@ O Flex Gold é a tendência atual para clínicas que buscam um implante para tud
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const [editorTab, setEditorTab] = useState<'content' | 'style' | 'metadata' | 'converter'>('content');
+  const [editorTab, setEditorTab] = useState<'content' | 'style' | 'metadata'>('content');
   const [suggestedMetadata, setSuggestedMetadata] = useState<SuggestedMetadata | null>(null);
   const [metadataLang, setMetadataLang] = useState<'pt' | 'en' | 'es'>('pt');
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -2272,15 +2272,59 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                       )}
                     </div>
 
-                    {/* Generate button */}
-                    <button
-                      onClick={generatePage}
-                      disabled={!markdownText.trim() || !filename.trim() || (selectedLang === 'all' && (!filenameEn.trim() || !filenameEs.trim()))}
-                      className="w-full bg-blue-600 text-white py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-blue-500 shadow-lg shadow-blue-900/20 transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-95"
-                    >
-                      <Wand2 size={13} /> Gerar Página Interativa
-                    </button>
-                  </div>
+                <div className="flex items-center gap-4">
+                  <button 
+                    onClick={() => {
+                      navigator.clipboard.writeText(markdownText);
+                      alert('Markdown copiado!');
+                    }}
+                    className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all"
+                    title="Copiar Markdown"
+                  >
+                    <Copy size={16} />
+                  </button>
+                  <button 
+                    onClick={generatePage} 
+                    disabled={!markdownText.trim() || !filename.trim()} 
+                    className="bg-blue-600 text-white px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest flex items-center gap-2 hover:bg-blue-500 shadow-lg shadow-blue-900/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
+                  >
+                    <Wand2 size={14} /> Gerar Página
+                  </button>
+                </div>
+              </div>
+
+              {/* Main Workspace */}
+              <div className="flex-1 flex overflow-hidden">
+                {/* Narrow Left Sidebar */}
+                <div className="w-16 bg-slate-900 border-r border-slate-800 flex flex-col items-center py-6 gap-6 shrink-0">
+                  <button 
+                    onClick={() => setEditorTab('converter')}
+                    className={`p-3 rounded-xl transition-all ${editorTab === 'converter' ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'}`}
+                    title="Conversor Rápido"
+                  >
+                    <ArrowRightLeft size={20} />
+                  </button>
+                  <button 
+                    onClick={() => setEditorTab('content')}
+                    className={`p-3 rounded-xl transition-all ${editorTab === 'content' ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'}`}
+                    title="Markdown Editor"
+                  >
+                    <Pencil size={20} />
+                  </button>
+                  <button 
+                    onClick={() => setEditorTab('style')}
+                    className={`p-3 rounded-xl transition-all ${editorTab === 'style' ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'}`}
+                    title="Biblioteca de Estilos"
+                  >
+                    <Palette size={20} />
+                  </button>
+                  <button 
+                    onClick={() => setEditorTab('metadata')}
+                    className={`p-3 rounded-xl transition-all ${editorTab === 'metadata' ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'}`}
+                    title="SEO & Metadados"
+                  >
+                    <LayoutTemplate size={20} />
+                  </button>
                 </div>
 
                 {/* Content Area */}
@@ -2295,8 +2339,8 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                             <button onClick={() => setMarkdownText('')} className="text-[10px] font-bold text-slate-500 hover:text-red-400 transition-colors">Limpar</button>
                           </div>
                         </div>
-                        <textarea
-                          value={markdownText}
+                        <textarea 
+                          value={markdownText} 
                           onChange={(e) => setMarkdownText(e.target.value)}
                           placeholder="# Comece a escrever seu conteúdo aqui..."
                           className="flex-1 w-full p-8 bg-transparent text-slate-200 outline-none font-mono text-sm resize-none leading-relaxed custom-scrollbar"
@@ -2324,14 +2368,14 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                             <p className="text-[10px] text-slate-500 font-bold uppercase">Texto Bruto / Rascunho</p>
                             <button onClick={() => setRawText('')} className="text-[10px] text-slate-500 hover:text-white">Limpar</button>
                           </div>
-                          <textarea
+                          <textarea 
                             value={rawText}
                             onChange={(e) => setRawText(e.target.value)}
                             placeholder="Cole aqui o conteúdo que deseja converter para Markdown..."
                             className="flex-1 p-6 bg-transparent text-slate-300 outline-none font-mono text-sm resize-none leading-relaxed custom-scrollbar"
                           />
                           <div className="p-4 border-t border-slate-800 flex justify-center">
-                            <button
+                            <button 
                               onClick={convertToMarkdown}
                               disabled={!rawText.trim()}
                               className="bg-purple-600 text-white px-8 py-3 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-purple-500 transition-all shadow-lg shadow-purple-900/20 disabled:opacity-50 flex items-center gap-2"
@@ -2356,7 +2400,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                           </div>
                           {markdownText && (
                             <div className="p-4 border-t border-slate-800 flex justify-end">
-                              <button
+                              <button 
                                 onClick={() => setEditorTab('content')}
                                 className="text-[10px] font-black text-blue-400 hover:text-blue-300 uppercase tracking-widest flex items-center gap-2"
                               >
@@ -2865,5 +2909,5 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
         onClose={() => setViewingMaterial(null)}
       />
     </div >
-  );
+        );
 }
