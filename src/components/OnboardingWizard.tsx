@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  User, Mail, Lock, Key, Palette, ChevronRight, ChevronLeft, 
-  CheckCircle2, Loader2, AlertTriangle, FileText, Upload, ShieldCheck, Copy, Check
+import {
+  User, Mail, Lock, Key, ChevronRight, ChevronLeft,
+  CheckCircle2, Loader2, AlertTriangle, ShieldCheck, Copy, Check, Terminal
 } from 'lucide-react';
 import { createClient } from '@supabase/supabase-js';
-import { supabase as defaultSupabase } from '../lib/supabase';
 import { SUPABASE_TABLES_SQL } from '../constants/supabaseSql';
 import { SEED_PROMPTS_SQL } from '../constants/seedSql';
 
@@ -58,7 +57,7 @@ export default function OnboardingWizard({ onComplete, onCancel }: OnboardingWiz
 
   const handleNextStep = async () => {
     setError('');
-    
+
     if (step === 1) {
       if (!fullName || !email || !password) {
         setError('Preencha todos os campos.');
@@ -74,7 +73,6 @@ export default function OnboardingWizard({ onComplete, onCancel }: OnboardingWiz
       }
       setStep(2);
     } else if (step === 2) {
-      // API Keys are optional, user can provide 1 or all
       if (!apiKeys.gemini && !apiKeys.openai && !apiKeys.claude && !apiKeys.groq) {
         setError('Forneça pelo menos uma chave de API para continuar.');
         return;
@@ -90,10 +88,8 @@ export default function OnboardingWizard({ onComplete, onCancel }: OnboardingWiz
     setError('');
 
     try {
-      // 0. Create a temporary client with the provided credentials
       const tempSupabase = createClient(supabaseConfig.url, supabaseConfig.anonKey);
 
-      // 1. Sign up user
       let { data: authData, error: authError } = await tempSupabase.auth.signUp({
         email,
         password,
@@ -105,7 +101,6 @@ export default function OnboardingWizard({ onComplete, onCancel }: OnboardingWiz
       });
 
       if (authError) {
-        // If user already exists, try to sign in
         if (authError.message.toLowerCase().includes('already registered') || authError.message.toLowerCase().includes('already exists')) {
           const { data: signInData, error: signInError } = await tempSupabase.auth.signInWithPassword({
             email,
@@ -126,14 +121,12 @@ export default function OnboardingWizard({ onComplete, onCancel }: OnboardingWiz
         throw new Error('Erro ao criar usuário.');
       }
 
-      // Check if we have a session. If not, email confirmation might be required.
       if (!authData.session) {
-        // Try to sign in to get a session
         const { data: signInData, error: signInError } = await tempSupabase.auth.signInWithPassword({
           email,
           password
         });
-        
+
         if (signInError || !signInData.session) {
           throw new Error('Erro de Autenticação: O seu projeto Supabase exige confirmação de e-mail. Vá em Authentication > Providers > Email no Supabase e DESATIVE "Confirm email", depois tente novamente.');
         }
@@ -141,14 +134,11 @@ export default function OnboardingWizard({ onComplete, onCancel }: OnboardingWiz
 
       const userId = authData.user.id;
 
-      // Save credentials to localStorage for the rest of the app
       localStorage.setItem('supabase_url', supabaseConfig.url);
       localStorage.setItem('supabase_anon_key', supabaseConfig.anonKey);
 
-      // Wait a moment for the trigger to create the profile
       await new Promise(resolve => setTimeout(resolve, 1000));
 
-      // 2. Save API Keys
       const keysToInsert = [];
       if (apiKeys.gemini) keysToInsert.push({ user_id: userId, service_name: 'gemini', key_value: apiKeys.gemini });
       if (apiKeys.openai) keysToInsert.push({ user_id: userId, service_name: 'openai', key_value: apiKeys.openai });
@@ -160,21 +150,17 @@ export default function OnboardingWizard({ onComplete, onCancel }: OnboardingWiz
         if (keysError) throw keysError;
       }
 
-      // 3. Save Supabase Config (in branding_configs table for now as it's the general config table)
       const { error: configError } = await tempSupabase.from('branding_configs').insert({
         user_id: userId,
         supabase_url: supabaseConfig.url,
         supabase_anon_key: supabaseConfig.anonKey,
-        // Default branding if not provided
-        primary_blue: '#004a8e',
-        primary_gold: '#c5a059',
-        description: 'Configuração inicial via Onboarding'
+        primary_blue: '#020617',
+        primary_gold: '#f59e0b',
+        description: 'Configuração Aura Inicial'
       });
 
       if (configError) throw configError;
 
-      // Success!
-      // We need to reload to ensure the default supabase client uses the new credentials
       window.location.reload();
       onComplete();
 
@@ -187,111 +173,124 @@ export default function OnboardingWizard({ onComplete, onCancel }: OnboardingWiz
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]"
+    <div className="fixed inset-0 bg-slate-950/95 backdrop-blur-3xl z-[200] flex items-center justify-center p-4">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-slate-900/40 border border-white/10 shadow-2xl w-full max-w-2xl rounded-3xl overflow-hidden flex flex-col max-h-[90vh] relative backdrop-blur-3xl"
       >
-        {/* Header */}
-        <div className="p-6 border-b border-slate-800 flex items-center justify-between bg-slate-900/50">
-          <div>
-            <h2 className="text-2xl font-bold text-white">Criar Conta</h2>
-            <p className="text-sm text-slate-400 mt-1">Configure seu ambiente em 3 passos simples</p>
-          </div>
-          <button onClick={onCancel} className="text-slate-400 hover:text-white transition-colors">
-            Cancelar
-          </button>
+        {/* Decorator Aura */}
+        <div className="absolute top-0 right-0 p-1 opacity-20">
+          <Terminal size={120} className="text-amber-500 -mr-12 -mt-12 rotate-12" />
         </div>
 
-        {/* Progress Bar */}
-        <div className="flex border-b border-slate-800 bg-slate-950/50">
+        {/* Header Aura */}
+        <div className="p-10 border-b border-white/5 bg-slate-950/40 relative z-10">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-[10px] font-black text-amber-500 uppercase tracking-[0.5em]">System_Pulse v2026.1</span>
+            <button onClick={onCancel} className="text-slate-500 hover:text-white transition-colors text-[10px] font-black uppercase tracking-widest">
+              Interromper_Carga
+            </button>
+          </div>
+          <h2 className="text-3xl font-black text-white uppercase tracking-tighter">Aura_Initialization</h2>
+          <p className="text-[10px] text-slate-500 mt-2 font-black uppercase tracking-[0.2em] leading-relaxed">Sincronize seu núcleo de desenvolvimento em 3 fases de transmutação</p>
+        </div>
+
+        {/* Progress System Aura */}
+        <div className="flex bg-slate-950/50 relative border-b border-white/5">
           {[1, 2, 3].map((i) => (
-            <div 
-              key={i} 
-              className={`flex-1 py-3 text-center text-sm font-medium border-b-2 transition-colors ${
-                step === i 
-                  ? 'border-blue-500 text-blue-400 bg-blue-500/5' 
-                  : step > i 
-                    ? 'border-emerald-500 text-emerald-500' 
-                    : 'border-transparent text-slate-500'
-              }`}
+            <div
+              key={i}
+              className={`flex-1 py-5 text-center text-[10px] font-black uppercase tracking-[0.4em] transition-all relative ${step === i
+                ? 'text-amber-500 bg-amber-500/5'
+                : step > i
+                  ? 'text-slate-400 opacity-50'
+                  : 'text-slate-700'
+                }`}
             >
-              Passo {i}
+              Stream_0{i}
+              {step === i && <motion.div layoutId="onboarding-step" className="absolute bottom-0 left-0 w-full h-1 bg-amber-500" />}
             </div>
           ))}
         </div>
 
-        {/* Content */}
-        <div className="p-6 overflow-y-auto flex-1 custom-scrollbar">
+        {/* Content Area */}
+        <div className="p-8 overflow-y-auto flex-1 custom-scrollbar bg-stone-950/50">
           <AnimatePresence mode="wait">
             {error && (
-              <motion.div 
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-start gap-3 text-red-400"
+              <motion.div
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 10 }}
+                className="mb-8 p-5 bg-rose-500/5 border border-rose-500/20 rounded-2xl flex items-start gap-4 text-rose-500 shadow-xl backdrop-blur-md"
               >
-                <AlertTriangle size={20} className="shrink-0 mt-0.5" />
-                <p className="text-sm">{error}</p>
+                <AlertTriangle size={24} className="shrink-0" />
+                <div className="space-y-1">
+                  <span className="text-[10px] uppercase font-black tracking-widest block">Error_Detected:</span>
+                  <p className="text-[11px] leading-relaxed uppercase font-black">{error}</p>
+                </div>
               </motion.div>
             )}
 
             {step === 1 && (
               <motion.div
                 key="step1"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-5"
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.98 }}
+                className="space-y-8"
               >
-                <div className="text-center mb-8">
-                  <div className="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-500/20">
-                    <User size={32} className="text-blue-400" />
+                <div className="flex items-center gap-6 pb-6 border-b border-white/5">
+                  <div className="w-20 h-20 bg-slate-950/50 border border-white/5 flex items-center justify-center text-amber-500 rounded-2xl shadow-xl">
+                    <User size={40} />
                   </div>
-                  <h3 className="text-xl font-bold text-white">Informações Básicas</h3>
-                  <p className="text-slate-400 text-sm mt-2">Como devemos chamar você?</p>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Nome Completo</label>
-                  <div className="relative">
-                    <User size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-                    <input 
-                      type="text" 
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 pl-10 pr-4 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
-                      placeholder="João da Silva"
-                    />
+                  <div>
+                    <h3 className="text-xl font-black text-white uppercase tracking-tight">Identity_Registration</h3>
+                    <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest mt-1">Configure suas credenciais de acesso local</p>
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">E-mail</label>
-                  <div className="relative">
-                    <Mail size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-                    <input 
-                      type="email" 
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 pl-10 pr-4 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
-                      placeholder="joao@exemplo.com"
-                    />
+                <div className="grid gap-6">
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">User_Alias</label>
+                    <div className="relative">
+                      <User size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600" />
+                      <input
+                        type="text"
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        className="w-full bg-slate-950/50 border border-white/5 py-5 pl-14 pr-6 text-white font-black text-xs rounded-xl focus:border-amber-500 focus:outline-none transition-all placeholder:text-slate-800"
+                        placeholder="AURA_OPERATOR_01"
+                      />
+                    </div>
                   </div>
-                </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Senha</label>
-                  <div className="relative">
-                    <Lock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-                    <input 
-                      type="password" 
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 pl-10 pr-4 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
-                      placeholder="Mínimo 6 caracteres"
-                    />
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Network_Address</label>
+                    <div className="relative">
+                      <Mail size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600" />
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="w-full bg-slate-950/50 border border-white/5 py-5 pl-14 pr-6 text-white font-black text-xs rounded-xl focus:border-amber-500 focus:outline-none transition-all placeholder:text-slate-800"
+                        placeholder="OPERATOR@AURA.STREAM"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Secure_Hash</label>
+                    <div className="relative">
+                      <Lock size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600" />
+                      <input
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="w-full bg-slate-950/50 border border-white/5 py-5 pl-14 pr-6 text-white font-black text-xs rounded-xl focus:border-amber-500 focus:outline-none transition-all placeholder:text-slate-800"
+                        placeholder="MIN_6_CHARS"
+                      />
+                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -300,60 +299,39 @@ export default function OnboardingWizard({ onComplete, onCancel }: OnboardingWiz
             {step === 2 && (
               <motion.div
                 key="step2"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-5"
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.98 }}
+                className="space-y-6"
               >
-                <div className="text-center mb-8">
-                  <div className="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-emerald-500/20">
-                    <Key size={32} className="text-emerald-400" />
+                <div className="flex items-center gap-6 pb-4 border-b border-white/5">
+                  <div className="w-16 h-16 bg-white/5 border border-white/5 flex items-center justify-center text-amber-600">
+                    <Key size={32} />
                   </div>
-                  <h3 className="text-xl font-bold text-white">Chaves de API (IA)</h3>
-                  <p className="text-slate-400 text-sm mt-2">Forneça pelo menos uma chave para gerar conteúdo. Você pode adicionar as outras depois.</p>
+                  <div>
+                    <h3 className="text-xl font-mono font-bold text-white uppercase tracking-tight">Core_Intelligence</h3>
+                    <p className="text-stone-500 text-[10px] font-mono uppercase tracking-widest mt-1">Integre modelos de linguagem avançados</p>
+                  </div>
                 </div>
 
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Google Gemini API Key</label>
-                    <input 
-                      type="password" 
-                      value={apiKeys.gemini}
-                      onChange={(e) => setApiKeys({...apiKeys, gemini: e.target.value})}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all font-mono text-sm"
-                      placeholder="AIzaSy..."
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">OpenAI API Key</label>
-                    <input 
-                      type="password" 
-                      value={apiKeys.openai}
-                      onChange={(e) => setApiKeys({...apiKeys, openai: e.target.value})}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all font-mono text-sm"
-                      placeholder="sk-..."
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Anthropic Claude API Key</label>
-                    <input 
-                      type="password" 
-                      value={apiKeys.claude}
-                      onChange={(e) => setApiKeys({...apiKeys, claude: e.target.value})}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all font-mono text-sm"
-                      placeholder="sk-ant-..."
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Groq API Key</label>
-                    <input 
-                      type="password" 
-                      value={apiKeys.groq}
-                      onChange={(e) => setApiKeys({...apiKeys, groq: e.target.value})}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all font-mono text-sm"
-                      placeholder="gsk_..."
-                    />
-                  </div>
+                <div className="grid gap-4">
+                  {[
+                    { label: 'Gemini_Protocol', key: 'gemini', placeholder: 'AIzaSy...' },
+                    { label: 'OpenAI_Interface', key: 'openai', placeholder: 'sk-...' },
+                    { label: 'Claude_Engine', key: 'claude', placeholder: 'sk-ant-...' },
+                    { label: 'Groq_Accelerator', key: 'groq', placeholder: 'gsk_...' }
+                  ].map((field) => (
+                    <div key={field.key} className="space-y-2">
+                      <label className="text-[9px] font-mono font-bold text-stone-500 uppercase tracking-widest">{field.label}</label>
+                      <input
+                        type="password"
+                        value={(apiKeys as any)[field.key]}
+                        onChange={(e) => setApiKeys({ ...apiKeys, [field.key]: e.target.value })}
+                        className="w-full bg-black border border-white/5 py-4 px-4 text-white font-mono text-[10px] focus:border-amber-600 focus:outline-none transition-all placeholder:text-stone-800"
+                        placeholder={field.placeholder}
+                      />
+                    </div>
+                  ))}
                 </div>
               </motion.div>
             )}
@@ -361,64 +339,64 @@ export default function OnboardingWizard({ onComplete, onCancel }: OnboardingWiz
             {step === 3 && (
               <motion.div
                 key="step3"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-5"
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.98 }}
+                className="space-y-8"
               >
-                <div className="text-center mb-6">
-                  <div className="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-500/20">
-                    <ShieldCheck size={32} className="text-blue-400" />
+                <div className="flex items-center gap-6 pb-4 border-b border-white/5">
+                  <div className="w-16 h-16 bg-white/5 border border-white/5 flex items-center justify-center text-amber-600">
+                    <ShieldCheck size={32} />
                   </div>
-                  <h3 className="text-xl font-bold text-white">Projeto Supabase</h3>
-                  <p className="text-slate-400 text-sm mt-2">Configure as credenciais do seu projeto Supabase.</p>
+                  <div>
+                    <h3 className="text-xl font-mono font-bold text-white uppercase tracking-tight">Nexus_Storage</h3>
+                    <p className="text-stone-500 text-[10px] font-mono uppercase tracking-widest mt-1">Configure o banco de dados Supabase</p>
+                  </div>
                 </div>
 
-                <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 mb-6">
-                  <div className="flex items-start gap-3">
-                    <AlertTriangle size={18} className="text-amber-500 shrink-0 mt-0.5" />
+                <div className="bg-amber-600/5 border border-amber-600/20 p-6 space-y-4">
+                  <div className="flex items-start gap-4">
+                    <AlertTriangle size={20} className="text-amber-500 shrink-0" />
                     <div className="space-y-2">
-                      <p className="text-xs font-bold text-amber-500 uppercase tracking-wider">Atenção: Configuração Necessária</p>
-                      <p className="text-xs text-slate-300 leading-relaxed">
-                        Antes de finalizar, você <b>DEVE</b> executar o script SQL no seu painel do Supabase (SQL Editor) para criar as tabelas necessárias.
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        <button 
-                          onClick={copySql}
-                          className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all ${copiedSql ? 'bg-emerald-500 text-white' : 'bg-amber-500/20 text-amber-500 hover:bg-amber-500/30'}`}
-                        >
-                          {copiedSql ? <><Check size={12} /> SQL Tabelas Copiado!</> : <><Copy size={12} /> Copiar Script Tabelas</>}
-                        </button>
-                        <button 
-                          onClick={copySeedSql}
-                          className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all ${copiedSeedSql ? 'bg-emerald-500 text-white' : 'bg-blue-500/20 text-blue-400 hover:bg-blue-500/30'}`}
-                        >
-                          {copiedSeedSql ? <><Check size={12} /> SQL Estilos Copiado!</> : <><Copy size={12} /> Copiar Script Estilos</>}
-                        </button>
-                      </div>
+                      <span className="text-[10px] font-mono font-bold text-amber-600 uppercase tracking-[0.2em]">Mandatory_Deployment</span>
+                      <p className="text-[11px] font-mono text-stone-400 leading-relaxed uppercase">Execute os scripts SQL no painel Supabase antes de concluir a sincronização.</p>
                     </div>
                   </div>
+                  <div className="grid grid-cols-2 gap-3 pt-2">
+                    <button
+                      onClick={copySql}
+                      className={`py-3 font-mono text-[9px] font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-3 ${copiedSql ? 'bg-amber-600 text-black' : 'bg-white/5 text-stone-400 hover:bg-white/10'}`}
+                    >
+                      {copiedSql ? <><Check size={14} /> SQL_SCHEMA_COPIED</> : <><Copy size={14} /> COPY_SCHEMA_SQL</>}
+                    </button>
+                    <button
+                      onClick={copySeedSql}
+                      className={`py-3 font-mono text-[9px] font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-3 ${copiedSeedSql ? 'bg-amber-600 text-black' : 'bg-white/5 text-stone-400 hover:bg-white/10'}`}
+                    >
+                      {copiedSeedSql ? <><Check size={14} /> SQL_SEED_COPIED</> : <><Copy size={14} /> COPY_SEED_SQL</>}
+                    </button>
+                  </div>
                 </div>
 
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Supabase URL</label>
-                    <input 
-                      type="text" 
+                <div className="grid gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-mono font-bold text-stone-500 uppercase tracking-widest">Supabase_URL</label>
+                    <input
+                      type="text"
                       value={supabaseConfig.url}
-                      onChange={(e) => setSupabaseConfig({...supabaseConfig, url: e.target.value})}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-mono text-sm"
-                      placeholder="https://your-project.supabase.co"
+                      onChange={(e) => setSupabaseConfig({ ...supabaseConfig, url: e.target.value })}
+                      className="w-full bg-black border border-white/5 py-4 px-4 text-white font-mono text-[10px] focus:border-amber-600 focus:outline-none transition-all placeholder:text-stone-800"
+                      placeholder="https://nexus_id.supabase.co"
                     />
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Supabase Anon Key</label>
-                    <input 
-                      type="password" 
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-mono font-bold text-stone-500 uppercase tracking-widest">Global_Auth_Key_Anon</label>
+                    <input
+                      type="password"
                       value={supabaseConfig.anonKey}
-                      onChange={(e) => setSupabaseConfig({...supabaseConfig, anonKey: e.target.value})}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-mono text-sm"
-                      placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                      onChange={(e) => setSupabaseConfig({ ...supabaseConfig, anonKey: e.target.value })}
+                      className="w-full bg-black border border-white/5 py-4 px-4 text-white font-mono text-[10px] focus:border-amber-600 focus:outline-none transition-all placeholder:text-stone-800"
+                      placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI..."
                     />
                   </div>
                 </div>
@@ -427,31 +405,31 @@ export default function OnboardingWizard({ onComplete, onCancel }: OnboardingWiz
           </AnimatePresence>
         </div>
 
-        {/* Footer */}
-        <div className="p-6 border-t border-slate-800 bg-slate-900/50 flex items-center justify-between">
-          {step > 1 ? (
-            <button 
-              onClick={() => setStep(step - 1)}
-              disabled={loading}
-              className="px-6 py-3 rounded-xl font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all flex items-center gap-2 disabled:opacity-50"
-            >
-              <ChevronLeft size={18} /> Voltar
-            </button>
-          ) : (
-            <div></div>
-          )}
-          
-          <button 
+        {/* Action Bar Aura */}
+        <div className="p-10 border-t border-white/5 bg-slate-950/40 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            {step > 1 && (
+              <button
+                onClick={() => setStep(step - 1)}
+                disabled={loading}
+                className="px-8 py-5 font-black text-[10px] uppercase tracking-widest text-slate-500 hover:text-white transition-all disabled:opacity-20 flex items-center gap-3 bg-white/5 rounded-2xl"
+              >
+                <ChevronLeft size={18} /> Stream_Anterior
+              </button>
+            )}
+          </div>
+
+          <button
             onClick={handleNextStep}
             disabled={loading}
-            className="px-8 py-3 rounded-xl font-bold text-white bg-blue-600 hover:bg-blue-500 transition-all flex items-center gap-2 shadow-lg shadow-blue-500/20 disabled:opacity-50"
+            className="px-12 py-5 bg-amber-500 text-black font-black text-[10px] uppercase tracking-[0.3em] hover:bg-amber-400 rounded-2xl transition-all shadow-lg shadow-amber-500/20 flex items-center gap-3 disabled:opacity-50 active:scale-[0.98]"
           >
             {loading ? (
-              <><Loader2 size={18} className="animate-spin" /> Processando...</>
+              <><Loader2 size={18} className="animate-spin" /> Sincronizando_Aura...</>
             ) : step === 3 ? (
-              <><CheckCircle2 size={18} /> Finalizar Cadastro</>
+              <><CheckCircle2 size={18} /> Implementar_Núcleo</>
             ) : (
-              <>Próximo <ChevronRight size={18} /></>
+              <>Próxima_Fase <ChevronRight size={18} /></>
             )}
           </button>
         </div>

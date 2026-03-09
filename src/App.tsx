@@ -41,7 +41,12 @@ import {
   LayoutTemplate,
   FolderOpen,
   FileCode,
-  Lock
+  Lock,
+  ChevronDown,
+  ChevronUp,
+  Flame,
+  ArrowUpRight,
+  Clock
 } from 'lucide-react';
 import { GoogleGenAI, Type } from "@google/genai";
 import ReactMarkdown from 'react-markdown';
@@ -118,8 +123,8 @@ interface PromptLibraryEntry {
 
 const DEFAULT_PROMPTS = [
   {
-    title: "Modern Medical Luxury (Padrão)",
-    description: "Estilo limpo, sofisticado e profissional. Ideal para clínicas e produtos de alto padrão.",
+    title: "Aura Blue & Gold (Padrão)",
+    description: "Estética de alta tecnologia com energia vibrante. Azul marinho profundo, dourado energético e formas orgânicas arredondadas.",
     content: `Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
 OBRIGATÓRIO INCLUIR NO <head> OU ANTES DO fechamento do <body>:
@@ -127,15 +132,16 @@ OBRIGATÓRIO INCLUIR NO <head> OU ANTES DO fechamento do <body>:
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
 
-DIRETRIZES DE DESIGN & ESTRUTURA:
-- ESTRUTURA DE LANDING PAGE: Divida o conteúdo em seções claras (<section>). Crie um fluxo de navegação envolvente.
-- HERO: Use um fundo com gradiente linear suave usando o Azul da marca. Título em 'Roboto' ou 'Inter' com font-bold e tracking-tight. Adicione um efeito de Glassmorphism sutil.
-- BENTO GRIDS: Transforme listas de benefícios em Bento Grids (grids assimétricos) com bg-white, bordas finas (border-slate-200) e sombras suaves (shadow-xl shadow-black/5). Use ícones Lucide em dourado.
-- CORES: Fundo principal bg-[#fdfbf7]. Use o Azul (#004a8e) para títulos de seção e o Dourado (#c5a059) para detalhes e ícones.
-- ANIMAÇÕES (GSAP): Você DEVE escrever o script JS no final do arquivo para inicializar o GSAP e ScrollTrigger. Crie animações de fade-in e slide-up para os cards e textos conforme o usuário rola a página. Garanta que os elementos fiquem visíveis (opacity: 1) como fallback.
+DIRETRIZES DE DESIGN & ESTRUTURA (AURA 2026):
+- ESTRUTURA: Layout fluido e dinâmico. Use paddings generosos (py-24).
+- HERO: Tipografia impactante 'Outfit' ou 'Satoshi'. Fundo Aura Gradient (Navy para Indigo profundo).
+- GEOMETRIA: Use bordas muito arredondadas (rounded-3xl ou rounded-2xl). Evite cantos vivos.
+- CORES: Fundo #020617. Use Dourado Vibrante (#F59E0B) para CTAs e Azul Elétrico (#60A5FA) para detalhes.
+- GLASSMORFISMO: Use 'glass-aura' (bg-blue-900/10, backdrop-blur-xl, border-blue-500/20).
+- ANIMAÇÕES: Movimentos orgânicos e energéticos com GSAP.
 
 RESTRIÇÕES:
-Retorne APENAS o código HTML. Sem botões de link externo, vídeos ou imagens.`
+Retorne APENAS o código HTML. Sem links reais ou interações de navegação.`
   },
   {
     title: "Neobrutalismo + Pastel Pop",
@@ -731,49 +737,49 @@ body {
 // --- Components ---
 
 const HeroSection = ({ title, subtitle, colors }: { title: string, subtitle: string, colors: BrandConfig }) => (
-  <section className="text-center mb-16 animate-fade-in">
+  <section className="text-center mb-24 animate-fade-in py-16">
     <div
-      className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] mb-6 border"
-      style={{ backgroundColor: `${colors.primaryBlue}20`, color: colors.primaryBlue, borderColor: `${colors.primaryBlue}40` }}
+      className="inline-flex items-center gap-2 px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-[0.3em] mb-8 glass-card border-white/20"
+      style={{ color: colors.primaryGold }}
     >
-      <Sparkles size={14} /> Hub Conexão Digital
+      <Sparkles size={14} /> Hub Conexão Digital Elite
     </div>
-    <h1 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight leading-tight">
+    <h1 className="text-5xl md:text-8xl font-black text-white mb-8 tracking-tighter leading-none font-mono">
       {title}
     </h1>
-    <p className="text-slate-400 max-w-2xl mx-auto text-lg md:text-xl leading-relaxed">
+    <p className="text-stone-400 max-w-3xl mx-auto text-lg md:text-2xl leading-relaxed font-light">
       {subtitle}
     </p>
   </section>
 );
 
 const GridSection = ({ title, items, colors }: { title?: string, items: any[], colors: BrandConfig }) => (
-  <div className="mb-20">
-    {title && <h3 className="text-2xl font-bold mb-8 text-center text-white">{title}</h3>}
+  <div className="mb-24">
+    {title && <h3 className="text-3xl font-bold mb-12 text-center text-stone-200 tracking-tight">{title}</h3>}
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
       {items?.map((item, i) => (
         <motion.div
           key={i}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          transition={{ delay: i * 0.1 }}
-          className="bg-slate-900 rounded-[2.5rem] p-8 border border-slate-800 shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/40 transition-all duration-500 group"
-          style={{ borderLeft: item.color === 'gold' ? `4px solid ${colors.primaryGold}` : '1px solid #1e293b' }}
+          transition={{ delay: i * 0.1, type: "spring", stiffness: 100 }}
+          className="glass-card-dark rounded-none p-10 border-l-4 group transition-all duration-500"
+          style={{ borderLeftColor: item.color === 'gold' ? colors.primaryGold : colors.primaryBlue }}
         >
           <div
-            className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 shadow-lg transition-transform group-hover:scale-110 text-white"
-            style={{ backgroundColor: item.color === 'gold' ? colors.primaryGold : item.color === 'blue' ? colors.primaryBlue : '#0f172a' }}
+            className="w-16 h-16 rounded-none flex items-center justify-center mb-8 shadow-2xl transition-transform group-hover:scale-110 text-white border border-white/10"
+            style={{ backgroundColor: item.color === 'gold' ? colors.primaryGold : item.color === 'blue' ? colors.primaryBlue : 'transparent' }}
           >
-            {item.icon === 'zap' && <Zap />}
-            {item.icon === 'shield-check' && <ShieldCheck />}
-            {item.icon === 'activity' && <Activity />}
-            {item.icon === 'layers' && <Layers />}
-            {item.icon === 'info' && <Info />}
-            {!item.icon && <ChevronRight />}
+            {item.icon === 'zap' && <Zap size={28} />}
+            {item.icon === 'shield-check' && <ShieldCheck size={28} />}
+            {item.icon === 'activity' && <Activity size={28} />}
+            {item.icon === 'layers' && <Layers size={28} />}
+            {item.icon === 'info' && <Info size={28} />}
+            {!item.icon && <ChevronRight size={28} />}
           </div>
-          <h4 className="text-xl font-bold mb-3 text-white">{item.title}</h4>
-          <p className="text-sm text-slate-400 leading-relaxed">{item.description}</p>
+          <h4 className="text-2xl font-bold mb-4 text-white font-mono tracking-tight">{item.title}</h4>
+          <p className="text-base text-stone-400 leading-relaxed font-light">{item.description}</p>
         </motion.div>
       ))}
     </div>
@@ -781,29 +787,28 @@ const GridSection = ({ title, items, colors }: { title?: string, items: any[], c
 );
 
 const ComparisonSection = ({ title, headers, rows, colors }: { title?: string, headers: string[], rows: string[][], colors: BrandConfig }) => (
-  <div className="mb-20">
-    {title && <h3 className="text-2xl font-bold mb-8 text-center text-white">{title}</h3>}
-    <div className="bg-slate-900 rounded-[2.5rem] border border-slate-800 overflow-hidden shadow-lg shadow-black/20">
+  <div className="mb-24">
+    {title && <h3 className="text-3xl font-bold mb-12 text-center text-stone-200 tracking-tight">{title}</h3>}
+    <div className="glass-card-dark rounded-none border border-white/10 overflow-hidden shadow-2xl">
       <div className="overflow-x-auto">
         <table className="w-full text-left">
           <thead>
-            <tr className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] border-b border-slate-800 bg-slate-950/50">
+            <tr className="text-[10px] font-black text-stone-500 uppercase tracking-[0.4em] border-b border-white/10 bg-black/40">
               {headers?.map((h, i) => (
-                <th key={i} className="px-8 py-6" style={{ color: i > 0 && headers.length > 2 && i === headers.length - 1 ? colors.primaryGold : undefined }}>{h}</th>
+                <th key={i} className="px-10 py-8" style={{ color: i > 0 && headers.length > 2 && i === headers.length - 1 ? colors.primaryGold : undefined }}>{h}</th>
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-800">
+          <tbody className="divide-y divide-white/5">
             {rows?.map((row, i) => (
-              <tr key={i} className="hover:bg-slate-800/50 transition-colors">
+              <tr key={i} className="hover:bg-white/5 transition-colors">
                 {row?.map((cell, j) => (
                   <td
                     key={j}
-                    className={`px-8 py-6 text-sm ${j === 0 ? 'font-bold text-slate-200' : 'text-slate-400'}`}
+                    className={`px-10 py-8 text-base ${j === 0 ? 'font-bold text-stone-200 font-mono' : 'text-stone-400 font-light'}`}
                     style={{
                       color: j > 0 && headers.length > 2 && j === headers.length - 1 ? colors.primaryGold : undefined,
-                      backgroundColor: j > 0 && headers.length > 2 && j === headers.length - 1 ? `${colors.primaryGold}10` : undefined,
-                      fontWeight: j > 0 && headers.length > 2 && j === headers.length - 1 ? '900' : undefined
+                      backgroundColor: j > 0 && headers.length > 2 && j === headers.length - 1 ? `${colors.primaryGold}05` : undefined,
                     }}
                   >
                     {cell}
@@ -820,30 +825,26 @@ const ComparisonSection = ({ title, headers, rows, colors }: { title?: string, h
 
 const CalloutSection = ({ title, text, accent, colors }: { title: string, text: string, accent: 'gold' | 'blue', colors: BrandConfig }) => (
   <section
-    className="rounded-[3rem] overflow-hidden text-white mb-20 shadow-2xl shadow-black/40"
-    style={{ backgroundColor: accent === 'gold' ? '#0f172a' : colors.primaryBlue }}
+    className="rounded-none overflow-hidden text-white mb-24 glass-card-dark border-white/10 shadow-2xl"
   >
     <div className="flex flex-col lg:flex-row">
-      <div className="p-10 lg:p-16 lg:w-3/5">
+      <div className="p-12 lg:p-20 lg:w-3/5">
         <span
-          className="font-bold text-[11px] uppercase tracking-[0.4em] mb-6 block"
-          style={{ color: accent === 'gold' ? colors.primaryGold : '#bfdbfe' }}
+          className="font-bold text-[11px] uppercase tracking-[0.5em] mb-8 block text-stone-500"
         >
-          Destaque Técnico
+          Destaque Técnico Elite
         </span>
-        <h3 className="text-3xl md:text-4xl font-black mb-8 leading-tight text-white">{title}</h3>
-        <p className="text-slate-300 text-base md:text-lg leading-relaxed">{text}</p>
+        <h3 className="text-4xl md:text-5xl font-black mb-10 leading-tight text-white font-mono tracking-tighter">{title}</h3>
+        <p className="text-stone-400 text-lg md:text-xl leading-relaxed font-light">{text}</p>
       </div>
       <div
-        className="lg:w-2/5 flex flex-col items-center justify-center p-16 text-center relative overflow-hidden"
-        style={{ backgroundColor: accent === 'gold' ? colors.primaryGold : '#2563eb' }}
+        className="lg:w-2/5 flex flex-col items-center justify-center p-20 text-center relative overflow-hidden"
+        style={{ backgroundColor: accent === 'gold' ? `${colors.primaryGold}20` : `${colors.primaryBlue}20` }}
       >
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_center,_white_0%,_transparent_70%)]"></div>
-        </div>
+        <div className="absolute inset-0 liquid-gradient opacity-10"></div>
         <div className="relative z-10">
-          <ShieldCheck size={64} className="text-white/40 mb-4 mx-auto" />
-          <div className="text-xl font-black uppercase tracking-[0.2em] text-white">Qualidade Conexão</div>
+          <ShieldCheck size={80} className="mb-6 mx-auto opacity-50" style={{ color: colors.primaryGold }} />
+          <div className="text-2xl font-black uppercase tracking-[0.3em] text-white">Hub Elite</div>
         </div>
       </div>
     </div>
@@ -870,23 +871,17 @@ export default function App() {
 
   // Data State
   const [brandConfig, setBrandConfig] = useState<BrandConfig>({
-    primaryBlue: '#004a8e',
-    primaryGold: '#c5a059',
-    description: 'A Conexão Sistemas de Prótese é líder em inovação para implantodontia...',
+    primaryBlue: '#1C1917',
+    primaryGold: '#CA8A04',
+    description: 'Plataforma multisetorial de geração de materiais de elite.',
     systemPrompt: `Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
-DIRETRIZES DE DESIGN & ESTRUTURA (ESTILO MEDICAL LUXURY):
-- ESTRUTURA DE LANDING PAGE: O conteúdo DEVE ser dividido em seções (<section>) com paddings generosos (py-20).
-- HERO SECTION: O primeiro título (#) deve ser transformado em um Hero de alto impacto, com fundo em gradiente azul (#004a8e para #002d5a) e texto em branco/dourado.
-- TRANSFORMAÇÃO DE LISTAS: Listas de benefícios ou características devem ser convertidas em GRIDS de cards (grid-cols-1 md:grid-cols-3) com ícones Lucide e bordas sutis.
-- RITMO VISUAL: Alterne as cores de fundo entre as seções (ex: bg-[#fdfbf7] para bg-white ou bg-slate-50).
-- TIPOGRAFIA: Use 'Roboto' ou 'Inter' (Sans) para títulos e corpo.
-- ANIMAÇÕES: Use GSAP para revelação de elementos ao rolar a página. Garanta visibilidade inicial ou fallback.
-
-RESTRIÇÕES TÉCNICAS:
-- NÃO inclua cabeçalhos ou rodapés externos.
-- NÃO use vídeos ou imagens reais.
-- Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).`
+DIRETRIZES DE DESIGN & ESTRUTURA (ESTILO LIQUID GLASS):
+- ESTRUTURA: Seções py-32 com margens técnicas.
+- HERO: Tipografia massiva text-8xl, font-black, tracking-tighter.
+- CARDS: Estilo Glassmorphism (bg-white/5, backdrop-blur-xl).
+- CORES: Fundo #0C0A09, acento Ouro #CA8A04.
+- TIPOGRAFIA: Fira Sans e Fira Code.`
   });
 
   const [apiKeys, setApiKeys] = useState<ApiKeys>({
@@ -902,25 +897,25 @@ RESTRIÇÕES TÉCNICAS:
   });
 
   const [rawText, setRawText] = useState<string>('');
-  const [markdownText, setMarkdownText] = useState<string>(`# Diferenças entre os Implantes: Flex Gold, Flash e Torque
+  const [markdownText, setMarkdownText] = useState<string>(`# Ecossistema Digital: Soluções Elite 2026
 
-As diferenças entre os implantes Flex Gold, Flash e Torque estão principalmente na sua indicação para diferentes tipos de densidade óssea.
+A arquitetura de sistemas do Hub Conexão foi redesenhada para escalabilidade extrema em múltiplos setores, unindo alta performance e estética Liquid Glass.
 
-## Modelos Principais
+## Pilares da Plataforma
 
-- **Flash**: Excelente travamento na maxila (osso macio) e alvéolo imediato. Design com rosca fina e cortante.
-- **Torque**: Performance em mandíbula (osso duro). Macroestrutura focada em torque.
-- **Flex Gold**: A solução 2 em 1. Híbrido universal que une os benefícios do Flash e Torque.
+- **Aura Engine**: Motor de inteligência generativa para automação de design e copy.
+- **Titanium Cloud**: Infraestrutura redundante com 99.9% de uptime garantido.
+- **Glass Core**: Sistema de design proprietário focado em clareza técnica e luxo visual.
 
-## Comparativo Técnico
+## Performance Comparativa
 
-| Característica | Flash | Torque | Flex Gold |
+| Métrica | Legado | Hub 2026 | Impacto |
 | :--- | :--- | :--- | :--- |
-| Foco Principal | Maxila | Mandíbula | Universal |
-| Ação Óssea | Compactante | Estabilidade | Corte + Compactação |
-| Complexidade | Alta em osso duro | Fluida em mandíbula | Simplificada |
+| Renderização | 1.8s | 0.4s | +75% Vel. |
+| Conversão | 4.2% | 12.8% | +3x ROI |
+| Retenção | Baixa | Alta | Fidelidade |
 
-O Flex Gold é a tendência atual para clínicas que buscam um implante para tudo.`);
+O Futuro é agora. O Hub Conexão é a ferramenta definitiva para quem não aceita o comum.`);
 
   const [pageData, setPageData] = useState<PageData | null>(null);
   const [selectedApi, setSelectedApi] = useState<keyof ApiKeys>('gemini');
@@ -983,23 +978,18 @@ O Flex Gold é a tendência atual para clínicas que buscam um implante para tud
       setApiKeys({ gemini: '', openai: '', claude: '', groq: '' });
       setSupabaseConfig({ url: '', anonKey: '' });
       setBrandConfig({
-        primaryBlue: '#004a8e',
-        primaryGold: '#c5a059',
-        description: 'A Conexão Sistemas de Prótese é líder em inovação para implantodontia...',
-        systemPrompt: `Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
-
-DIRETRIZES DE DESIGN & ESTRUTURA (ESTILO MEDICAL LUXURY):
-- ESTRUTURA DE LANDING PAGE: O conteúdo DEVE ser dividido em seções (<section>) com paddings generosos (py-20).
-- HERO SECTION: O primeiro título (#) deve ser transformado em um Hero de alto impacto, com fundo em gradiente azul (#004a8e para #002d5a) e texto em branco/dourado.
-- TRANSFORMAÇÃO DE LISTAS: Listas de benefícios ou características devem ser convertidas em GRIDS de cards (grid-cols-1 md:grid-cols-3) com ícones Lucide e bordas sutis.
-- RITMO VISUAL: Alterne as cores de fundo entre as seções (ex: bg-[#fdfbf7] para bg-white ou bg-slate-50).
-- TIPOGRAFIA: Use 'Roboto' ou 'Inter' (Sans) para títulos e corpo.
-- ANIMAÇÕES: Use GSAP para revelação de elementos ao rolar a página. Garanta visibilidade inicial ou fallback.
-
-RESTRIÇÕES TÉCNICAS:
-- NÃO inclua cabeçalhos ou rodapés externos.
-- NÃO use vídeos ou imagens reais.
-- Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).`
+        primaryBlue: '#1C1917',
+        primaryGold: '#CA8A04',
+        description: 'Hub Conexão Digital: Plataforma Elite de Automação e Design Multisetorial.',
+        systemPrompt: `Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e bibliotecas modernas).
+        
+ESTILO LIQUID GLASS (DARK PREMIUN):
+  - PALETA: Fundo stone-950, acentos amber-600/gold, texto stone-100.
+  - COMPONENTES: Use .glass-card e .glass-card-dark (backdrop-blur-xl, background com baixa opacidade stone-900/40, bordas brancas/5).
+  - BORDAS: Cantos sharp (rounded-none) para estética técnica elite.
+  - GRADIENTES: Use .liquid-gradient para fundos de destaque.
+  - ESTRUTURA: Landing page com seções clean, tipografia Mono para dados técnicos (Fira Code) e Sans para leitura (Fira Sans).
+  - ANIMAÇÕES: GSAP para transições fluidas e micro-interações técnicas.`
       });
       loadDefaultPrompts();
     }
@@ -1431,7 +1421,7 @@ RESTRIÇÕES TÉCNICAS:
         setView('editor');
 
         setLoadingSteps(prev => prev.map(s => ({ ...s, status: 'completed' })));
-        
+
         // Autogerar metadados após conversão
         setTimeout(() => {
           generateMetadataSuggestions();
@@ -1474,20 +1464,20 @@ RESTRIÇÕES TÉCNICAS:
         const response = await ai.models.generateContent({
           model: "gemini-3-flash-preview",
           contents: `Analise o seguinte Markdown e sugira metadados estratégicos para uma landing page.
-          Retorne APENAS um JSON válido seguindo exatamente esta estrutura:
-          {
-            "pt": { "title": "...", "filename": "...", "description": "...", "tags": ["...", "..."] },
-            "en": { "title": "...", "filename": "...", "description": "...", "tags": ["...", "..."] },
-            "es": { "title": "...", "filename": "...", "description": "...", "tags": ["...", "..."] }
+    Retorne APENAS um JSON válido seguindo exatamente esta estrutura:
+    {
+      "pt": {"title": "...", "filename": "...", "description": "...", "tags": ["...", "..."] },
+    "en": {"title": "...", "filename": "...", "description": "...", "tags": ["...", "..."] },
+    "es": {"title": "...", "filename": "...", "description": "...", "tags": ["...", "..."] }
           }
-          
-          Regras:
-          - filename deve ser um slug (ex: meu-produto-novo) sem extensão.
-          - description deve ser curta e persuasiva (máx 160 caracteres).
-          - tags devem ser relevantes para SEO.
-          
-          Markdown:
-          ${markdownText}`,
+
+    Regras:
+    - filename deve ser um slug (ex: meu-produto-novo) sem extensão.
+    - description deve ser curta e persuasiva (máx 160 caracteres).
+    - tags devem ser relevantes para SEO.
+
+    Markdown:
+    ${markdownText}`,
           config: {
             responseMimeType: "application/json",
             systemInstruction: "Você é um especialista em SEO e Copywriting multilíngue."
@@ -1499,12 +1489,12 @@ RESTRIÇÕES TÉCNICAS:
         if (!response.text) throw new Error("Sem resposta do modelo.");
         const data = JSON.parse(response.text);
         setSuggestedMetadata(data);
-        
+
         // Preencher automaticamente os nomes dos arquivos
         if (data.pt?.filename) setFilename(data.pt.filename);
         if (data.en?.filename) setFilenameEn(data.en.filename);
         if (data.es?.filename) setFilenameEs(data.es.filename);
-        
+
         setEditorTab('metadata');
 
         setLoadingSteps(prev => prev.map(s => ({ ...s, status: 'completed' })));
@@ -1576,42 +1566,42 @@ RESTRIÇÕES TÉCNICAS:
 
     const systemInstruction = `Você é um Diretor de Arte e Desenvolvedor Front-end de elite, especializado em Landing Pages de LUXO para o mercado médico/odontológico.
 
-SUA MISSÃO:
-Transformar o conteúdo fornecido em uma EXPERIÊNCIA DIGITAL de altíssimo padrão. Não gere apenas um site; gere uma peça de design que transmita autoridade, tecnologia e sofisticação.
+    SUA MISSÃO:
+    Transformar o conteúdo fornecido em uma EXPERIÊNCIA DIGITAL de altíssimo padrão. Não gere apenas um site; gere uma peça de design que transmita autoridade, tecnologia e sofisticação.
 
-REGRAS CRÍTICAS DE NAVEGAÇÃO:
-- É TERMINANTEMENTE PROIBIDO o uso de tags <a> (links) ou <button> (botões).
-- A página deve ser puramente contemplativa e informativa.
-- Para chamadas de ação (CTAs), use elementos visuais como <div> ou <span> estilizados com bordas douradas, gradientes e sombras para atrair o olhar, mas eles NÃO devem ser clicáveis nem levar a lugar nenhum.
-- Não use atributos 'href', 'onclick' ou qualquer forma de navegação.
+    REGRAS CRÍTICAS DE NAVEGAÇÃO:
+    - É TERMINANTEMENTE PROIBIDO o uso de tags <a> (links) ou <button> (botões).
+      - A página deve ser puramente contemplativa e informativa.
+      - Para chamadas de ação (CTAs), use elementos visuais como <div> ou <span> estilizados com bordas douradas, gradientes e sombras para atrair o olhar, mas eles NÃO devem ser clicáveis nem levar a lugar nenhum.
+        - Não use atributos 'href', 'onclick' ou qualquer forma de navegação.
 
-DESIGN SYSTEM OBRIGATÓRIO:
-1. PALETA DE CORES:
-   - Primária: ${brandConfig.primaryBlue} (Azul Conexão)
-   - Accent: ${brandConfig.primaryGold} (Dourado Premium)
-   - Backgrounds: Use Off-white (#FDFDFD), Slate-950 (#020617) e variações de Glassmorphism.
-2. TIPOGRAFIA:
-   - Títulos: 'Roboto', 'Inter', 'Montserrat', sans-serif (Peso 700/900).
-   - Corpo: 'Roboto', 'Inter', sans-serif (Peso 300/400).
-   - Use fontes SANS-SERIF modernas e limpas.
-3. COMPONENTES DE IMPACTO:
-   - HERO: Layout 50/50 ou Centralizado com tipografia massiva (text-7xl+), gradientes sutis e animação de entrada.
-   - BENTO GRIDS: Use grids assimétricos para seções de benefícios.
-   - GLASSMORPHISM: Cards com 'backdrop-blur-xl' e bordas semi-transparentes 'border-white/10'.
-   - RAIL TEXT: Use textos verticais decorativos nas laterais das seções.
-   - DIVIDERS: Use linhas finas (1px) com opacidade baixa.
+        DESIGN SYSTEM OBRIGATÓRIO:
+        1. PALETA DE CORES:
+        - Primária: ${brandConfig.primaryBlue} (Azul Conexão)
+        - Accent: ${brandConfig.primaryGold} (Dourado Premium)
+        - Backgrounds: Use Off-white (#FDFDFD), Slate-950 (#020617) e variações de Glassmorphism.
+        2. TIPOGRAFIA:
+        - Títulos: 'Roboto', 'Inter', 'Montserrat', sans-serif (Peso 700/900).
+        - Corpo: 'Roboto', 'Inter', sans-serif (Peso 300/400).
+        - Use fontes SANS-SERIF modernas e limpas.
+        3. COMPONENTES DE IMPACTO:
+        - HERO: Layout 50/50 ou Centralizado com tipografia massiva (text-7xl+), gradientes sutis e animação de entrada.
+        - BENTO GRIDS: Use grids assimétricos para seções de benefícios.
+        - GLASSMORPHISM: Cards com 'backdrop-blur-xl' e bordas semi-transparentes 'border-white/10'.
+        - RAIL TEXT: Use textos verticais decorativos nas laterais das seções.
+        - DIVIDERS: Use linhas finas (1px) com opacidade baixa.
 
-REGRAS TÉCNICAS:
-1. ANIMAÇÕES (GSAP): Você DEVE incluir a CDN do GSAP e ScrollTrigger. Adicione scripts para animar seções conforme o scroll (fade-in, slide-up, stagger).
-   - IMPORTANTE: Garanta que os elementos fiquem visíveis (opacity: 1) caso o JS falhe ou o scroll passe rápido demais. Use 'gsap.set' para estados iniciais e 'gsap.to' com ScrollTrigger.
-2. ÍCONES: Use Lucide React (via CDN). Escolha ícones que remetam a tecnologia e precisão.
-3. RESPONSIVIDADE: Mobile-first impecável.
-4. SEO: Injetar título, descrição e tags nos locais corretos do <head>.
+        REGRAS TÉCNICAS:
+        1. ANIMAÇÕES (GSAP): Você DEVE incluir a CDN do GSAP e ScrollTrigger. Adicione scripts para animar seções conforme o scroll (fade-in, slide-up, stagger).
+        - IMPORTANTE: Garanta que os elementos fiquem visíveis (opacity: 1) caso o JS falhe ou o scroll passe rápido demais. Use 'gsap.set' para estados iniciais e 'gsap.to' com ScrollTrigger.
+        2. ÍCONES: Use Lucide React (via CDN). Escolha ícones que remetam a tecnologia e precisão.
+        3. RESPONSIVIDADE: Mobile-first impecável.
+        4. SEO: Injetar título, descrição e tags nos locais corretos do <head>.
 
-ESTRUTURA DE SEÇÕES:
+          ESTRUTURA DE SEÇÕES:
 - Hero -> Prova Social -> Benefícios (Bento Grid) -> Detalhes Técnicos (Acordeões ou Tabs) -> Tabela de Comparação (Luxury Style) -> CTA Final (Visual, não clicável).
 
-NUNCA gere um layout linear ou genérico. Use o Dourado para elementos de destaque e bordas finas.`;
+          NUNCA gere um layout linear ou genérico. Use o Dourado para elementos de destaque e bordas finas.`;
 
     let html = '';
 
@@ -1766,12 +1756,12 @@ NUNCA gere um layout linear ou genérico. Use o Dourado para elementos de destaq
         const langs: ('pt' | 'en' | 'es')[] = ['pt', 'en', 'es'];
         const names: Record<'pt' | 'en' | 'es', string> = { pt: filename, en: filenameEn, es: filenameEs };
         let masterHtml = '';
-        
+
         for (const lang of langs) {
           setLoadingMsg(`Gerando versão ${lang.toUpperCase()}...`);
           // Reset steps for each language to show progress
           setLoadingSteps(steps.map(s => s.id === 'analyze' ? { ...s, status: 'loading' } : { ...s, status: 'pending' }));
-          
+
           if (lang === 'pt') {
             masterHtml = await generateSinglePage(lang, names[lang]);
           } else {
@@ -1779,7 +1769,7 @@ NUNCA gere um layout linear ou genérico. Use o Dourado para elementos de destaq
           }
         }
         setGeneratedHtml(masterHtml); // Keep master in preview
-        setFilename(filename); 
+        setFilename(filename);
       } else {
         const html = await generateSinglePage(selectedLang, filename);
         setGeneratedHtml(html);
@@ -1822,16 +1812,16 @@ NUNCA gere um layout linear ou genérico. Use o Dourado para elementos de destaq
   };
 
   return (
-    <div className="min-h-screen bg-[#020617] text-slate-100 font-sans">
+    <div className="min-h-screen bg-[#020617] text-slate-100 font-sans selection:bg-blue-500/30">
       {/* Header */}
-      <header className="bg-[#0f172a]/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50 px-6 py-4">
+      <header className="bg-slate-950/50 backdrop-blur-xl border-b border-white/5 sticky top-0 z-50 px-6 py-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-500/20" style={{ backgroundColor: brandConfig.primaryBlue }}>
+            <div className="w-10 h-10 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-500/20" style={{ backgroundColor: brandConfig.primaryBlue }}>
               <Sparkles size={24} />
             </div>
             <div>
-              <h1 className="text-lg font-black tracking-tight uppercase text-white">
+              <h1 className="text-xl font-black tracking-tight uppercase text-white font-sans">
                 Interactive <span style={{ color: brandConfig.primaryGold }}>Builder</span>
               </h1>
             </div>
@@ -1839,17 +1829,17 @@ NUNCA gere um layout linear ou genérico. Use o Dourado para elementos de destaq
 
           <div className="flex items-center gap-4">
             {session ? (
-              <div className="flex items-center gap-3 bg-slate-900 px-4 py-2 rounded-xl border border-slate-800">
-                <div className="w-8 h-8 bg-slate-800 rounded-full flex items-center justify-center text-slate-400">
+              <div className="flex items-center gap-3 bg-slate-900/50 px-4 py-2 rounded-2xl border border-white/5 backdrop-blur-md">
+                <div className="w-8 h-8 bg-blue-500/10 rounded-full flex items-center justify-center text-blue-400">
                   <User size={16} />
                 </div>
                 <div className="hidden sm:block">
-                  <p className="text-[10px] font-black text-slate-500 uppercase leading-none mb-1">Usuário</p>
+                  <p className="text-[10px] font-black text-slate-500 uppercase leading-none mb-1">Operador</p>
                   <p className="text-xs font-bold text-slate-300 truncate max-w-[180px]">{session.user.email}</p>
                 </div>
                 <button
                   onClick={() => supabase.auth.signOut()}
-                  className="p-2 text-slate-500 hover:text-red-400 transition-colors"
+                  className="p-2 text-slate-500 hover:text-amber-500 transition-colors"
                   title="Sair"
                 >
                   <LogOut size={18} />
@@ -1858,7 +1848,7 @@ NUNCA gere um layout linear ou genérico. Use o Dourado para elementos de destaq
             ) : (
               <button
                 onClick={() => setShowLoginModal(true)}
-                className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-blue-500 transition-all shadow-lg shadow-blue-900/20"
+                className="flex items-center gap-2 bg-blue-600 text-white px-6 py-2.5 rounded-2xl text-xs font-bold hover:bg-blue-500 transition-all shadow-lg shadow-blue-900/40"
               >
                 <LogIn size={16} /> Entrar
               </button>
@@ -1868,8 +1858,8 @@ NUNCA gere um layout linear ou genérico. Use o Dourado para elementos de destaq
       </header>
 
       {/* Navigation Sub-header */}
-      <nav className="bg-[#0f172a]/60 backdrop-blur-md border-b border-slate-800 sticky top-[73px] z-40 px-6 py-2">
-        <div className="max-w-7xl mx-auto flex items-center justify-center gap-1 overflow-x-auto max-w-full">
+      <nav className="bg-slate-950/80 backdrop-blur-2xl border-b border-white/5 sticky top-[73px] z-40 px-6 py-2">
+        <div className="max-w-7xl mx-auto flex items-center justify-center gap-2 overflow-x-auto max-w-full">
           {[
             { id: 'keys', icon: Key, label: 'API Keys' },
             { id: 'supabase', icon: ShieldCheck, label: 'Supabase' },
@@ -1881,7 +1871,7 @@ NUNCA gere um layout linear ou genérico. Use o Dourado para elementos de destaq
             <button
               key={tab.id}
               onClick={() => setView(tab.id as ViewType)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${view === tab.id ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'}`}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl text-[11px] font-bold transition-all whitespace-nowrap ${view === tab.id ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
             >
               <tab.icon size={14} /> {tab.label}
             </button>
@@ -1895,64 +1885,58 @@ NUNCA gere um layout linear ou genérico. Use o Dourado para elementos de destaq
           {loading && (
             <motion.div
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/90 backdrop-blur-xl z-[100] flex items-center justify-center p-6"
+              className="fixed inset-0 bg-[#020617]/95 backdrop-blur-2xl z-[100] flex items-center justify-center p-6"
             >
               <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
+                initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
-                className="bg-slate-900 rounded-[3rem] p-12 text-center w-full max-w-xl shadow-2xl shadow-blue-900/20 border border-slate-800 relative overflow-hidden"
+                exit={{ scale: 0.95, opacity: 0 }}
+                className="bg-slate-900/80 backdrop-blur-3xl rounded-3xl p-12 text-center w-full max-w-xl border border-white/5 relative overflow-hidden shadow-2xl"
               >
                 {/* Animated Background Scanner */}
                 <motion.div
-                  animate={{
-                    top: ['-100%', '200%'],
-                  }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "linear"
-                  }}
-                  className="absolute left-0 right-0 h-32 bg-gradient-to-b from-transparent via-blue-500/5 to-transparent pointer-events-none"
+                  animate={{ top: ['-100%', '200%'] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                  className="absolute left-0 right-0 h-48 bg-gradient-to-b from-transparent via-blue-500/10 to-transparent pointer-events-none"
                 />
 
                 <div className="relative z-10">
-                  <div className="w-20 h-20 bg-blue-600/20 rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-inner border border-blue-500/30">
+                  <div className="w-24 h-24 bg-blue-500/10 rounded-2xl flex items-center justify-center mx-auto mb-8 border border-blue-500/20">
                     <motion.div
                       animate={{ rotate: 360 }}
-                      transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                      transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
                     >
-                      <Sparkles size={40} className="text-blue-400" />
+                      <Sparkles size={48} className="text-amber-500" />
                     </motion.div>
                   </div>
 
-                  <h3 className="text-3xl font-black text-white mb-2 tracking-tight">
-                    {loadingMsg || 'Processando...'}
+                  <h3 className="text-4xl font-sans font-black text-white mb-2 tracking-tighter uppercase">
+                    {loadingMsg || 'Sincronizando'}
                   </h3>
-                  <p className="text-slate-500 text-sm mb-10">Isso pode levar alguns segundos enquanto nossa IA refina seu conteúdo.</p>
+                  <p className="text-slate-400 text-xs font-bold mb-10 uppercase tracking-widest leading-relaxed">Arquitetando sua visão através do Aura AI.</p>
 
-                  <div className="space-y-3 text-left max-w-sm mx-auto">
+                  <div className="space-y-4 text-left max-w-sm mx-auto">
                     {loadingSteps.map((step, idx) => (
                       <motion.div
                         key={step.id}
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: idx * 0.1 }}
-                        className="flex items-center gap-3"
+                        className="flex items-center gap-4"
                       >
-                        <div className={`w-5 h-5 rounded-full flex items-center justify-center border transition-colors ${step.status === 'completed' ? 'bg-emerald-500 border-emerald-500' :
-                            step.status === 'loading' ? 'bg-blue-500/20 border-blue-500 animate-pulse' :
-                              'border-slate-700'
+                        <div className={`w-5 h-5 rounded-full flex items-center justify-center border-2 transition-colors ${step.status === 'completed' ? 'bg-amber-500 border-amber-500' :
+                          step.status === 'loading' ? 'bg-blue-500/20 border-blue-500 animate-pulse' :
+                            'border-slate-800'
                           }`}>
                           {step.status === 'completed' ? (
-                            <Check size={12} className="text-white" />
+                            <Check size={12} className="text-black font-bold" />
                           ) : step.status === 'loading' ? (
                             <div className="w-1.5 h-1.5 bg-blue-400 rounded-full" />
                           ) : null}
                         </div>
-                        <span className={`text-xs font-bold uppercase tracking-widest transition-colors ${step.status === 'completed' ? 'text-emerald-400' :
-                            step.status === 'loading' ? 'text-blue-400' :
-                              'text-slate-600'
+                        <span className={`text-[11px] font-black uppercase tracking-[0.2em] transition-colors ${step.status === 'completed' ? 'text-amber-500' :
+                          step.status === 'loading' ? 'text-white' :
+                            'text-slate-600'
                           }`}>
                           {step.label}
                         </span>
@@ -1961,9 +1945,9 @@ NUNCA gere um layout linear ou genérico. Use o Dourado para elementos de destaq
                   </div>
 
                   {/* Progress Bar */}
-                  <div className="mt-12 h-1.5 w-full bg-slate-800 rounded-full overflow-hidden border border-slate-700/50">
+                  <div className="mt-12 h-2 w-full bg-slate-950 rounded-full overflow-hidden border border-white/5">
                     <motion.div
-                      className="h-full bg-gradient-to-r from-blue-600 to-indigo-500"
+                      className="h-full bg-gradient-to-r from-blue-500 to-amber-500 shadow-[0_0_15px_rgba(59,130,246,0.5)]"
                       initial={{ width: "0%" }}
                       animate={{
                         width: `${(loadingSteps.filter(s => s.status === 'completed').length / loadingSteps.length) * 100}%`
@@ -1979,45 +1963,45 @@ NUNCA gere um layout linear ou genérico. Use o Dourado para elementos de destaq
         <AnimatePresence mode="wait">
           {/* 1. Supabase Tab */}
           {view === 'supabase' && (
-            <motion.div key="supabase" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="max-w-5xl mx-auto space-y-8">
-              <div className="bg-slate-900 rounded-[2.5rem] p-10 border border-slate-800 shadow-lg shadow-black/20">
-                <div className="flex justify-between items-center mb-8">
+            <motion.div key="supabase" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="max-w-5xl mx-auto space-y-8 p-1">
+              <div className="bg-slate-900/50 backdrop-blur-3xl rounded-3xl p-10 border border-white/5 shadow-2xl">
+                <div className="flex justify-between items-center mb-10 border-b border-white/5 pb-8">
                   <div>
-                    <h2 className="text-3xl font-black text-white flex items-center gap-3">
-                      <ShieldCheck className="text-blue-500" /> Projeto Supabase
+                    <h2 className="text-4xl font-sans font-black text-white flex items-center gap-4 tracking-tighter uppercase">
+                      <ShieldCheck className="text-amber-500" size={32} /> Infraestrutura Aura
                     </h2>
-                    <p className="text-slate-400 mt-2">Configure as credenciais do seu projeto Supabase para persistência de dados.</p>
+                    <p className="text-slate-400 mt-2 font-bold text-xs uppercase tracking-widest">Conexão segura com o motor de dados Supabase.</p>
                   </div>
-                  <button onClick={saveSupabaseConfig} className="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-blue-500 shadow-lg shadow-blue-900/20 transition-all active:scale-95 text-sm">
-                    <Save size={16} /> Salvar Configuração
+                  <button onClick={saveSupabaseConfig} className="bg-amber-500 text-black px-10 py-4 rounded-2xl font-black flex items-center gap-3 hover:bg-amber-400 transition-all uppercase tracking-widest text-xs shadow-lg shadow-amber-500/20">
+                    <Save size={18} /> Estabelecer Conexão
                   </button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="p-6 rounded-2xl border border-slate-800 bg-slate-800/30">
-                    <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Supabase URL</label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                  <div className="space-y-4">
+                    <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Ponto de Extremidade (URL)</label>
                     <div className="relative">
-                      <ExternalLink size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+                      <ExternalLink size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" />
                       <input
                         type="text"
                         value={supabaseConfig.url}
                         onChange={(e) => setSupabaseConfig({ ...supabaseConfig, url: e.target.value })}
-                        placeholder="https://your-project.supabase.co"
-                        className="w-full pl-12 pr-4 py-4 border border-slate-700 bg-slate-900 text-white rounded-xl font-mono text-sm outline-none focus:ring-2 focus:ring-blue-600"
+                        placeholder="https://..."
+                        className="w-full pl-12 pr-4 py-4 bg-slate-950/50 border border-white/5 text-slate-200 font-mono text-sm outline-none focus:border-amber-500/50 transition-colors rounded-2xl"
                       />
                     </div>
                   </div>
 
-                  <div className="p-6 rounded-2xl border border-slate-800 bg-slate-800/30">
-                    <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Supabase Anon Key</label>
+                  <div className="space-y-4">
+                    <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Token de Acesso (Anon Key)</label>
                     <div className="relative">
-                      <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+                      <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" />
                       <input
                         type="password"
                         value={supabaseConfig.anonKey}
                         onChange={(e) => setSupabaseConfig({ ...supabaseConfig, anonKey: e.target.value })}
-                        placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                        className="w-full pl-12 pr-4 py-4 border border-slate-700 bg-slate-900 text-white rounded-xl font-mono text-sm outline-none focus:ring-2 focus:ring-blue-600"
+                        placeholder="eyJhbGciOiJIUzI1Ni..."
+                        className="w-full pl-12 pr-4 py-4 bg-slate-950/50 border border-white/5 text-slate-200 font-mono text-sm outline-none focus:border-amber-500/50 transition-colors rounded-2xl"
                       />
                     </div>
                   </div>
@@ -2027,46 +2011,46 @@ NUNCA gere um layout linear ou genérico. Use o Dourado para elementos de destaq
               {/* SQL Scripts & Library Styles */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* SQL Scripts */}
-                <div className="bg-slate-900 rounded-[2.5rem] p-10 border border-slate-800 shadow-lg shadow-black/20 flex flex-col h-[600px]">
+                <div className="bg-slate-900/50 backdrop-blur-3xl p-10 border border-white/5 flex flex-col h-[600px] rounded-3xl">
                   <div className="flex justify-between items-center mb-6">
                     <div>
-                      <h3 className="text-xl font-black text-white flex items-center gap-2">
-                        <FileCode className="text-emerald-500" /> Scripts SQL
+                      <h3 className="text-xl font-sans font-black text-white flex items-center gap-3 uppercase tracking-tighter">
+                        <FileCode className="text-amber-500" /> Esquema SQL
                       </h3>
-                      <p className="text-xs text-slate-500 mt-1">Execute estes scripts no SQL Editor do Supabase.</p>
+                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">Definição de Tabelas e RLS.</p>
                     </div>
                     <button
                       onClick={() => copyToClipboard(SUPABASE_SQL, 'sql')}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${copiedId === 'sql' ? 'bg-emerald-500 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
+                      className={`flex items-center gap-2 px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${copiedId === 'sql' ? 'bg-amber-500 text-black' : 'bg-white/5 text-slate-400 hover:text-white border border-white/5'}`}
                     >
-                      {copiedId === 'sql' ? <><Check size={14} /> Copiado!</> : <><Copy size={14} /> Copiar SQL</>}
+                      {copiedId === 'sql' ? <><Check size={14} /> Copiado!</> : <><Copy size={14} /> Copiar Schema</>}
                     </button>
                   </div>
-                  <div className="flex-1 bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden relative">
-                    <pre className="p-6 text-xs font-mono text-slate-300 overflow-auto h-full custom-scrollbar leading-relaxed">
+                  <div className="flex-1 bg-slate-950/50 border border-white/5 overflow-hidden relative rounded-2xl">
+                    <pre className="p-6 text-[11px] font-mono text-slate-400 overflow-auto h-full custom-scrollbar leading-relaxed">
                       {SUPABASE_SQL}
                     </pre>
                   </div>
                 </div>
 
                 {/* Seed Prompts */}
-                <div className="bg-slate-900 rounded-[2.5rem] p-10 border border-slate-800 shadow-lg shadow-black/20 flex flex-col h-[600px]">
+                <div className="bg-slate-900/50 backdrop-blur-3xl p-10 border border-white/5 flex flex-col h-[600px] rounded-3xl">
                   <div className="flex justify-between items-center mb-6">
                     <div>
-                      <h3 className="text-xl font-black text-white flex items-center gap-2">
-                        <Palette className="text-purple-500" /> Modelos de Design (Seed)
+                      <h3 className="text-xl font-sans font-black text-white flex items-center gap-3 uppercase tracking-tighter">
+                        <Palette className="text-amber-500" /> Biblioteca Seed
                       </h3>
-                      <p className="text-xs text-slate-500 mt-1">SQL para popular sua biblioteca com 31 estilos exclusivos.</p>
+                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">Injeção de 31 estilos Premium.</p>
                     </div>
                     <button
                       onClick={() => copyToClipboard(SEED_PROMPTS_SQL, 'seed')}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${copiedId === 'seed' ? 'bg-purple-500 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
+                      className={`flex items-center gap-2 px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${copiedId === 'seed' ? 'bg-amber-500 text-black' : 'bg-white/5 text-slate-400 hover:text-white border border-white/5'}`}
                     >
                       {copiedId === 'seed' ? <><Check size={14} /> Copiado!</> : <><Copy size={14} /> Copiar Seed SQL</>}
                     </button>
                   </div>
-                  <div className="flex-1 bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden relative">
-                    <pre className="p-6 text-xs font-mono text-slate-300 overflow-auto h-full custom-scrollbar leading-relaxed">
+                  <div className="flex-1 bg-slate-950/50 border border-white/5 overflow-hidden relative rounded-2xl">
+                    <pre className="p-6 text-[11px] font-mono text-slate-400 overflow-auto h-full custom-scrollbar leading-relaxed">
                       {SEED_PROMPTS_SQL}
                     </pre>
                   </div>
@@ -2088,50 +2072,50 @@ NUNCA gere um layout linear ou genérico. Use o Dourado para elementos de destaq
 
                 {/* Left Panel: Visual Identity */}
                 <div className="lg:col-span-4 space-y-6">
-                  <div className="bg-slate-900 rounded-[2rem] p-8 border border-slate-800 shadow-lg shadow-black/20 h-full">
-                    <h2 className="text-xl font-black text-white mb-6 flex items-center gap-3">
-                      <Palette className="text-blue-500" /> Identidade Visual
+                  <div className="bg-slate-900/50 backdrop-blur-3xl rounded-3xl p-8 border border-white/5 h-full shadow-2xl">
+                    <h2 className="text-xl font-sans font-black text-white mb-8 flex items-center gap-3 uppercase tracking-tighter">
+                      <Palette className="text-amber-500" /> Identidade Aura
                     </h2>
 
-                    <div className="space-y-6">
-                      <div className="space-y-3">
-                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Cor Primária (Azul)</label>
-                        <div className="flex items-center gap-4 bg-slate-800/50 p-3 rounded-2xl border border-slate-800">
+                    <div className="space-y-8">
+                      <div className="space-y-4">
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Primária (Main Aura)</label>
+                        <div className="flex items-center gap-4 bg-slate-950/50 p-4 border border-white/5 rounded-2xl">
                           <input
                             type="color"
                             value={brandConfig.primaryBlue}
                             onChange={(e) => setBrandConfig({ ...brandConfig, primaryBlue: e.target.value })}
-                            className="w-12 h-12 rounded-xl cursor-pointer bg-transparent border-none p-0"
+                            className="w-12 h-12 cursor-pointer bg-transparent border-none p-0 rounded-lg overflow-hidden"
                           />
                           <div className="flex-1">
                             <input
                               type="text"
                               value={brandConfig.primaryBlue}
                               onChange={(e) => setBrandConfig({ ...brandConfig, primaryBlue: e.target.value })}
-                              className="w-full bg-transparent text-white font-mono text-sm font-bold outline-none uppercase"
+                              className="w-full bg-transparent text-white font-mono text-xs font-bold outline-none uppercase"
                             />
-                            <p className="text-[10px] text-slate-500">Brand Blue</p>
+                            <p className="text-[9px] text-slate-600 font-bold mt-1 uppercase">HEX CODE</p>
                           </div>
                         </div>
                       </div>
 
-                      <div className="space-y-3">
-                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Cor Secundária (Dourado)</label>
-                        <div className="flex items-center gap-4 bg-slate-800/50 p-3 rounded-2xl border border-slate-800">
+                      <div className="space-y-4">
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Destaque (Aura Gold)</label>
+                        <div className="flex items-center gap-4 bg-slate-950/50 p-4 border border-white/5 rounded-2xl">
                           <input
                             type="color"
                             value={brandConfig.primaryGold}
                             onChange={(e) => setBrandConfig({ ...brandConfig, primaryGold: e.target.value })}
-                            className="w-12 h-12 rounded-xl cursor-pointer bg-transparent border-none p-0"
+                            className="w-12 h-12 cursor-pointer bg-transparent border-none p-0 rounded-lg overflow-hidden"
                           />
                           <div className="flex-1">
                             <input
                               type="text"
                               value={brandConfig.primaryGold}
                               onChange={(e) => setBrandConfig({ ...brandConfig, primaryGold: e.target.value })}
-                              className="w-full bg-transparent text-white font-mono text-sm font-bold outline-none uppercase"
+                              className="w-full bg-transparent text-white font-mono text-xs font-bold outline-none uppercase"
                             />
-                            <p className="text-[10px] text-slate-500">Accent Gold</p>
+                            <p className="text-[9px] text-slate-600 font-bold mt-1 uppercase">HEX CODE</p>
                           </div>
                         </div>
                       </div>
@@ -2141,43 +2125,45 @@ NUNCA gere um layout linear ou genérico. Use o Dourado para elementos de destaq
 
                 {/* Right Panel: Brand Strategy */}
                 <div className="lg:col-span-8 space-y-6">
-                  <div className="bg-slate-900 rounded-[2rem] p-8 border border-slate-800 shadow-lg shadow-black/20 h-full flex flex-col">
-                    <h2 className="text-xl font-black text-white mb-6 flex items-center gap-3">
-                      <FileText className="text-amber-500" /> Estratégia & Voz
+                  <div className="bg-slate-900/50 backdrop-blur-3xl rounded-3xl p-8 border border-white/5 h-full flex flex-col shadow-2xl">
+                    <h2 className="text-xl font-sans font-black text-white mb-8 flex items-center gap-3 uppercase tracking-tighter">
+                      <FileText className="text-amber-500" /> Estratégia Aura
                     </h2>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1">
-                      <div className="space-y-2 flex flex-col">
-                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Descrição da Marca</label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10 flex-1">
+                      <div className="space-y-4 flex flex-col">
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Descrição Sistêmica</label>
                         <textarea
                           value={brandConfig.description}
                           onChange={(e) => setBrandConfig({ ...brandConfig, description: e.target.value })}
-                          className="flex-1 w-full p-4 border border-slate-700 bg-slate-800 text-slate-300 rounded-2xl outline-none focus:ring-2 focus:ring-blue-600 placeholder:text-slate-600 resize-none text-sm leading-relaxed"
-                          placeholder="Descreva o tom de voz, valores e diretrizes da marca..."
+                          className="flex-1 w-full p-4 bg-slate-950/50 border border-white/5 text-slate-300 rounded-2xl outline-none focus:border-amber-500/50 placeholder:text-slate-700 resize-none font-sans text-xs font-bold leading-relaxed"
+                          placeholder="Defina o core business e tom de voz..."
                         />
                       </div>
 
-                      <div className="space-y-2 flex flex-col">
-                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Manual da Marca (PDF)</label>
+                      <div className="space-y-4 flex flex-col">
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Guia de Estilo (PDF)</label>
                         {!brandConfig.pdfName ? (
-                          <label className="flex-1 flex flex-col items-center justify-center w-full border-2 border-dashed border-slate-700 rounded-2xl cursor-pointer hover:bg-slate-800/50 transition-all group bg-slate-800/20">
+                          <label className="flex-1 flex flex-col items-center justify-center w-full border border-dashed border-slate-800 rounded-2xl cursor-pointer hover:bg-blue-500/5 transition-all group bg-slate-950/30">
                             <div className="flex flex-col items-center justify-center p-6 text-center">
-                              <div className="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                                <FileUp className="w-6 h-6 text-slate-500 group-hover:text-blue-400" />
+                              <div className="w-16 h-16 bg-white/5 border border-white/5 rounded-2xl flex items-center justify-center mb-4 group-hover:border-amber-500/30 transition-all">
+                                <FileUp className="w-6 h-6 text-slate-600 group-hover:text-amber-500" />
                               </div>
-                              <p className="text-sm font-bold text-slate-400 group-hover:text-white transition-colors">Upload PDF</p>
-                              <p className="text-[10px] text-slate-600 mt-1">Arraste ou clique (Max 10MB)</p>
+                              <p className="text-xs font-black text-slate-500 group-hover:text-white transition-colors uppercase">Upload Styleguide</p>
+                              <p className="text-[9px] text-slate-700 mt-2 uppercase tracking-widest font-bold">Max 10MB .PDF</p>
                             </div>
                             <input type="file" className="hidden" accept="application/pdf" onChange={handlePdfUpload} />
                           </label>
                         ) : (
-                          <div className="flex-1 flex flex-col items-center justify-center w-full bg-slate-800 border border-slate-700 rounded-2xl p-6 relative group">
-                            <FileText size={48} className="text-red-500/50 mb-4" />
-                            <p className="text-sm font-bold text-white text-center break-all px-4">{brandConfig.pdfName}</p>
-                            <p className="text-[10px] text-slate-500 uppercase font-bold mt-1">Documento Carregado</p>
+                          <div className="flex-1 flex flex-col items-center justify-center w-full bg-slate-950/50 border border-white/5 rounded-2xl p-8 relative group">
+                            <div className="w-16 h-16 bg-amber-500/10 border border-amber-500/20 rounded-2xl flex items-center justify-center mb-4">
+                              <FileText size={32} className="text-amber-500" />
+                            </div>
+                            <p className="text-xs font-bold text-white text-center break-all px-4 uppercase tracking-tighter">{brandConfig.pdfName}</p>
+                            <p className="text-[9px] text-amber-500 font-black mt-2 uppercase tracking-[0.2em]">Documento Integrado</p>
                             <button
                               onClick={removePdf}
-                              className="absolute top-4 right-4 p-2 bg-slate-700 text-slate-400 rounded-xl hover:bg-red-500 hover:text-white transition-all opacity-0 group-hover:opacity-100"
+                              className="absolute top-4 right-4 p-2 bg-white/5 rounded-xl text-slate-500 hover:bg-amber-500 hover:text-black transition-all opacity-0 group-hover:opacity-100"
                             >
                               <X size={14} />
                             </button>
@@ -2186,12 +2172,9 @@ NUNCA gere um layout linear ou genérico. Use o Dourado para elementos de destaq
                       </div>
                     </div>
 
-                    <div className="mt-8 pt-6 border-t border-slate-800 flex justify-end gap-4">
-                      <button onClick={() => setView('keys')} className="px-6 py-3 rounded-xl font-bold text-slate-400 hover:text-white hover:bg-slate-800 transition-all text-sm">
-                        Pular para API Keys
-                      </button>
-                      <button onClick={saveBranding} className="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-blue-500 shadow-lg shadow-blue-900/20 transition-all active:scale-95 text-sm">
-                        <Save size={16} /> Salvar Configurações
+                    <div className="mt-10 pt-8 border-t border-white/5 flex justify-end gap-6">
+                      <button onClick={saveBranding} className="bg-amber-500 text-black px-10 py-4 rounded-2xl font-black flex items-center gap-3 hover:bg-amber-400 transition-all uppercase tracking-widest text-xs shadow-lg shadow-amber-500/20">
+                        <Save size={18} /> Salvar Brand Config
                       </button>
                     </div>
                   </div>
@@ -2202,331 +2185,251 @@ NUNCA gere um layout linear ou genérico. Use o Dourado para elementos de destaq
 
           {/* 2. API Keys Tab */}
           {view === 'keys' && (
-            <motion.div key="keys" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="max-w-4xl mx-auto">
-              <div className="bg-slate-900 rounded-[2.5rem] p-10 border border-slate-800 shadow-lg shadow-black/20">
-                <div className="flex justify-between items-center mb-8">
+            <motion.div key="keys" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="max-w-4xl mx-auto p-1">
+              <div className="bg-slate-900/50 backdrop-blur-3xl rounded-3xl p-10 border border-white/5 shadow-2xl">
+                <div className="flex justify-between items-center mb-10 border-b border-white/5 pb-8">
                   <div>
-                    <h2 className="text-3xl font-black text-white flex items-center gap-3">
-                      <Key className="text-emerald-500" /> Chaves de API
+                    <h2 className="text-4xl font-sans font-black text-white flex items-center gap-4 tracking-tighter uppercase">
+                      <Key className="text-amber-500" size={32} /> Chaves Aura
                     </h2>
-                    <p className="text-slate-400 mt-2">Gerencie as conexões com os modelos de inteligência artificial.</p>
+                    <p className="text-slate-400 mt-2 font-bold text-xs uppercase tracking-widest">Gerencie as conexões neurais com modelos de IA.</p>
                   </div>
-                  <button onClick={saveApiKeys} className="bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-emerald-500 shadow-lg shadow-emerald-900/20 transition-all active:scale-95 text-sm">
-                    <Save size={16} /> Salvar Todas
+                  <button onClick={saveApiKeys} className="bg-amber-500 text-black px-10 py-4 rounded-2xl font-black flex items-center gap-3 hover:bg-amber-400 transition-all uppercase tracking-widest text-xs shadow-lg shadow-amber-500/20">
+                    <Save size={18} /> Validar Credenciais
                   </button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   {[
-                    { id: 'gemini', label: 'Google Gemini', icon: Sparkles, color: 'text-blue-400', bg: 'bg-blue-400/10', border: 'border-blue-400/20' },
-                    { id: 'openai', label: 'OpenAI (GPT-4)', icon: Zap, color: 'text-green-400', bg: 'bg-green-400/10', border: 'border-green-400/20' },
-                    { id: 'claude', label: 'Anthropic Claude', icon: Activity, color: 'text-amber-400', bg: 'bg-amber-400/10', border: 'border-amber-400/20' },
-                    { id: 'groq', label: 'Groq (Llama 3)', icon: Layers, color: 'text-purple-400', bg: 'bg-purple-400/10', border: 'border-purple-400/20' }
+                    { id: 'gemini', label: 'Google Gemini Pro', icon: Sparkles },
+                    { id: 'openai', label: 'OpenAI GPT-4o', icon: Zap },
+                    { id: 'claude', label: 'Anthropic Claude 3.5', icon: Activity },
+                    { id: 'groq', label: 'Groq Llama 3 (70B)', icon: Layers }
                   ].map((service) => (
-                    <div key={service.id} className={`p-6 rounded-2xl border ${service.border} bg-slate-800/30 hover:bg-slate-800/50 transition-all group`}>
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${service.bg} ${service.color}`}>
+                    <div key={service.id} className="p-6 bg-slate-950/50 border border-white/5 hover:border-blue-500/30 transition-all group relative overflow-hidden rounded-2xl shadow-xl">
+                      <div className="flex items-center gap-4 mb-4">
+                        <div className="w-10 h-10 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center text-amber-500">
                           <service.icon size={20} />
                         </div>
-                        <span className="font-bold text-slate-200">{service.label}</span>
+                        <span className="font-bold text-[10px] text-slate-300 uppercase tracking-widest leading-none">{service.label}</span>
                       </div>
                       <div className="relative">
                         <input
                           type="password"
                           value={(apiKeys as any)[service.id]}
                           onChange={(e) => setApiKeys({ ...apiKeys, [service.id]: e.target.value })}
-                          placeholder={`Cole sua chave ${service.label} aqui...`}
-                          className="w-full px-4 py-3 border border-slate-700 bg-slate-900 text-white rounded-xl font-mono text-xs outline-none focus:ring-2 focus:ring-blue-600 placeholder:text-slate-600 transition-all"
+                          placeholder={`SECRET_KEY_${service.id.toUpperCase()}`}
+                          className="w-full px-4 py-4 bg-slate-900/50 border border-white/5 text-slate-200 font-mono text-xs outline-none focus:border-amber-500/50 placeholder:text-slate-800 transition-all rounded-xl"
                         />
                         {(apiKeys as any)[service.id] && (
-                          <div className="absolute right-3 top-3 text-emerald-500">
-                            <CheckCircle2 size={16} />
+                          <div className="absolute right-4 top-1/2 -translate-y-1/2 text-amber-500">
+                            <CheckCircle2 size={14} />
                           </div>
                         )}
                       </div>
                     </div>
                   ))}
                 </div>
-
-                <div className="mt-8 flex justify-center">
-                  <button onClick={() => { setView('editor'); setEditorTab('converter'); }} className="flex items-center gap-2 text-slate-500 hover:text-white transition-colors text-sm font-bold">
-                    Ir para Conversor <ChevronRight size={16} />
-                  </button>
-                </div>
               </div>
             </motion.div>
           )}
 
-          {/* 3. Editor Tab */}
+          {/* 3. Editor Tab Aura */}
           {view === 'editor' && (
             <motion.div
               key="editor"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 top-[72px] bg-slate-950 flex flex-col overflow-hidden"
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              className="fixed inset-0 top-[72px] bg-[#020617] flex flex-col overflow-hidden"
             >
               {/* Main Workspace */}
               <div className="flex-1 flex overflow-hidden">
-                {/* Expanded Left Sidebar */}
-                <div className="w-56 bg-slate-900 border-r border-slate-800 flex flex-col shrink-0 overflow-hidden">
+                {/* Expanded Left Sidebar Aura */}
+                <div className="w-64 bg-[#020617] border-r border-white/5 flex flex-col shrink-0 overflow-hidden shadow-2xl">
                   {/* Header */}
-                  <div className="px-4 py-4 border-b border-slate-800">
-                    <p className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em]">Editor</p>
+                  <div className="px-6 py-8 border-b border-white/5">
+                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Ambiente Aura</p>
                   </div>
 
                   {/* Nav Tabs */}
-                  <div className="flex flex-col gap-1 p-3">
-                    <button
-                      onClick={() => setEditorTab('converter')}
-                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all text-left ${editorTab === 'converter' ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
-                        }`}
-                    >
-                      <ArrowRightLeft size={15} className="shrink-0" />
-                      Conversor Rápido
-                    </button>
-                    <button
-                      onClick={() => setEditorTab('content')}
-                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all text-left ${editorTab === 'content' ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
-                        }`}
-                    >
-                      <Pencil size={15} className="shrink-0" />
-                      Markdown Editor
-                    </button>
-                    <button
-                      onClick={() => setEditorTab('style')}
-                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all text-left ${editorTab === 'style' ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
-                        }`}
-                    >
-                      <Palette size={15} className="shrink-0" />
-                      Biblioteca de Estilos
-                    </button>
-                    <button
-                      onClick={() => setEditorTab('metadata')}
-                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all text-left ${editorTab === 'metadata' ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
-                        }`}
-                    >
-                      <LayoutTemplate size={15} className="shrink-0" />
-                      Metadados & SEO
-                    </button>
+                  <div className="flex flex-col p-4 space-y-2">
+                    {[
+                      { id: 'converter', label: 'Conversor Flux', icon: ArrowRightLeft },
+                      { id: 'content', label: 'Editor Markdown', icon: Pencil },
+                      { id: 'style', label: 'Arquétipos Aura', icon: Palette },
+                      { id: 'metadata', label: 'Heurística & SEO', icon: LayoutTemplate }
+                    ].map((tab) => (
+                      <button
+                        key={tab.id}
+                        onClick={() => setEditorTab(tab.id as any)}
+                        className={`flex items-center gap-4 px-5 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all text-left group ${editorTab === tab.id ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20' : 'text-slate-500 hover:text-white hover:bg-white/5'
+                          }`}
+                      >
+                        <tab.icon size={16} className={`shrink-0 ${editorTab === tab.id ? 'text-black' : 'text-slate-600 group-hover:text-amber-500 transition-colors'}`} />
+                        {tab.label}
+                      </button>
+                    ))}
                   </div>
 
                   {/* Spacer */}
                   <div className="flex-1" />
 
-                  {/* Generate Section */}
-                  <div className="border-t border-slate-800 p-4 space-y-4">
-                    <p className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
-                      <Wand2 size={10} /> Gerar Página
+                  {/* Generate Section Aura */}
+                  <div className="border-t border-white/5 p-6 space-y-6 bg-blue-500/5">
+                    <p className="text-[9px] font-black text-slate-600 uppercase tracking-[0.3em] flex items-center gap-2">
+                      <Wand2 size={12} className="text-amber-500" /> Motor de Geração
                     </p>
 
-                    {/* IA selector */}
-                    <div className="space-y-1">
-                      <label className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">IA</label>
-                      <select
-                        value={selectedApi}
-                        onChange={(e) => setSelectedApi(e.target.value as keyof ApiKeys)}
-                        className="w-full px-2.5 py-2 bg-slate-800 border border-slate-700 text-white text-xs font-bold rounded-lg outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer [&>option]:text-slate-900"
-                      >
-                        {(apiKeys.gemini || process.env.GEMINI_API_KEY) ? <option value="gemini">Google Gemini</option> : null}
-                        {apiKeys.openai ? <option value="openai">OpenAI (GPT-4o)</option> : null}
-                        {apiKeys.claude ? <option value="claude">Anthropic Claude</option> : null}
-                        {apiKeys.groq ? <option value="groq">Groq (Llama 3)</option> : null}
-                        {!apiKeys.gemini && !apiKeys.openai && !apiKeys.claude && !apiKeys.groq && !process.env.GEMINI_API_KEY && (
-                          <option value="gemini">Gemini (Padrão)</option>
-                        )}
-                      </select>
-                    </div>
+                    <div className="space-y-4">
+                      {/* IA selector */}
+                      <div className="space-y-2">
+                        <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Cérebro AI</label>
+                        <div className="relative">
+                          <select
+                            value={selectedApi}
+                            onChange={(e) => setSelectedApi(e.target.value as keyof ApiKeys)}
+                            className="w-full px-4 py-3.5 bg-slate-950/80 border border-white/10 text-slate-200 text-[10px] font-black rounded-xl outline-none focus:border-amber-500/50 cursor-pointer appearance-none uppercase tracking-widest transition-all"
+                          >
+                            {(apiKeys.gemini || (typeof process !== 'undefined' && process.env.GEMINI_API_KEY)) ? <option value="gemini">Google Gemini Pro</option> : null}
+                            {apiKeys.openai ? <option value="openai">OpenAI GPT-4o</option> : null}
+                            {apiKeys.claude ? <option value="claude">Anthropic Claude</option> : null}
+                            {apiKeys.groq ? <option value="groq">Groq Llama 3</option> : null}
+                            {!apiKeys.gemini && !apiKeys.openai && !apiKeys.claude && !apiKeys.groq && (typeof process === 'undefined' || !process.env.GEMINI_API_KEY) && (
+                              <option value="gemini">Gemini Default</option>
+                            )}
+                          </select>
+                          <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 pointer-events-none" />
+                        </div>
+                      </div>
 
-                    {/* Idioma selector */}
-                    <div className="space-y-1">
-                      <label className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Idioma</label>
-                      <select
-                        value={selectedLang}
-                        onChange={(e) => setSelectedLang(e.target.value as any)}
-                        className="w-full px-2.5 py-2 bg-slate-800 border border-slate-700 text-white text-xs font-bold rounded-lg outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer [&>option]:text-slate-900"
-                      >
-                        <option value="pt">🇧🇷 Português (BR)</option>
-                        <option value="en">🇺🇸 Inglês (US)</option>
-                        <option value="es">🇪🇸 Espanhol (ES)</option>
-                        <option value="all">🌐 Todos (3 langs)</option>
-                      </select>
-                    </div>
+                      {/* Idioma selector Aura */}
+                      <div className="space-y-2">
+                        <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Localização</label>
+                        <div className="relative">
+                          <select
+                            value={selectedLang}
+                            onChange={(e) => setSelectedLang(e.target.value as any)}
+                            className="w-full px-4 py-3.5 bg-slate-950/80 border border-white/10 text-slate-200 text-[10px] font-black rounded-xl outline-none focus:border-amber-500/50 cursor-pointer appearance-none uppercase tracking-widest transition-all"
+                          >
+                            <option value="pt">BR Português</option>
+                            <option value="en">US English</option>
+                            <option value="es">ES Spanish</option>
+                            <option value="all">🌐 Multilingual</option>
+                          </select>
+                          <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 pointer-events-none" />
+                        </div>
+                      </div>
 
-                    {/* Arquivo input(s) */}
-                    <div className="space-y-1">
-                      <label className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Arquivo</label>
-                      {selectedLang !== 'all' ? (
-                        <div className="flex items-center gap-1">
+                      {/* Identificador Aura */}
+                      <div className="space-y-2">
+                        <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Identificador Aura</label>
+                        <div className="flex items-center gap-2">
                           <input
                             type="text"
                             value={filename}
                             onChange={(e) => setFilename(e.target.value)}
-                            placeholder="nome-do-arquivo"
-                            className="flex-1 px-2.5 py-2 bg-slate-800 border border-slate-700 text-white text-xs font-mono rounded-lg outline-none focus:ring-1 focus:ring-blue-500 min-w-0"
+                            placeholder="page-id"
+                            className="flex-1 px-4 py-3.5 bg-slate-950/80 border border-white/10 text-slate-200 text-[10px] font-mono rounded-xl outline-none focus:border-amber-500/50 min-w-0 transition-all font-bold"
                           />
-                          <span className="text-slate-500 text-[10px] font-mono shrink-0">.html</span>
+                          <span className="text-slate-600 text-[9px] font-black uppercase">.html</span>
                         </div>
-                      ) : (
-                        <div className="space-y-1.5">
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-[9px] font-black text-blue-400 w-5 shrink-0">PT</span>
-                            <input
-                              type="text"
-                              value={filename}
-                              onChange={(e) => setFilename(e.target.value)}
-                              placeholder="minha-pagina"
-                              className="flex-1 px-2 py-1.5 bg-slate-800 border border-slate-700 text-white text-[10px] font-mono rounded-lg outline-none focus:ring-1 focus:ring-blue-500 min-w-0"
-                            />
-                          </div>
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-[9px] font-black text-emerald-400 w-5 shrink-0">EN</span>
-                            <input
-                              type="text"
-                              value={filenameEn}
-                              onChange={(e) => setFilenameEn(e.target.value)}
-                              placeholder="my-page"
-                              className="flex-1 px-2 py-1.5 bg-slate-800 border border-slate-700 text-white text-[10px] font-mono rounded-lg outline-none focus:ring-1 focus:ring-emerald-500 min-w-0"
-                            />
-                          </div>
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-[9px] font-black text-purple-400 w-5 shrink-0">ES</span>
-                            <input
-                              type="text"
-                              value={filenameEs}
-                              onChange={(e) => setFilenameEs(e.target.value)}
-                              placeholder="mi-pagina"
-                              className="flex-1 px-2 py-1.5 bg-slate-800 border border-slate-700 text-white text-[10px] font-mono rounded-lg outline-none focus:ring-1 focus:ring-purple-500 min-w-0"
-                            />
-                          </div>
-                          <span className="text-slate-500 text-[9px] font-mono">.html cada</span>
-                        </div>
-                      )}
+                        {/* Final Action button Aura */}
+                        <button
+                          onClick={generatePage}
+                          disabled={!markdownText.trim() || !filename.trim()}
+                          className={`w-full py-5 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] flex items-center justify-center gap-4 transition-all shadow-xl active:scale-[0.98] ${!markdownText.trim() || !filename.trim()
+                            ? 'bg-slate-900 text-slate-700 cursor-not-allowed border border-white/5 opacity-50'
+                            : 'bg-amber-500 text-black hover:bg-amber-400 shadow-amber-500/20'
+                            }`}
+                        >
+                          <Flame size={18} fill="currentColor" /> Transmutar Interface
+                        </button>
+                      </div>
                     </div>
-
-                    {/* Generate button */}
-                    <button
-                      onClick={generatePage}
-                      disabled={!markdownText.trim() || !filename.trim() || (selectedLang === 'all' && (!filenameEn.trim() || !filenameEs.trim()))}
-                      className={`w-full py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all shadow-lg active:scale-95 ${
-                        !markdownText.trim() 
-                        ? 'bg-slate-800 text-slate-600 cursor-not-allowed border border-slate-700 shadow-none' 
-                        : 'bg-blue-600 text-white hover:bg-blue-500 shadow-blue-900/20'
-                      }`}
-                    >
-                      <Wand2 size={13} /> Gerar Página Interativa
-                    </button>
-                    {!markdownText.trim() && (
-                      <p className="text-[8px] text-slate-600 text-center mt-2 italic">
-                        Converta ou escreva conteúdo para habilitar a geração.
-                      </p>
-                    )}
                   </div>
                 </div>
 
-                {/* Content Area */}
-                <div className="flex-1 overflow-hidden relative bg-slate-950">
+                <div className="flex-1 overflow-hidden relative bg-[#020617]">
                   {editorTab === 'converter' ? (
                     <div className="h-full flex flex-col overflow-hidden">
-                      <div className="h-10 bg-slate-900/50 flex items-center px-4 justify-between border-b border-slate-800">
-                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Conversor Rápido</span>
+                      <div className="h-16 bg-slate-950/80 flex items-center px-8 justify-between border-b border-white/5 backdrop-blur-3xl">
+                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Célula de Transmutação Aura</span>
                         <button
                           onClick={convertToMarkdown}
                           disabled={!rawText.trim()}
-                          className="text-[10px] font-black text-purple-400 hover:text-purple-300 flex items-center gap-1 uppercase tracking-widest disabled:opacity-30"
+                          className="text-[10px] font-black text-amber-500 hover:text-amber-400 flex items-center gap-3 uppercase tracking-[0.3em] disabled:opacity-20 transition-all"
                         >
-                          <Sparkles size={12} /> Converter Agora
+                          <Sparkles size={16} className="text-amber-500" /> Executar Síntese
                         </button>
                       </div>
 
-                      <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-slate-800">
-                        {/* Input */}
-                        <div className="flex flex-col p-6 group">
-                          <div className="flex justify-between items-center mb-4">
-                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                              <FileText size={14} /> Entrada de Texto
+                      <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-white/5">
+                        {/* Input Aura */}
+                        <div className="flex flex-col p-8 bg-blue-500/5">
+                          <div className="flex justify-between items-center mb-6">
+                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] flex items-center gap-3">
+                              <FileText size={18} className="text-amber-500" /> Fluxo Bruto
                             </label>
-                            <div className="flex items-center gap-4">
-                              <span className="text-[9px] font-mono text-slate-600">{rawText.length} caracteres</span>
-                              {rawText && (
-                                <button onClick={() => setRawText('')} className="text-[10px] font-bold text-slate-500 hover:text-white transition-colors">Limpar</button>
-                              )}
-                            </div>
+                            <span className="text-[10px] font-mono text-slate-700 uppercase tracking-widest">{rawText.length} Bytes</span>
                           </div>
-                          <div className="flex-1 relative">
+                          <div className="flex-1 relative group">
                             <textarea
                               value={rawText}
                               onChange={(e) => setRawText(e.target.value)}
-                              placeholder="Cole aqui suas anotações, e-mails ou rascunhos para converter em Markdown..."
-                              className="w-full h-full p-6 bg-slate-900/30 text-slate-200 rounded-2xl outline-none border border-slate-800 focus:border-purple-500/50 font-mono text-sm resize-none leading-relaxed custom-scrollbar transition-all group-hover:bg-slate-900/50"
+                              placeholder="Insira dados brutos para processamento..."
+                              className="w-full h-full p-8 bg-[#020617]/50 border border-white/5 text-slate-300 rounded-2xl outline-none focus:border-amber-500/30 font-mono text-xs resize-none leading-loose custom-scrollbar transition-all backdrop-blur-3xl"
                             />
                             {!rawText && (
                               <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20">
                                 <div className="text-center">
-                                  <Download size={48} className="mx-auto mb-2 text-slate-400" />
-                                  <p className="text-xs font-bold uppercase tracking-widest">Arraste arquivos ou cole texto</p>
+                                  <Download size={64} className="mx-auto mb-4 text-slate-600" />
+                                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600">Buffer_Aura_Vazio</p>
                                 </div>
                               </div>
                             )}
                           </div>
                         </div>
 
-                        {/* Info / Action Panel */}
-                        <div className="flex flex-col p-8 bg-slate-900/10 items-center justify-center text-center relative overflow-hidden">
-                          {/* Animated Background Element */}
-                          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-purple-600/5 blur-[100px] rounded-full" />
-                          
+                        {/* Status Panel Aura */}
+                        <div className="flex flex-col p-12 items-center justify-center text-center relative overflow-hidden bg-[#020617]">
+                          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-500/5 blur-[120px] rounded-full" />
+
                           <div className="relative z-10 max-w-sm">
                             {!rawText.trim() ? (
-                              <>
-                                <div className="w-20 h-20 bg-slate-900 rounded-3xl flex items-center justify-center mb-6 shadow-xl border border-slate-800 mx-auto">
-                                  <ArrowRightLeft size={32} className="text-slate-600" />
-                                </div>
-                                <h4 className="text-lg font-black text-white mb-2">Aguardando Conteúdo</h4>
-                                <p className="text-slate-500 text-sm mb-8">
-                                  Insira seu texto bruto à esquerda para que possamos estruturá-lo com inteligência artificial.
-                                </p>
-                                <div className="flex justify-center gap-2">
-                                  <span className="px-3 py-1 rounded-lg bg-slate-900 text-slate-500 text-[10px] font-bold uppercase tracking-widest border border-slate-800">Estruturação</span>
-                                  <span className="px-3 py-1 rounded-lg bg-slate-900 text-slate-500 text-[10px] font-bold uppercase tracking-widest border border-slate-800">Limpeza</span>
-                                </div>
-                              </>
-                            ) : (
-                              <motion.div
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                className="space-y-6"
-                              >
-                                <div className="w-24 h-24 bg-purple-600/10 rounded-[2rem] flex items-center justify-center mb-6 shadow-2xl shadow-purple-900/20 border border-purple-500/30 mx-auto">
-                                  <Sparkles size={40} className="text-purple-400 animate-pulse" />
+                              <div className="space-y-8">
+                                <div className="w-24 h-24 rounded-3xl bg-slate-900 border border-white/5 flex items-center justify-center mx-auto shadow-2xl transition-transform hover:scale-110">
+                                  <ArrowRightLeft size={40} className="text-slate-600" />
                                 </div>
                                 <div>
-                                  <h4 className="text-xl font-black text-white mb-2">Conteúdo Detectado</h4>
-                                  <p className="text-slate-400 text-sm mb-8">
-                                    Estamos prontos para transformar suas anotações em um Markdown profissional e estruturado.
+                                  <h4 className="text-xl font-black text-white mb-4 uppercase tracking-tighter">Espera Aura</h4>
+                                  <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest leading-relaxed">
+                                    O motor está pronto para receber conteúdo. Otimize seu fluxo de trabalho através da automação inteligente.
                                   </p>
                                 </div>
-                                
+                                <div className="flex justify-center gap-3">
+                                  <div className="px-5 py-2 rounded-lg bg-slate-900 border border-white/5 text-slate-600 text-[9px] font-black uppercase tracking-widest">Aura_Active</div>
+                                  <div className="px-5 py-2 rounded-lg bg-slate-900 border border-white/5 text-slate-600 text-[9px] font-black uppercase tracking-widest">V.2026</div>
+                                </div>
+                              </div>
+                            ) : (
+                              <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center space-y-8 max-w-sm">
+                                <div className="w-28 h-28 rounded-3xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto transition-all shadow-2xl">
+                                  <Sparkles size={48} className="text-amber-500 animate-pulse" />
+                                </div>
+                                <div>
+                                  <h4 className="text-2xl font-black text-white mb-4 uppercase tracking-tighter">DNA_Mapeado</h4>
+                                  <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest leading-relaxed">
+                                    Conteúdo identificado. A estrutura Aura está pronta para a transmutação em formato Markdown Elite.
+                                  </p>
+                                </div>
+
                                 <button
                                   onClick={convertToMarkdown}
-                                  className="w-full bg-purple-600 hover:bg-purple-500 text-white py-5 rounded-2xl font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-purple-900/40 transition-all active:scale-95 flex items-center justify-center gap-3 group"
+                                  className="w-full bg-amber-500 hover:bg-amber-400 text-black py-6 rounded-2xl font-black text-xs uppercase tracking-[0.3em] transition-all flex items-center justify-center gap-4 shadow-lg shadow-amber-500/20 active:scale-[0.98]"
                                 >
-                                  <Wand2 size={20} className="group-hover:rotate-12 transition-transform" />
-                                  Converter Agora
+                                  <Wand2 size={24} /> Transmutar
                                 </button>
-                                
-                                <div className="pt-6 grid grid-cols-2 gap-4">
-                                  <div className="p-4 bg-slate-900/50 rounded-2xl border border-slate-800">
-                                    <p className="text-[10px] font-black text-slate-500 uppercase mb-1">Estimativa</p>
-                                    <p className="text-lg font-black text-white">~{Math.ceil(rawText.length / 4)}</p>
-                                    <p className="text-[8px] text-slate-600 uppercase">Tokens</p>
-                                  </div>
-                                  <div className="p-4 bg-slate-900/50 rounded-2xl border border-slate-800">
-                                    <p className="text-[10px] font-black text-slate-500 uppercase mb-1">Qualidade</p>
-                                    <p className="text-lg font-black text-purple-400">Alta</p>
-                                    <p className="text-[8px] text-slate-600 uppercase">GPT-4o / Gemini</p>
-                                  </div>
-                                </div>
                               </motion.div>
                             )}
                           </div>
@@ -2534,94 +2437,95 @@ NUNCA gere um layout linear ou genérico. Use o Dourado para elementos de destaq
                       </div>
                     </div>
                   ) : editorTab === 'content' ? (
-                    <div className="flex h-full divide-x divide-slate-800">
-                      {/* Editor Pane */}
+                    <div className="flex h-full divide-x divide-white/5 bg-[#020617]">
+                      {/* Editor Pane Aura */}
                       <div className="flex-1 flex flex-col min-w-0">
-                        <div className="h-10 bg-slate-900/50 flex items-center px-4 justify-between border-b border-slate-800">
-                          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Markdown Editor</span>
-                          <div className="flex items-center gap-2">
-                            <button onClick={() => setMarkdownText('')} className="text-[10px] font-bold text-slate-500 hover:text-red-400 transition-colors">Limpar</button>
-                          </div>
+                        <div className="h-16 bg-slate-950/80 flex items-center px-8 justify-between border-b border-white/5 backdrop-blur-3xl">
+                          <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Editor de Manuscrito Aura</span>
+                          <button onClick={() => setMarkdownText('')} className="text-[10px] font-black text-slate-600 hover:text-amber-500 transition-colors uppercase tracking-widest">Limpar_Buffer</button>
                         </div>
                         <textarea
                           value={markdownText}
                           onChange={(e) => setMarkdownText(e.target.value)}
-                          placeholder="# Comece a escrever seu conteúdo aqui..."
-                          className="flex-1 w-full p-8 bg-transparent text-slate-200 outline-none font-mono text-sm resize-none leading-relaxed custom-scrollbar"
+                          placeholder="# Arquitetura_de_Dados..."
+                          className="flex-1 w-full p-10 bg-transparent text-slate-300 outline-none font-mono text-xs resize-none leading-loose custom-scrollbar selection:bg-amber-500/30"
                         />
                       </div>
 
                       {/* Preview Pane */}
-                      <div className="flex-1 flex flex-col min-w-0 bg-slate-900/20">
-                        <div className="h-10 bg-slate-900/50 flex items-center px-4 justify-between border-b border-slate-800">
-                          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Live Preview</span>
+                      <div className="flex-1 flex flex-col min-w-0 bg-black/40">
+                        <div className="h-14 bg-stone-950/80 flex items-center px-6 justify-between border-b border-white/5 backdrop-blur-md">
+                          <span className="text-[10px] font-bold text-stone-500 uppercase tracking-[0.3em] font-mono">Renderização Heurística</span>
                         </div>
-                        <div className="flex-1 p-8 overflow-y-auto custom-scrollbar prose prose-invert prose-slate prose-sm max-w-none">
+                        <div className="flex-1 p-8 overflow-y-auto custom-scrollbar prose prose-invert prose-stone prose-xs max-w-none font-sans bg-[radial-gradient(circle_at_top_right,rgba(202,138,4,0.02),transparent)]">
                           <ReactMarkdown>{markdownText}</ReactMarkdown>
                         </div>
                       </div>
                     </div>
                   ) : editorTab === 'style' ? (
-                    <div className="h-full flex divide-x divide-slate-800">
-                      {/* Style Settings Pane */}
-                      <div className="w-96 flex flex-col shrink-0 bg-slate-900/30">
-                        <div className="h-10 bg-slate-900/50 flex items-center px-4 border-b border-slate-800">
-                          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Biblioteca de Estilos</span>
+                    <div className="h-full flex divide-x divide-white/5 bg-[#020617]">
+                      {/* Style Settings Pane Aura */}
+                      <div className="w-96 flex flex-col shrink-0 bg-blue-500/5">
+                        <div className="h-16 bg-slate-950/80 flex items-center px-8 border-b border-white/5 backdrop-blur-3xl">
+                          <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Arquétipos Aura (Design DNA)</span>
                         </div>
-                        <div className="p-6 space-y-8 overflow-y-auto custom-scrollbar">
-                          <div>
-                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 block">Selecionar Template Visual</label>
-                            <select
-                              value={selectedPromptId}
-                              onChange={(e) => {
-                                const id = e.target.value;
-                                setSelectedPromptId(id);
-                                const prompt = promptLibrary.find(p => p.id === id);
-                                if (prompt) {
-                                  setBrandConfig({ ...brandConfig, systemPrompt: prompt.content });
-                                }
-                              }}
-                              className="w-full px-4 py-3 border border-slate-700 bg-slate-800 text-white rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer appearance-none"
-                            >
-                              <option value="">Selecione um estilo...</option>
-                              {promptLibrary.map(p => (
-                                <option key={p.id} value={p.id}>{p.title}</option>
-                              ))}
-                            </select>
+                        <div className="p-10 space-y-10 overflow-y-auto custom-scrollbar">
+                          <div className="space-y-4">
+                            <label className="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] block">Assinatura Visual IA</label>
+                            <div className="relative">
+                              <select
+                                value={selectedPromptId}
+                                onChange={(e) => {
+                                  const id = e.target.value;
+                                  setSelectedPromptId(id);
+                                  const prompt = promptLibrary.find(p => p.id === id);
+                                  if (prompt) {
+                                    setBrandConfig({ ...brandConfig, systemPrompt: prompt.content });
+                                  }
+                                }}
+                                className="w-full px-5 py-4 bg-slate-950 border border-white/10 text-slate-200 rounded-2xl text-[10px] outline-none focus:border-amber-500/50 cursor-pointer appearance-none uppercase tracking-widest font-black transition-all"
+                              >
+                                <option value="">SELECIONAR ARQUÉTIPO...</option>
+                                {promptLibrary.map(p => (
+                                  <option key={p.id} value={p.id}>{p.title}</option>
+                                ))}
+                              </select>
+                              <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-600 pointer-events-none" />
+                            </div>
+                            <p className="text-[9px] text-slate-600 font-black leading-relaxed uppercase tracking-tighter">
+                              * Define o tom de voz e a sofisticação da interface gerada.
+                            </p>
                           </div>
 
-                          {/* Style Preview Component */}
-                          <div className="space-y-3">
-                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Preview do Estilo Aplicado</label>
-                            <div className="aspect-video w-full rounded-2xl overflow-hidden border border-slate-800 shadow-2xl shadow-black/40">
+                          {/* Style Preview Component Aura */}
+                          <div className="space-y-4">
+                            <label className="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] block">Telemetria Visual Aura</label>
+                            <div className="aspect-video w-full rounded-2xl overflow-hidden border border-white/5 shadow-2xl relative group bg-slate-950">
                               <StylePreview
-                                styleTitle={promptLibrary.find(p => p.id === selectedPromptId)?.title || 'Branding Padrão'}
+                                styleTitle={promptLibrary.find(p => p.id === selectedPromptId)?.title || 'Aura Base'}
                                 brandConfig={{
                                   primaryBlue: brandConfig.primaryBlue,
                                   primaryGold: brandConfig.primaryGold
                                 }}
                               />
                             </div>
-                            <p className="text-[10px] text-slate-500 leading-relaxed italic">
-                              * Este é um componente modelo demonstrando como o estilo visual será interpretado pela IA.
-                            </p>
                           </div>
 
-                          <div className="pt-6 border-t border-slate-800">
-                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 block">Cores da Marca</label>
-                            <div className="grid grid-cols-2 gap-4">
-                              <div className="space-y-2">
-                                <span className="text-[10px] text-slate-500">Primária</span>
-                                <div className="flex items-center gap-2">
-                                  <div className="w-8 h-8 rounded-lg border border-slate-700" style={{ backgroundColor: brandConfig.primaryBlue }} />
-                                  <span className="text-[10px] font-mono text-slate-400 uppercase">{brandConfig.primaryBlue}</span>
+                          <div className="pt-8 border-t border-white/5 space-y-6">
+                            <label className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em] block">Matrizes Cromáticas Aura</label>
+                            <div className="grid grid-cols-2 gap-6">
+                              <div className="space-y-3">
+                                <span className="text-[10px] text-slate-700 font-bold uppercase tracking-widest">Base_Navy</span>
+                                <div className="flex items-center gap-3">
+                                  <div className="w-10 h-10 rounded-xl border border-white/10 shadow-lg" style={{ backgroundColor: brandConfig.primaryBlue }} />
+                                  <span className="text-[10px] font-mono text-slate-500 uppercase tracking-tighter font-black">{brandConfig.primaryBlue}</span>
                                 </div>
                               </div>
-                              <div className="space-y-2">
-                                <span className="text-[10px] text-slate-500">Destaque</span>
-                                <div className="flex items-center gap-2">
-                                  <div className="w-8 h-8 rounded-lg border border-slate-700" style={{ backgroundColor: brandConfig.primaryGold }} />
-                                  <span className="text-[10px] font-mono text-slate-400 uppercase">{brandConfig.primaryGold}</span>
+                              <div className="space-y-3">
+                                <span className="text-[10px] text-slate-700 font-bold uppercase tracking-widest">Aura_Gold</span>
+                                <div className="flex items-center gap-3">
+                                  <div className="w-10 h-10 rounded-xl border border-white/10 shadow-lg" style={{ backgroundColor: brandConfig.primaryGold }} />
+                                  <span className="text-[10px] font-mono text-slate-500 uppercase tracking-tighter font-black">{brandConfig.primaryGold}</span>
                                 </div>
                               </div>
                             </div>
@@ -2629,81 +2533,88 @@ NUNCA gere um layout linear ou genérico. Use o Dourado para elementos de destaq
 
                           <button
                             onClick={seedPromptLibrary}
-                            className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest border border-slate-700 transition-all flex items-center justify-center gap-2"
+                            className="w-full py-4 bg-white/5 border border-white/5 text-slate-500 hover:text-amber-500 rounded-2xl text-[9px] font-black uppercase tracking-[0.3em] transition-all flex items-center justify-center gap-3 shadow-sm"
                           >
-                            <Download size={12} /> Importar Padrões
+                            <Download size={14} /> Importar Padrões Aura
                           </button>
                         </div>
                       </div>
 
-                      {/* Prompt Editor Pane */}
-                      <div className="flex-1 flex flex-col min-w-0 bg-slate-900/10">
-                        <div className="h-10 bg-slate-900/50 flex items-center px-4 justify-between border-b border-slate-800">
-                          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">System Prompt (Direção de Arte)</span>
+                      {/* Prompt Editor / System Info Aura */}
+                      <div className="flex-1 flex flex-col bg-[#020617]">
+                        <div className="h-16 bg-slate-950/80 flex items-center px-8 justify-between border-b border-white/5 backdrop-blur-3xl">
+                          <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Cérebro Aura (System Prompt)</span>
                           <button
                             onClick={savePromptToLibrary}
-                            className="text-[10px] font-black text-blue-400 hover:text-blue-300 flex items-center gap-1 uppercase tracking-widest"
+                            className="text-[10px] font-black text-amber-500 hover:text-amber-400 flex items-center gap-3 uppercase tracking-[0.3em] disabled:opacity-20 transition-all font-sans"
                           >
-                            <Plus size={12} /> Salvar na Biblioteca
+                            <Save size={16} className="text-amber-500" /> Commit_to_Buffer
                           </button>
                         </div>
-                        <textarea
-                          value={brandConfig.systemPrompt}
-                          onChange={(e) => setBrandConfig({ ...brandConfig, systemPrompt: e.target.value })}
-                          className="flex-1 w-full p-8 bg-transparent text-slate-300 outline-none font-mono text-xs resize-none leading-relaxed custom-scrollbar"
-                        />
+                        <div className="flex-1 p-8 relative">
+                          <textarea
+                            value={brandConfig.systemPrompt}
+                            onChange={(e) => setBrandConfig({ ...brandConfig, systemPrompt: e.target.value })}
+                            className="w-full h-full p-8 bg-slate-950/50 border border-white/5 text-slate-400 font-mono text-[11px] leading-relaxed resize-none outline-none focus:border-amber-500/30 custom-scrollbar selection:bg-amber-500/20 rounded-2xl shadow-inner shadow-black/50"
+                            placeholder="Defina as diretrizes lógicas para a criação das interfaces Aura..."
+                          />
+                        </div>
                       </div>
                     </div>
-                  ) : editorTab === 'metadata' ? (
-                    <div className="h-full flex flex-col overflow-hidden">
-                      <div className="h-10 bg-slate-900/50 flex items-center px-4 justify-between border-b border-slate-800">
-                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Sugestões de Metadados & SEO</span>
+                  ) : (
+                    <div className="h-full flex flex-col bg-stone-950 overflow-hidden relative">
+                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(202,138,4,0.03),transparent)] pointer-events-none" />
+
+                      <div className="h-16 bg-slate-950/80 flex items-center px-8 justify-between border-b border-white/5 backdrop-blur-3xl shrink-0">
+                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Heurística Aura (SEO & Metadata)</span>
                         <button
                           onClick={generateMetadataSuggestions}
-                          className="text-[10px] font-black text-blue-400 hover:text-blue-300 flex items-center gap-1 uppercase tracking-widest"
+                          className="text-[10px] font-black text-amber-500 hover:text-amber-400 flex items-center gap-3 uppercase tracking-[0.3em] font-sans transition-all"
                         >
-                          <Wand2 size={12} /> Atualizar IA
+                          <Sparkles size={16} /> Computar Sugestões_Aura
                         </button>
                       </div>
 
-                      <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
+                      <div className="flex-1 overflow-y-auto p-12 custom-scrollbar">
                         <div className="max-w-4xl mx-auto">
                           {!suggestedMetadata ? (
-                            <div className="bg-slate-900/50 border border-dashed border-slate-800 rounded-[2rem] p-16 text-center">
-                              <div className="w-20 h-20 bg-slate-800 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                            <div className="max-w-md mx-auto text-center py-20 space-y-10">
+                              <div className="w-24 h-24 rounded-3xl bg-slate-900 border border-white/5 flex items-center justify-center mx-auto shadow-2xl transition-transform hover:scale-110">
                                 <LayoutTemplate size={40} className="text-slate-600" />
                               </div>
-                              <h4 className="text-xl font-black text-white mb-2">Nenhuma sugestão gerada</h4>
-                              <p className="text-slate-500 text-sm max-w-xs mx-auto mb-8">Nossa IA pode analisar seu conteúdo e sugerir os melhores textos para SEO.</p>
+                              <h4 className="text-xl font-black text-white mb-4 uppercase tracking-tighter">Espera Estrutural Aura</h4>
+                              <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] max-w-xs mx-auto mb-10 leading-relaxed">
+                                A IA aguarda análise estrutural para definir os padrões de visibilidade e SEO.
+                              </p>
                               <button
                                 onClick={generateMetadataSuggestions}
-                                className="bg-blue-600 text-white px-8 py-3 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-blue-500 transition-all"
+                                className="bg-amber-500 text-black px-12 py-5 rounded-2xl font-black uppercase tracking-[0.3em] text-[10px] hover:bg-amber-400 transition-all shadow-lg shadow-amber-500/20 active:scale-[0.98]"
                               >
-                                Gerar Sugestões Agora
+                                Computar Sugestões_Aura
                               </button>
                             </div>
                           ) : (
-                            <div className="space-y-8">
-                              {/* Language Switcher */}
-                              <div className="flex gap-2 p-1 bg-slate-900 border border-slate-800 rounded-2xl w-fit">
+                            <div className="space-y-12">
+                              {/* Language Switcher Aura */}
+                              <div className="flex gap-4 p-2 bg-slate-900/50 border border-white/5 rounded-2xl w-fit mx-auto backdrop-blur-3xl">
                                 {(['pt', 'en', 'es'] as const).map(lang => (
                                   <button
                                     key={lang}
                                     onClick={() => setMetadataLang(lang)}
-                                    className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${metadataLang === lang ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-slate-500 hover:text-slate-300'}`}
+                                    className={`px-8 py-3 rounded-xl text-[9px] font-black uppercase tracking-[0.3em] transition-all ${metadataLang === lang ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20' : 'text-slate-500 hover:text-white hover:bg-white/5'}`}
                                   >
                                     {lang === 'pt' ? 'Português' : lang === 'en' ? 'English' : 'Español'}
                                   </button>
                                 ))}
                               </div>
 
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-6">
-                                  <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8">
-                                    <div className="flex justify-between items-center mb-4">
-                                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Título da Página</label>
-                                      <button onClick={() => copyToClipboard(suggestedMetadata[metadataLang].title, 'meta-title')} className="text-slate-500 hover:text-white transition-colors">
-                                        {copiedId === 'meta-title' ? <Check size={16} className="text-emerald-500" /> : <Copy size={16} />}
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div className="space-y-8">
+                                  <div className="bg-slate-900/50 border border-white/5 rounded-2xl p-8 relative backdrop-blur-3xl">
+                                    <div className="flex justify-between items-center mb-6">
+                                      <label className="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em]">Protocolo_Título</label>
+                                      <button onClick={() => copyToClipboard(suggestedMetadata[metadataLang].title, 'meta-title')} className="text-slate-600 hover:text-amber-500 transition-colors">
+                                        {copiedId === 'meta-title' ? <Check size={16} className="text-amber-500" /> : <Copy size={16} />}
                                       </button>
                                     </div>
                                     <input
@@ -2714,22 +2625,22 @@ NUNCA gere um layout linear ou genérico. Use o Dourado para elementos de destaq
                                         newMeta[metadataLang].title = e.target.value;
                                         setSuggestedMetadata(newMeta);
                                       }}
-                                      className="w-full bg-transparent border-b border-slate-800 focus:border-blue-500 outline-none text-xl font-black text-white leading-tight pb-2"
+                                      className="w-full bg-transparent border-b border-white/10 focus:border-amber-500/50 outline-none text-xl font-black text-slate-200 tracking-tight pb-4 transition-all"
                                     />
                                   </div>
 
-                                  <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8">
-                                    <div className="flex justify-between items-center mb-4">
-                                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Nome do Arquivo (Slug)</label>
-                                      <div className="flex items-center gap-4">
+                                  <div className="bg-slate-900/50 border border-white/5 rounded-2xl p-8 backdrop-blur-3xl">
+                                    <div className="flex justify-between items-center mb-6">
+                                      <label className="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em]">Aura_ID (Slug)</label>
+                                      <div className="flex items-center gap-6">
                                         <button
                                           onClick={() => setFilename(suggestedMetadata[metadataLang].filename)}
-                                          className="text-[10px] font-black text-blue-400 hover:text-blue-300 uppercase tracking-widest"
+                                          className="text-[9px] font-black text-amber-500 hover:text-amber-400 uppercase tracking-[0.3em]"
                                         >
-                                          Aplicar ao Gerador
+                                          Aplicar_Ao_Motor
                                         </button>
-                                        <button onClick={() => copyToClipboard(suggestedMetadata[metadataLang].filename, 'meta-file')} className="text-slate-500 hover:text-white transition-colors">
-                                          {copiedId === 'meta-file' ? <Check size={16} className="text-emerald-500" /> : <Copy size={16} />}
+                                        <button onClick={() => copyToClipboard(suggestedMetadata[metadataLang].filename, 'meta-file')} className="text-slate-600 hover:text-amber-500 transition-colors">
+                                          {copiedId === 'meta-file' ? <Check size={16} className="text-amber-500" /> : <Copy size={16} />}
                                         </button>
                                       </div>
                                     </div>
@@ -2741,17 +2652,17 @@ NUNCA gere um layout linear ou genérico. Use o Dourado para elementos de destaq
                                         newMeta[metadataLang].filename = e.target.value;
                                         setSuggestedMetadata(newMeta);
                                       }}
-                                      className="w-full bg-transparent border-b border-slate-800 focus:border-blue-500 outline-none text-blue-400 font-mono text-sm pb-2"
+                                      className="w-full bg-transparent border-b border-white/10 focus:border-amber-500/50 outline-none text-amber-500 font-mono text-[10px] font-black pb-4"
                                     />
                                   </div>
                                 </div>
 
-                                <div className="space-y-6">
-                                  <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8">
-                                    <div className="flex justify-between items-center mb-4">
-                                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Meta Descrição</label>
-                                      <button onClick={() => copyToClipboard(suggestedMetadata[metadataLang].description, 'meta-desc')} className="text-slate-500 hover:text-white transition-colors">
-                                        {copiedId === 'meta-desc' ? <Check size={16} className="text-emerald-500" /> : <Copy size={16} />}
+                                <div className="space-y-8">
+                                  <div className="bg-slate-900/50 border border-white/5 rounded-2xl p-8 h-full flex flex-col backdrop-blur-3xl">
+                                    <div className="flex justify-between items-center mb-6">
+                                      <label className="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em]">Heurística_Aura</label>
+                                      <button onClick={() => copyToClipboard(suggestedMetadata[metadataLang].description, 'meta-desc')} className="text-slate-600 hover:text-amber-500 transition-colors">
+                                        {copiedId === 'meta-desc' ? <Check size={16} className="text-amber-500" /> : <Copy size={16} />}
                                       </button>
                                     </div>
                                     <textarea
@@ -2761,21 +2672,7 @@ NUNCA gere um layout linear ou genérico. Use o Dourado para elementos de destaq
                                         newMeta[metadataLang].description = e.target.value;
                                         setSuggestedMetadata(newMeta);
                                       }}
-                                      className="w-full bg-transparent border-b border-slate-800 focus:border-blue-500 outline-none text-slate-400 text-sm leading-relaxed resize-none h-24"
-                                    />
-                                  </div>
-
-                                  <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8">
-                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 block">Tags (separadas por vírgula)</label>
-                                    <input
-                                      type="text"
-                                      value={suggestedMetadata[metadataLang].tags.join(', ')}
-                                      onChange={(e) => {
-                                        const newMeta = { ...suggestedMetadata };
-                                        newMeta[metadataLang].tags = e.target.value.split(',').map(t => t.trim());
-                                        setSuggestedMetadata(newMeta);
-                                      }}
-                                      className="w-full bg-transparent border-b border-slate-800 focus:border-blue-500 outline-none text-slate-400 text-[10px] font-bold pb-2"
+                                      className="flex-1 w-full bg-transparent border border-white/5 p-6 rounded-xl focus:border-amber-500/30 outline-none text-slate-400 text-xs leading-relaxed resize-none custom-scrollbar transition-all"
                                     />
                                   </div>
                                 </div>
@@ -2785,7 +2682,7 @@ NUNCA gere um layout linear ou genérico. Use o Dourado para elementos de destaq
                         </div>
                       </div>
                     </div>
-                  ) : null}
+                  )}
                 </div>
               </div>
             </motion.div>
@@ -2793,66 +2690,67 @@ NUNCA gere um layout linear ou genérico. Use o Dourado para elementos de destaq
 
           {/* 5. Preview Tab */}
           {view === 'preview' && (
-            <motion.div key="preview" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="h-[calc(100vh-200px)] min-h-[600px] flex flex-col">
+            <motion.div key="preview" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.98 }} className="h-[calc(100vh-220px)] min-h-[600px] flex flex-col bg-stone-950 border border-white/5 relative">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(202,138,4,0.02),transparent)] pointer-events-none" />
               {generatedHtml ? (
-                <div className="bg-slate-900 rounded-[2rem] border border-slate-800 shadow-2xl shadow-black/40 flex flex-col h-full overflow-hidden">
-                  {/* Browser Toolbar */}
-                  <div className="bg-slate-900 px-6 py-4 border-b border-slate-800 flex items-center gap-4">
-                    <div className="flex gap-2">
-                      <div className="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/50" />
-                      <div className="w-3 h-3 rounded-full bg-amber-500/20 border border-amber-500/50" />
-                      <div className="w-3 h-3 rounded-full bg-green-500/20 border border-green-500/50" />
+                <div className="flex flex-col h-full overflow-hidden relative z-10">
+                  {/* Browser Toolbar Aura */}
+                  <div className="bg-slate-950/90 px-8 py-5 border-b border-white/5 flex items-center gap-8 backdrop-blur-3xl">
+                    <div className="flex gap-3">
+                      <div className="w-3 h-3 rounded-full bg-slate-800 border border-white/5" />
+                      <div className="w-3 h-3 rounded-full bg-slate-800 border border-white/5" />
+                      <div className="w-3 h-3 rounded-full bg-slate-800 border border-white/5" />
                     </div>
 
-                    <div className="flex-1 bg-slate-800 rounded-xl px-4 py-2 flex items-center gap-3 border border-slate-700/50 mx-4">
-                      <Lock size={12} className="text-emerald-500" />
-                      <span className="text-xs font-mono text-slate-400 truncate">
-                        https://interactive-builder.app/preview/{filename || 'untitled'}.html
+                    <div className="flex-1 bg-slate-900/50 border border-white/10 px-6 py-2.5 rounded-xl flex items-center gap-4 mx-4 group backdrop-blur-xl">
+                      <Lock size={14} className="text-amber-500/50 group-hover:text-amber-500 transition-colors" />
+                      <span className="text-[10px] font-mono text-slate-500 truncate uppercase tracking-widest font-black">
+                        aura_protocol://render.live/view/{filename || 'unnamed'}.aura
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-6">
                       <button
                         onClick={() => downloadHtml(generatedHtml, filename)}
-                        className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
-                        title="Baixar HTML"
+                        className="p-3 text-slate-500 hover:text-amber-500 transition-all hover:bg-white/5 rounded-xl"
+                        title="Exportar Aura"
                       >
-                        <Download size={18} />
+                        <Download size={20} />
                       </button>
                       <button
                         onClick={() => setView('editor')}
-                        className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
-                        title="Voltar para Editor"
+                        className="p-3 text-slate-500 hover:text-white transition-all hover:bg-white/5 rounded-xl"
+                        title="Fechar Visualizador"
                       >
-                        <X size={18} />
+                        <X size={20} />
                       </button>
                     </div>
                   </div>
 
-                  {/* Iframe Container */}
+                  {/* Iframe Viewport */}
                   <div className="flex-1 bg-white relative">
                     <iframe
                       srcDoc={generatedHtml}
-                      className="absolute inset-0 w-full h-full border-none"
+                      className="absolute inset-0 w-full h-full border-none shadow-[0_0_50px_rgba(0,0,0,0.5)]"
                       title="Preview"
                       sandbox="allow-scripts"
                     />
                   </div>
                 </div>
               ) : (
-                <div className="h-full flex flex-col items-center justify-center text-center p-12 bg-slate-900 rounded-[2rem] border border-slate-800 border-dashed">
-                  <div className="w-24 h-24 bg-slate-800 rounded-full flex items-center justify-center mb-6">
+                <div className="h-full flex flex-col items-center justify-center text-center p-20 bg-blue-500/5">
+                  <div className="w-24 h-24 rounded-3xl bg-slate-900 border border-white/5 flex items-center justify-center mb-8 shadow-2xl">
                     <LayoutTemplate size={40} className="text-slate-600" />
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-2">Nenhuma Preview Disponível</h3>
-                  <p className="text-slate-500 max-w-sm mb-8">
-                    Gere uma página na aba Editor para visualizar o resultado aqui.
+                  <h3 className="text-xl font-black text-white mb-4 uppercase tracking-tighter">Vácuo de Visualização Aura</h3>
+                  <p className="text-slate-500 max-w-sm mb-10 text-[10px] font-black uppercase tracking-widest leading-relaxed">
+                    Nenhum código heurístico foi gerado para visualização no momento.
                   </p>
                   <button
                     onClick={() => setView('editor')}
-                    className="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-500 transition-all shadow-lg shadow-blue-900/20"
+                    className="bg-amber-500 text-black px-12 py-5 rounded-2xl font-black uppercase tracking-[0.3em] text-[10px] hover:bg-amber-400 transition-all shadow-lg shadow-amber-500/20 active:scale-[0.98]"
                   >
-                    Ir para o Editor
+                    Abrir Operador Editor
                   </button>
                 </div>
               )}
@@ -2861,100 +2759,105 @@ NUNCA gere um layout linear ou genérico. Use o Dourado para elementos de destaq
 
           {/* 6. Materials Tab */}
           {view === 'materials' && (
-            <motion.div key="materials" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="space-y-8">
-              <div className="flex justify-between items-end">
+            <motion.div key="materials" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.98 }} className="space-y-12 pb-20">
+              <div className="flex justify-between items-end border-b border-white/5 pb-10">
                 <div>
-                  <h2 className="text-3xl font-black text-white flex items-center gap-3">
-                    <FolderOpen className="text-amber-500" /> Meus Materiais
+                  <h2 className="text-4xl font-black text-white flex items-center gap-6 uppercase tracking-tighter">
+                    <FolderOpen className="text-amber-500" size={40} /> Repositório Aura
                   </h2>
-                  <p className="text-slate-400 mt-2">Gerencie, baixe ou edite suas páginas criadas anteriormente.</p>
+                  <p className="text-slate-500 mt-2 font-black text-[10px] uppercase tracking-widest leading-relaxed">Acesso ao registro histórico de transmutações heuísticas do sistema.</p>
                 </div>
-                <div className="hidden md:flex gap-2">
-                  <div className="px-4 py-2 bg-slate-900 rounded-xl border border-slate-800 text-xs font-bold text-slate-400">
-                    {materials.length} Arquivos
+                <div className="hidden md:flex gap-4">
+                  <div className="px-8 py-3 bg-slate-900 border border-white/5 rounded-2xl text-[10px] font-black text-slate-500 uppercase tracking-widest shadow-xl backdrop-blur-3xl">
+                    {materials.length}_REGISTROS_ATIVOS
                   </div>
                 </div>
               </div>
 
               {materials.length === 0 ? (
-                <div className="bg-slate-900 rounded-[2.5rem] p-16 border border-slate-800 border-dashed flex flex-col items-center justify-center text-center">
-                  <div className="w-32 h-32 bg-slate-800/50 rounded-full flex items-center justify-center mb-6">
-                    <FolderOpen size={48} className="text-slate-600" />
+                <div className="bg-blue-500/5 border border-white/5 rounded-3xl p-24 flex flex-col items-center justify-center text-center relative overflow-hidden backdrop-blur-3xl">
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-amber-500/5 blur-[150px] rounded-full" />
+                  <div className="relative z-10">
+                    <div className="w-32 h-32 rounded-3xl bg-slate-900 border border-white/5 flex items-center justify-center mx-auto mb-10 group transition-all shadow-2xl">
+                      <FolderOpen size={56} className="text-slate-600 group-hover:text-amber-500 transition-colors" />
+                    </div>
+                    <h3 className="text-2xl font-black text-white mb-4 uppercase tracking-tighter">Vácuo de Registros Aura</h3>
+                    <p className="text-slate-500 max-w-md mx-auto mb-12 text-[10px] font-black uppercase tracking-widest leading-relaxed">
+                      Seu repositório central está em standby. Inicie o fluxo de transmutação para forjar novas instâncias de interface.
+                    </p>
+                    <button
+                      onClick={() => { setView('editor'); setEditorTab('converter'); }}
+                      className="bg-amber-500 text-black px-12 py-5 rounded-2xl font-black hover:bg-amber-400 transition-all shadow-lg shadow-amber-500/20 text-[10px] uppercase tracking-[0.3em]"
+                    >
+                      <Plus size={20} className="inline mr-3" /> Nova_Transmutação_Aura
+                    </button>
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-2">Sua biblioteca está vazia</h3>
-                  <p className="text-slate-500 max-w-md mb-8">
-                    Comece convertendo um texto ou criando um prompt para gerar sua primeira página interativa.
-                  </p>
-                  <button
-                    onClick={() => { setView('editor'); setEditorTab('converter'); }}
-                    className="bg-blue-600 text-white px-8 py-4 rounded-2xl font-bold hover:bg-blue-500 transition-all shadow-lg shadow-blue-900/20 active:scale-95"
-                  >
-                    <Plus size={18} className="inline mr-2" /> Criar Novo Material
-                  </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {materials.map((material) => (
                     <motion.div
                       key={material.id}
                       layout
-                      initial={{ opacity: 0, scale: 0.9 }}
+                      initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      className="group bg-slate-900 rounded-[2rem] border border-slate-800 hover:border-blue-500/50 transition-all hover:shadow-xl hover:shadow-blue-900/10 overflow-hidden flex flex-col"
+                      className="group bg-slate-900/40 border border-white/10 rounded-3xl hover:border-amber-500/30 transition-all overflow-hidden flex flex-col relative backdrop-blur-3xl shadow-2xl"
                     >
-                      <div className="h-40 bg-slate-800/50 relative p-6 flex items-center justify-center group-hover:bg-slate-800 transition-colors">
-                        <FileCode size={48} className="text-slate-600 group-hover:text-blue-500 transition-colors" />
-                        <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <span className="px-2 py-1 bg-blue-500/20 text-blue-400 text-[10px] font-bold uppercase tracking-wider rounded-lg border border-blue-500/30">
-                            HTML
+                      <div className="h-56 bg-slate-950/50 relative p-8 flex items-center justify-center group-hover:bg-slate-950/80 transition-all border-b border-white/5 mx-4 mt-4 rounded-2xl">
+                        <FileCode size={64} className="text-slate-800 group-hover:text-amber-500/40 transition-colors" />
+                        <div className="absolute top-6 right-6">
+                          <span className="px-4 py-1 bg-amber-500/10 text-amber-500 text-[10px] font-black uppercase tracking-widest border border-amber-500/20 rounded-lg">
+                            v.Aura
                           </span>
+                        </div>
+                        <div className="absolute bottom-4 left-6">
+                          <p className="text-[10px] text-slate-600 font-black uppercase tracking-[0.2em]">{(material.html.length / 1024).toFixed(1)} KB</p>
                         </div>
                       </div>
 
-                      <div className="p-6 flex-1 flex flex-col">
-                        <div className="flex-1">
-                          <h3 className="text-lg font-bold text-white mb-1 truncate" title={material.name}>
+                      <div className="p-8 flex-1 flex flex-col">
+                        <div className="flex-1 mb-10">
+                          <h3 className="text-base font-black text-slate-200 mb-3 truncate uppercase tracking-tighter" title={material.name}>
                             {material.name}
                           </h3>
-                          <p className="text-xs text-slate-500 font-mono mb-4">
-                            {new Date(material.timestamp).toLocaleDateString('pt-BR', {
-                              day: '2-digit', month: 'long', year: 'numeric'
-                            })}
-                          </p>
+                          <div className="flex items-center gap-3">
+                            <Clock size={12} className="text-slate-600" />
+                            <p className="text-[10px] text-slate-600 font-black uppercase tracking-widest">
+                              SYNC: {new Date(material.timestamp).toLocaleDateString('pt-BR', {
+                                day: '2-digit', month: '2-digit', year: 'numeric'
+                              })}
+                            </p>
+                          </div>
                         </div>
 
-                        <div className="grid grid-cols-3 gap-2 pt-4 border-t border-slate-800">
+                        <div className="grid grid-cols-4 gap-4 pb-4">
                           <button
                             onClick={() => setViewingMaterial(material)}
-                            className="flex flex-col items-center justify-center gap-1 py-2 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-blue-400 transition-colors"
-                            title="Visualizar"
+                            className="flex items-center justify-center p-4 bg-slate-900 border border-white/5 rounded-xl hover:border-amber-500/30 text-slate-500 hover:text-amber-500 transition-all shadow-xl"
+                            title="Visualizar Aura"
                           >
-                            <Eye size={16} />
-                            <span className="text-[10px] font-bold uppercase">Ver</span>
+                            <Eye size={20} />
                           </button>
                           <button
                             onClick={() => loadMaterial(material)}
-                            className="flex flex-col items-center justify-center gap-1 py-2 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-blue-400 transition-colors"
-                            title="Editar"
+                            className="flex items-center justify-center p-4 bg-slate-900 border border-white/5 rounded-xl hover:border-amber-500/30 text-slate-500 hover:text-amber-500 transition-all shadow-xl"
+                            title="Editar Material"
                           >
-                            <Pencil size={16} />
-                            <span className="text-[10px] font-bold uppercase">Editar</span>
+                            <Pencil size={20} />
                           </button>
                           <button
                             onClick={() => downloadHtml(material.html, material.name)}
-                            className="flex flex-col items-center justify-center gap-1 py-2 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-emerald-400 transition-colors"
-                            title="Baixar"
+                            className="flex items-center justify-center p-4 bg-slate-900 border border-white/5 rounded-xl hover:border-amber-500/30 text-slate-500 hover:text-amber-500 transition-all shadow-xl"
+                            title="Descarregar Buffer"
                           >
-                            <Download size={16} />
-                            <span className="text-[10px] font-bold uppercase">Baixar</span>
+                            <Download size={20} />
                           </button>
                           <button
                             onClick={() => setDeleteConfirmId(material.id)}
-                            className="flex flex-col items-center justify-center gap-1 py-2 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-red-400 transition-colors"
-                            title="Excluir"
+                            className="flex items-center justify-center p-4 bg-slate-900 border border-white/5 rounded-xl hover:border-rose-500/30 text-slate-500 hover:text-rose-500 transition-all shadow-xl"
+                            title="Purgar Registro"
                           >
-                            <Trash2 size={16} />
-                            <span className="text-[10px] font-bold uppercase">Excluir</span>
+                            <Trash2 size={20} />
                           </button>
                         </div>
                       </div>
@@ -2965,128 +2868,136 @@ NUNCA gere um layout linear ou genérico. Use o Dourado para elementos de destaq
             </motion.div>
           )}
         </AnimatePresence>
+      </main >
 
-        {/* Delete Confirmation Modal */}
-        <AnimatePresence>
-          {deleteConfirmId && (
-            <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setDeleteConfirmId(null)}
-                className="absolute inset-0 bg-black/80 backdrop-blur-sm"
-              />
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                className="relative bg-slate-900 rounded-[2.5rem] p-8 max-w-md w-full shadow-2xl shadow-red-900/20 border border-slate-800"
-              >
-                <div className="w-16 h-16 bg-red-900/20 text-red-500 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-red-900/10">
-                  <AlertTriangle size={32} />
-                </div>
-                <h3 className="text-2xl font-black text-white mb-2">Excluir Material?</h3>
-                <p className="text-slate-400 mb-8">
-                  Esta ação não pode ser desfeita. O arquivo será removido permanentemente do seu histórico e do banco de dados.
-                </p>
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => setDeleteConfirmId(null)}
-                    className="flex-1 px-6 py-4 rounded-2xl font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all"
-                  >
-                    Cancelar
-                  </button>
-                  <button
-                    onClick={confirmDelete}
-                    className="flex-1 px-6 py-4 rounded-2xl font-bold bg-red-600 text-white hover:bg-red-500 shadow-lg shadow-red-900/20 transition-all"
-                  >
-                    Confirmar Exclusão
-                  </button>
-                </div>
-              </motion.div>
-            </div>
-          )}
-        </AnimatePresence>
-
-        {/* Login Modal */}
-        <AnimatePresence>
-          {showLoginModal && (
-            <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setShowLoginModal(false)}
-                className="absolute inset-0 bg-black/80 backdrop-blur-sm"
-              />
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                className="relative bg-slate-900 rounded-[2.5rem] p-8 max-w-md w-full shadow-2xl shadow-blue-900/20 border border-slate-800"
-              >
-                <div className="w-16 h-16 bg-blue-900/20 text-blue-500 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-blue-900/10 mx-auto">
-                  <LogIn size={32} />
-                </div>
-                <h3 className="text-2xl font-black text-white mb-2 text-center">Acesso Restrito</h3>
-                <p className="text-slate-400 mb-8 text-center text-sm">
-                  Utilize as credenciais mestre para acessar a plataforma.
-                </p>
-
-                <form onSubmit={handleAuth} className="space-y-4">
-                  <input
-                    type="email" placeholder="E-mail" value={authEmail} onChange={e => setAuthEmail(e.target.value)}
-                    className="w-full px-4 py-3 border border-slate-700 bg-slate-800 text-white rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-600 placeholder:text-slate-600" required
-                  />
-                  <input
-                    type="password" placeholder="Senha" value={authPassword} onChange={e => setAuthPassword(e.target.value)}
-                    className="w-full px-4 py-3 border border-slate-700 bg-slate-800 text-white rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-600 placeholder:text-slate-600" required
-                  />
-                  <div className="flex flex-col gap-3 pt-2">
-                    <button
-                      type="submit"
-                      className="w-full px-6 py-3 rounded-xl font-bold bg-blue-600 text-white hover:bg-blue-500 shadow-lg shadow-blue-900/20 transition-all flex items-center justify-center gap-2"
-                    >
-                      <LogIn size={18} /> Entrar
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowLoginModal(false);
-                        setShowOnboarding(true);
-                      }}
-                      className="w-full px-6 py-3 rounded-xl font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition-all flex items-center justify-center gap-2"
-                    >
-                      <User size={18} /> Criar Nova Conta
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setShowLoginModal(false)}
-                      className="w-full py-2 text-slate-500 hover:text-slate-300 text-xs transition-all"
-                    >
-                      Cancelar
-                    </button>
-                  </div>
-                </form>
-              </motion.div>
-            </div>
-          )}
-          {showOnboarding && (
-            <OnboardingWizard
-              onComplete={() => {
-                setShowOnboarding(false);
-                loadUserData();
-              }}
-              onCancel={() => setShowOnboarding(false)}
-            />
-          )}
-        </AnimatePresence>
-      </main>
       <MaterialPreviewModal
         material={viewingMaterial}
         onClose={() => setViewingMaterial(null)}
       />
-    </div>
+
+      {/* Modais Globais Aura */}
+      <AnimatePresence>
+        {deleteConfirmId && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setDeleteConfirmId(null)}
+              className="absolute inset-0 bg-slate-950/90 backdrop-blur-3xl"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="relative bg-slate-900/40 border border-white/10 p-12 max-w-md w-full rounded-3xl shadow-2xl backdrop-blur-3xl text-center"
+            >
+              <div className="w-24 h-24 rounded-2xl bg-rose-500/10 text-rose-500 border border-rose-500/20 flex items-center justify-center mb-10 mx-auto shadow-xl">
+                <AlertTriangle size={48} />
+              </div>
+              <h3 className="text-2xl font-black text-white mb-4 uppercase tracking-tighter">Purgar Registro Aura?</h3>
+              <p className="text-slate-500 mb-12 text-[10px] font-black uppercase tracking-widest leading-relaxed">
+                Esta ação de purga é irreversível. O registro será removido permanentemente dos servidores Aura e do buffer local.
+              </p>
+              <div className="grid grid-cols-2 gap-4">
+                <button
+                  onClick={() => setDeleteConfirmId(null)}
+                  className="px-8 py-5 rounded-2xl font-black text-[10px] text-slate-500 uppercase tracking-widest hover:text-white transition-all bg-white/5 border border-white/5 hover:border-white/10"
+                >
+                  Abortar
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  className="px-8 py-5 bg-rose-600 text-white rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] hover:bg-rose-500 transition-all shadow-lg shadow-rose-600/20 active:scale-[0.98]"
+                >
+                  Confirmar
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+
+        {showLoginModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowLoginModal(false)}
+              className="absolute inset-0 bg-slate-950/95 backdrop-blur-3xl"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="relative bg-slate-900/40 border border-white/5 p-12 max-w-md w-full rounded-3xl shadow-2xl overflow-hidden backdrop-blur-3xl"
+            >
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-amber-500/50 to-transparent" />
+
+              <div className="w-24 h-24 rounded-2xl bg-amber-500/10 text-amber-500 border border-amber-500/20 flex items-center justify-center mb-8 mx-auto shadow-2xl">
+                <LogIn size={40} />
+              </div>
+              <h3 className="text-2xl font-black text-white mb-2 text-center uppercase tracking-tighter">Terminal Aura</h3>
+              <p className="text-slate-500 mb-10 text-center text-[10px] font-black uppercase tracking-[0.2em]">
+                Autenticação Mandatória via Stream Aura
+              </p>
+
+              <form onSubmit={handleAuth} className="space-y-6">
+                <div className="space-y-4">
+                  <div className="relative">
+                    <input
+                      type="email" placeholder="IDENTIFICADOR_USUÁRIO" value={authEmail} onChange={e => setAuthEmail(e.target.value)}
+                      className="w-full px-6 py-5 border border-white/5 bg-slate-950/50 text-slate-200 text-xs font-black rounded-xl outline-none focus:border-amber-500/30 transition-all placeholder:text-slate-800" required
+                    />
+                  </div>
+                  <div className="relative">
+                    <input
+                      type="password" placeholder="CHAVE_DE_ACESSO" value={authPassword} onChange={e => setAuthPassword(e.target.value)}
+                      className="w-full px-6 py-5 border border-white/5 bg-slate-950/50 text-slate-200 text-xs font-black rounded-xl outline-none focus:border-amber-500/30 transition-all placeholder:text-slate-800" required
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-4 pt-4">
+                  <button
+                    type="submit"
+                    className="w-full px-8 py-5 bg-amber-500 text-black font-black uppercase tracking-[0.3em] text-[10px] hover:bg-amber-400 rounded-2xl transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center gap-3 active:scale-[0.98]"
+                  >
+                    <LogIn size={20} /> INICIAR_SESSÃO_AURA
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowLoginModal(false);
+                      setShowOnboarding(true);
+                    }}
+                    className="w-full px-8 py-5 border border-white/5 text-slate-500 font-black uppercase tracking-[0.2em] text-[10px] hover:text-white hover:bg-white/5 rounded-2xl transition-all flex items-center justify-center gap-3"
+                  >
+                    <User size={20} /> NOVO_REGISTRO_AURA
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowLoginModal(false)}
+                    className="w-full py-4 text-slate-700 hover:text-slate-500 text-[10px] font-black uppercase tracking-widest transition-all"
+                  >
+                    CANCELAR_PROTOCOLO
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+
+        {showOnboarding && (
+          <OnboardingWizard
+            onComplete={() => {
+              setShowOnboarding(false);
+              loadUserData();
+            }}
+            onCancel={() => setShowOnboarding(false)}
+          />
+        )}
+      </AnimatePresence>
+    </div >
   );
 }
