@@ -1,4 +1,5 @@
 -- SCRIPT PARA INSERIR OS 31 MODELOS DE DESIGN NA BIBLIOTECA
+-- Estrutura de Prompt Engineering Otimizada (Tags XML)
 -- Substitua NULL pelo seu ID de usuário do Supabase (encontrado em Authentication > Users)
 
 INSERT INTO public.prompt_library (user_id, title, description, content, is_default)
@@ -7,568 +8,724 @@ VALUES
     NULL, 
     'Padrão', 
     'Estilo que utiliza as cores do branding',
-    'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
+    '<role>
+Atue como um Desenvolvedor Front-end Sênior especialista em UI/UX, focado em criar experiências web fluidas e de alta retenção.
+</role>
 
-Diretrizes de Design
-"Gere um ÚNICO arquivo HTML autônomo contendo HTML, CSS (use Tailwind via CDN: https://cdn.tailwindcss.com) e JS (use Lucide Icons via CDN: https://unpkg.com/lucide@latest).
+<task>
+Gere uma página web interativa completa contida em um ÚNICO arquivo HTML autônomo. O arquivo deve mesclar HTML5, Tailwind CSS e JavaScript nativo sem dependências de build.
+</task>
 
-NÃO inclua cabeçalhos ou rodapés externos do construtor.
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.
+<technical_stack>
+- CSS: Tailwind CSS (via CDN: https://cdn.tailwindcss.com)
+- Ícones: Lucide Icons (via CDN: https://unpkg.com/lucide@latest)
+- Fontes: Google Fonts (importadas no <head>)
+- Interatividade: Vanilla JavaScript (incorporado antes do fechamento do <body>)
+</technical_stack>
 
-Aplique o branding fornecido de forma elegante e profissional.
+<strict_rules>
+1. ISOLAMENTO TOTAL: NENHUMA tag <a> com atributo href apontando para URLs externas.
+2. ZERO ROTAS DE FUGA: Proibida a criação de cabeçalhos de navegação, rodapés com links ou botões de redirecionamento.
+3. MÍDIA: Não inclua tags de <video>, <img> ou <iframe>. Use apenas formas, cores, tipografia e os ícones do Lucide para o design.
+4. TIPO DE INTERATIVIDADE: Toda a interação do usuário deve acontecer exclusivamente na mesma página, manipulando o DOM via JavaScript localmente.
+</strict_rules>
 
-Use animações suaves (pode usar CSS puro ou bibliotecas via CDN se necessário).
+<design_guidelines>
+- Estilo: Elegante, limpo e profissional.
+- Animações: Use transições suaves do Tailwind (ex: duration-300, ease-in-out) para hover, focus e mudanças de estado. Se necessário, use CSS puro ou bibliotecas via CDN.
+- Responsividade: A página deve funcionar perfeitamente em mobile (default), tablet e desktop.
+- Branding: Aplique o branding fornecido de forma rigorosa. [INSERIR DIRETRIZES DE BRANDING AQUI]
+- Conteúdo: [INSERIR AQUI O TEXTO/TEMA DA PÁGINA]
+</design_guidelines>
 
-O arquivo deve ser auto-contido e pronto para ser aberto em qualquer navegador.
-
-Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).',
+<output_format>
+Retorne APENAS o código fonte raw completo e pronto para execução.
+NÃO envolva a resposta em blocos de código markdown (como ```html). Inicie diretamente com <!DOCTYPE html> e termine com </html>. Não inclua explicações antes ou depois do código.
+</output_format>',
     true
 ),
 (
     NULL, 
     'Neobrutalismo + Pastel Pop', 
     'Estilo de alto contraste com bordas pretas espessas, sombras sólidas (Shadow-Pop) e paleta pastel vibrante. Ideal para fintechs e ferramentas modernas.',
-    'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
+    '<role>
+Atue como um Desenvolvedor Front-end Sênior especialista em UI/UX, focado em criar experiências web fluidas e de alta retenção.
+</role>
 
-Diretrizes de Design & Sofisticação:
+<task>
+Gere uma página web interativa completa contida em um ÚNICO arquivo HTML autônomo. O arquivo deve mesclar HTML5, Tailwind CSS e JavaScript nativo sem dependências de build.
+</task>
+
+<technical_stack>
+- CSS: Tailwind CSS (via CDN: [https://cdn.tailwindcss.com](https://cdn.tailwindcss.com))
+- Ícones: Lucide Icons (via CDN: [https://unpkg.com/lucide@latest](https://unpkg.com/lucide@latest))
+- Fontes: Google Fonts (importadas no <head>)
+- Interatividade: Vanilla JavaScript (incorporado antes do fechamento do <body>)
+</technical_stack>
+
+<strict_rules>
+1. ISOLAMENTO TOTAL: NENHUMA tag <a> com atributo href apontando para URLs externas.
+2. ZERO ROTAS DE FUGA: Proibida a criação de cabeçalhos de navegação, rodapés com links ou botões de redirecionamento.
+3. MÍDIA: Não inclua tags de <video>, <img> ou <iframe>. Use apenas formas, cores, tipografia e os ícones do Lucide para o design.
+4. TIPO DE INTERATIVIDADE: Toda a interação do usuário deve acontecer exclusivamente na mesma página, manipulando o DOM via JavaScript localmente.
+</strict_rules>
+
+<design_guidelines>
 - Estética Neobrutalista: Utilize bordas pretas sólidas e espessas (border-2 ou border-4 border-black). Remova arredondamentos excessivos em favor de cantos vivos ou levemente arredondados (rounded-none ou rounded-lg).
 - Sombras Hard-Edge: Implemente o efeito ''Shadow-Pop''. Em vez de sombras suaves e esfumaçadas, use sombras sólidas e deslocadas (box-shadow: 8px 8px 0px 0px #000;) que não possuem desfoque.
 - Paleta Pastel Pop: Combine um fundo off-white (bg-[#f4f4f0]) com elementos em cores pastéis vibrantes e saturadas (Amarelo #FFD100, Rosa #FF90E8, Verde Menta #B1F1CB).
 - Tipografia e Peso: Use a fonte ''Inter'' ou ''Lexend'' via Google Fonts. Títulos devem ter peso font-black (900) e letras levemente comprimidas (tracking-tighter).
-- Interatividade: Use GSAP para criar animações de ''mola'' (spring). Ao passar o mouse (hover), os elementos devem se deslocar na direção oposta da sombra, simulando um clique físico real.
+- Interatividade: Use GSAP (via CDN) para criar animações de ''mola'' (spring). Ao passar o mouse (hover), os elementos devem se deslocar na direção oposta da sombra, simulando um clique físico real.
 - Estrutura: Layout estilo ''Service Grid'' ou ''Feature List'', com ícones Lucide grandes, sempre dentro de containers com bordas pretas.
+- Conteúdo: [INSERIR AQUI O TEXTO/TEMA DA PÁGINA]
+</design_guidelines>
 
-Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+<output_format>
+Retorne APENAS o código fonte raw completo e pronto para execução.
+NÃO envolva a resposta em blocos de código markdown (como ```html). Inicie diretamente com <!DOCTYPE html> e termine com </html>. Não inclua explicações antes ou depois do código.
+</output_format>',
     true
 ),
 (
     NULL, 
     'Bento Grid + Glassmorphism', 
     'Organização modular inspirada na Apple com efeitos de vidro, desfoque e profundidade. Layout assimétrico e moderno.',
-    'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
+    '<role>
+Atue como um Desenvolvedor Front-end Sênior especialista em UI/UX, focado em criar experiências web fluidas e de alta retenção.
+</role>
 
-Diretrizes de Design & Sofisticação:
+<task>
+Gere uma página web interativa completa contida em um ÚNICO arquivo HTML autônomo. O arquivo deve mesclar HTML5, Tailwind CSS e JavaScript nativo sem dependências de build.
+</task>
+
+<technical_stack>
+- CSS: Tailwind CSS (via CDN: https://cdn.tailwindcss.com)
+- Ícones: Lucide Icons (via CDN: https://unpkg.com/lucide@latest)
+- Fontes: Google Fonts (importadas no <head>)
+- Interatividade: Vanilla JavaScript (incorporado antes do fechamento do <body>)
+</technical_stack>
+
+<strict_rules>
+1. ISOLAMENTO TOTAL: NENHUMA tag <a> com atributo href apontando para URLs externas.
+2. ZERO ROTAS DE FUGA: Proibida a criação de cabeçalhos de navegação, rodapés com links ou botões de redirecionamento.
+3. MÍDIA: Não inclua tags de <video>, <img> ou <iframe>. Use apenas formas, cores, tipografia e os ícones do Lucide para o design.
+4. TIPO DE INTERATIVIDADE: Toda a interação do usuário deve acontecer exclusivamente na mesma página, manipulando o DOM via JavaScript localmente.
+</strict_rules>
+
+<design_guidelines>
 - Estrutura Bento Grid: Utilize um layout grid de 4 ou 6 colunas com auto-rows. Os cards devem ter tamanhos variados (col-span-1, col-span-2, row-span-2) para criar um ritmo visual assimétrico e moderno.
 - Estética Glassmorphism: Aplique backdrop-blur-xl e fundos semi-transparentes (bg-white/5 ou bg-white/10). O segredo está na borda: use uma borda fina de 1px com transparência (border-white/20) para simular a quina de um vidro lapidado.
 - Profundidade Visual: Use camadas de sombras muito suaves e amplas (shadow-[0_20px_50px_rgba(0,0,0,0.3)]). Os cards devem parecer flutuar sobre o fundo.
 - Liquid Background Animado: Crie um fundo escuro profundo (bg-[#0a0a0c]) com pelo menos dois ''blobs'' de gradiente orgânico (um ciano e um violeta) que se movam lentamente usando animate-pulse ou Keyframes CSS personalizados com blur(100px).
 - Tipografia e Ícones: Use a fonte ''Plus Jakarta Sans'' via Google Fonts. Os títulos devem ser font-bold e os ícones Lucide devem estar dentro de círculos ou quadrados de vidro com opacidade reduzida.
-- Interatividade: Use GSAP para uma animação de ''Stagger'' (entrada em cascata) onde os cards aparecem um após o outro com um leve movimento de baixo para cima e escala.
+- Interatividade: Use GSAP (via CDN) para uma animação de ''Stagger'' (entrada em cascata) onde os cards aparecem um após o outro com um leve movimento de baixo para cima e escala.
+- Conteúdo: [INSERIR AQUI O TEXTO/TEMA DA PÁGINA]
+</design_guidelines>
 
-Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+<output_format>
+Retorne APENAS o código fonte raw completo e pronto para execução.
+NÃO envolva a resposta em blocos de código markdown (como ```html). Inicie diretamente com <!DOCTYPE html> e termine com </html>. Não inclua explicações antes ou depois do código.
+</output_format>',
     true
 ),
 (
     NULL, 
     'Aurora UI + Minimalismo Orgânico', 
     'Elegância etérea com fundos dinâmicos de gradiente suave e tipografia serifada premium.',
-    'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
+    '<role>
+Atue como um Desenvolvedor Front-end Sênior especialista em UI/UX.
+</role>
 
-Diretrizes de Design & Sofisticação:
-- Estética Aurora: Crie um fundo dinâmico usando 3 ou 4 esferas de gradiente (blur-[120px]) com cores análogas (ex: Índigo, Violeta e fúcsia) que se movem lentamente em órbitas irregulares via CSS Keyframes. O fundo base deve ser um cinza quase preto (bg-[#050505]).
-- Minimalismo Orgânico: Use tipografia serifada premium para títulos (Google Fonts ''Playfair Display'' ou ''Instrument Serif'') e sans-serif para corpo (''Inter''). Garanta um letter-spacing negativo nos títulos (tracking-tighter).
-- Contraste de Superfície: O conteúdo principal deve flutuar em um container central com bg-white/[0.02] e backdrop-blur-3xl. As bordas devem ser quase invisíveis (border-white/5).
-- Interatividade & Animações: Use GSAP para um efeito de ''Reveal'' suave no carregamento (opacity 0 para 1 com deslocamento de 20px no eixo Y). Adicione um cursor personalizado que reage ao passar sobre elementos clicáveis (escala e mudança de mix-blend-mode).
-- Estrutura: Layout de ''Landing Page Hero'' ultra-clean, com um CTA central minimalista e ícones Lucide com traço fino (stroke-width: 1px).
+<task>
+Gere uma página web interativa completa contida em um ÚNICO arquivo HTML autônomo com Tailwind CSS e JS nativo.
+</task>
 
-Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+<technical_stack>
+- CSS: Tailwind CSS via CDN
+- Ícones: Lucide Icons via CDN
+- Fontes: Google Fonts
+- Interatividade: Vanilla JavaScript
+</technical_stack>
+
+<strict_rules>
+1. ISOLAMENTO TOTAL: NENHUMA tag <a> com href para fora.
+2. ZERO ROTAS DE FUGA: Sem cabeçalhos/rodapés de navegação ou redirecionamentos.
+3. MÍDIA: Sem <video>, <img> ou <iframe>.
+4. TIPO DE INTERATIVIDADE: DOM via JS localmente.
+</strict_rules>
+
+<design_guidelines>
+- Estética Aurora: Crie um fundo dinâmico usando 3 ou 4 esferas de gradiente (blur-[120px]) com cores análogas (ex: Índigo, Violeta e fúcsia) que se movem lentamente via CSS Keyframes. O fundo base deve ser cinza quase preto (bg-[#050505]).
+- Minimalismo Orgânico: Use tipografia serifada premium (Google Fonts ''Playfair Display'' ou ''Instrument Serif'') para títulos e sans-serif (''Inter'') para corpo. Letras com tracking-tighter nos títulos.
+- Contraste de Superfície: Conteúdo flutuando em container central com bg-white/[0.02] e backdrop-blur-3xl. Bordas quase invisíveis (border-white/5).
+- Interatividade & Animações: Efeito de ''Reveal'' suave no carregamento (opacity 0 para 1 com Y:20px). Cursor personalizado que reage (escala/mix-blend-mode) em elementos interativos.
+- Estrutura: Layout ''Landing Page Hero'' ultra-clean, CTA central minimalista, ícones Lucide com traço fino (stroke-width: 1px).
+- Conteúdo: [INSERIR AQUI O TEXTO/TEMA DA PÁGINA]
+</design_guidelines>
+
+<output_format>
+Retorne APENAS o código HTML completo. Sem markdown (```html).
+</output_format>',
     true
 ),
 (
     NULL, 
     'Claymorphism + Soft 3D', 
     'Interfaces táteis e amigáveis que parecem feitas de argila ou plástico macio, com cores pastéis.',
-    'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
+    '<role>
+Atue como um Desenvolvedor Front-end Sênior especialista em UI/UX.
+</role>
 
-Diretrizes de Design & Sofisticação:
-- Estética Claymorphism: Os elementos devem parecer feitos de argila ou plástico macio. Utilize border-radius extremo (rounded-[3rem]) e uma combinação de box-shadow externa suave com duas sombras internas (inset) — uma clara no topo esquerdo e uma escura no canto inferior direito — para criar volume 3D tátil.
-- Paleta de Cores: Use tons pastéis ''doces'' (ex: Azul bebê #A5D8FF, Rosa chiclete #FFD6E8, Lilás #E5DBFF). O fundo deve ser um gradiente radial muito suave entre duas cores pastéis próximas.
-- Profundidade e Camadas: Implemente o efeito de flutuação. Use GSAP para criar uma animação de ''Floating'' contínua (bobbing) nos elementos principais, fazendo-os subir e descer levemente em tempos diferentes.
-- Tipografia: Use a fonte ''Outfit'' ou ''Quicksand'' via Google Fonts para manter o aspecto amigável e arredondado. Títulos em font-bold e cores de texto em tons de cinza azulado escuro (text-slate-700).
-- Interatividade: Adicione um efeito de ''Squeeze'' (compressão) no clique via CSS active:scale-95 e transições de hover:scale-105 extremamente suaves.
-- Estrutura: Layout estilo ''Onboarding Cards'' ou ''Feature Showcase'' com ícones Lucide estilizados com traços grossos e cores vibrantes.
+<task>
+Gere uma página web interativa completa contida em um ÚNICO arquivo HTML autônomo.
+</task>
 
-Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+<technical_stack>
+- CSS: Tailwind CSS via CDN
+- Ícones: Lucide Icons via CDN
+- Fontes: Google Fonts
+- Interatividade: Vanilla JavaScript
+</technical_stack>
+
+<strict_rules>
+1. ISOLAMENTO TOTAL: NENHUMA tag <a> com href para fora.
+2. ZERO ROTAS DE FUGA: Sem cabeçalhos/rodapés de navegação ou redirecionamentos.
+3. MÍDIA: Sem <video>, <img> ou <iframe>.
+4. TIPO DE INTERATIVIDADE: Manipulação do DOM via JS localmente.
+</strict_rules>
+
+<design_guidelines>
+- Estética Claymorphism: Elementos parecem argila/plástico macio. Utilize border-radius extremo (rounded-[3rem]) e combinação de box-shadow externa suave com duas sombras internas (inset) — clara no topo/esquerda e escura na base/direita.
+- Paleta de Cores: Tons pastéis ''doces'' (Azul bebê #A5D8FF, Rosa chiclete #FFD6E8, Lilás #E5DBFF). Fundo gradiente radial muito suave.
+- Profundidade e Camadas: Efeito de flutuação (bobbing) contínua nos elementos principais via CSS/JS.
+- Tipografia: Fonte ''Outfit'' ou ''Quicksand''. Títulos font-bold, texto cinza azulado escuro (text-slate-700).
+- Interatividade: Efeito de ''Squeeze'' no clique (active:scale-95) e hover suave (hover:scale-105).
+- Estrutura: Layout estilo ''Onboarding Cards'', ícones Lucide estilizados com traços grossos.
+- Conteúdo: [INSERIR AQUI O TEXTO/TEMA DA PÁGINA]
+</design_guidelines>
+
+<output_format>
+Retorne APENAS o código HTML completo. Sem markdown (```html).
+</output_format>',
     true
 ),
 (
     NULL, 
     'Retro-Futurismo Synthwave + Clean Cyberpunk', 
     'Nostalgia tecnológica com acabamento premium, luzes neon refinadas e tipografia monospace.',
-    'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
-
-Diretrizes de Design & Sofisticação:
-- Estética Retro-Futurista Clean: Combine o estilo noir tecnológico com elegância moderna. Utilize um fundo sólido ultra-escuro (bg-[#020205]) com uma grade de perspectiva (CSS grid floor) no rodapé que desaparece no horizonte com mask-image linear-gradient.
-- Neon Refinado: Evite o excesso de brilho. Use cores neon (Ciano #00f3ff e Magenta #ff00ff) apenas como luzes de contorno (border com drop-shadow de 5px) e detalhes em pequenos LEDs indicadores.
-- Tipografia Monospace & Display: Use a fonte ''Space Mono'' para dados e labels, e ''Syncopate'' ou ''Orbitron'' via Google Fonts para títulos principais. Aplique um efeito sutil de ''flicker'' (piscar) via CSS Keyframes em elementos de destaque.
-- Interatividade & Efeitos de Vidro Negro: Utilize containers com bg-black/60 e backdrop-blur-lg. Ao passar o mouse, a borda neon do elemento deve aumentar de intensidade e o texto deve ganhar um efeito de ''glitch'' controlado e rápido.
-- Animações: Use GSAP para criar uma linha de ''scanline'' que percorre a tela verticalmente e animações de entrada estilo ''terminal boot'' (texto surgindo caractere por caractere).
-- Estrutura: Layout de ''Command Center'' ou ''Tech Dashboard'', com ícones Lucide estilizados em modo duotone usando as cores neon da paleta.
-
-Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    '<role>
+Atue como Desenvolvedor Front-end Sênior especialista em UI/UX.
+</role>
+<task>
+Gere HTML único e autônomo com Tailwind e JS nativo.
+</task>
+<technical_stack>
+Tailwind CSS CDN, Lucide Icons CDN, Google Fonts, Vanilla JS.
+</technical_stack>
+<strict_rules>
+SEM tags <a> externas. SEM navegação ou rodapés. SEM <img>, <video> ou <iframe>. Interação APENAS via DOM local.
+</strict_rules>
+<design_guidelines>
+- Estética Retro-Futurista Clean: Fundo sólido ultra-escuro (bg-[#020205]) com grade de perspectiva (CSS grid floor) no rodapé desaparecendo no horizonte via mask-image.
+- Neon Refinado: Cores neon (Ciano #00f3ff, Magenta #ff00ff) apenas como luzes de contorno (border com drop-shadow de 5px) e LEDs.
+- Tipografia Monospace: ''Space Mono'' para dados, ''Syncopate'' ou ''Orbitron'' para títulos. Efeito sutil de ''flicker'' via CSS.
+- Vidro Negro & Interatividade: Containers bg-black/60 com backdrop-blur-lg. Hover intensifica a borda neon e causa glitch rápido no texto.
+- Animações: Linha de scanline vertical, animação estilo ''terminal boot'' na entrada.
+- Estrutura: Layout ''Command Center'', ícones Lucide duotone neon.
+- Conteúdo: [INSERIR TEMA AQUI]
+</design_guidelines>
+<output_format>
+Apenas HTML puro, sem markdown (```html).
+</output_format>',
     true
 ),
 (
     NULL, 
     'Skeuomorph Moderno (Neuomorphism 2.0)', 
     'Realismo tátil minimalista com sombras duplas precisas e sofisticação monocromática.',
-    'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
-
-Diretrizes de Design & Sofisticação:
-- Estética Neuomorphism 2.0: Diferente da primeira versão, esta deve ser refinada. Utilize uma cor de base única para fundo e elementos (ex: Cinza Suave #E0E5EC ou Azul Gelo #E2E8F0). Crie volume usando sombras duplas precisas: uma sombra clara (white) no topo/esquerda e uma sombra escura (rgba(163,177,198,0.6)) na base/direita.
-- Textura e Material: Adicione uma leve curvatura côncava ou convexa aos cards usando gradientes lineares quase imperceptíveis que seguem a direção da luz.
-- Acentos de Cor: Escolha uma única cor de destaque vibrante (ex: Azul Elétrico ou Verde Esmeralda) apenas para estados ativos, indicadores de Toggle ou ícones principais, quebrando a monocromia.
-- Tipografia: Use a fonte ''Inter'' ou ''Satoshi'' com pesos variados. Títulos devem ter baixo contraste de cor com o fundo para manter a estética minimalista, mas com font-bold para legibilidade.
-- Interatividade & Micro-animações: Use GSAP para animar a transição entre estados. Quando um botão for clicado, ele deve trocar as sombras externas por sombras internas (inset), simulando o movimento físico de ser pressionado para dentro do material.
-- Estrutura: Layout de ''Smart Home Controller'' ou ''Music Player'', com botões circulares, sliders personalizados e ícones Lucide que parecem gravados na superfície.
-
-Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    '<role>
+Atue como Desenvolvedor Front-end Sênior especialista em UI/UX.
+</role>
+<task>
+Gere HTML único e autônomo com Tailwind e JS nativo.
+</task>
+<technical_stack>
+Tailwind CSS CDN, Lucide Icons CDN, Google Fonts, Vanilla JS.
+</technical_stack>
+<strict_rules>
+SEM tags <a> externas. SEM navegação ou rodapés. SEM <img>, <video> ou <iframe>. Interação APENAS via DOM local.
+</strict_rules>
+<design_guidelines>
+- Estética Neuomorphism 2.0: Cor de base única para fundo e elementos (ex: Cinza Suave #E0E5EC). Volume com sombras duplas: clara topo/esquerda, escura (rgba(163,177,198,0.6)) base/direita.
+- Textura: Leve curvatura (gradientes lineares quase imperceptíveis) simulando direção da luz.
+- Acentos: Única cor vibrante (Azul Elétrico ou Verde Esmeralda) apenas para estados ativos.
+- Tipografia: ''Inter'' ou ''Satoshi''. Baixo contraste com o fundo, mas font-bold para leitura.
+- Interatividade: Clique troca sombras externas por internas (inset) simulando botão físico.
+- Estrutura: Layout ''Smart Home Controller'', botões circulares, ícones parecendo gravados na superfície.
+- Conteúdo: [INSERIR TEMA AQUI]
+</design_guidelines>
+<output_format>
+Apenas HTML puro, sem markdown.
+</output_format>',
     true
 ),
 (
     NULL, 
     'Maximalismo Tipográfico + Dark Mode', 
     'Impacto visual extremo através de fontes gigantes, alto contraste e composições dinâmicas.',
-    'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
-
-Diretrizes de Design & Sofisticação:
-- Estética Maximalista: O texto deve ser o elemento estrutural. Utilize fontes ''Display'' de impacto (Google Fonts ''Syne'' ou ''Bricolage Grotesque''). Títulos principais devem ser gigantes (text-7xl ou text-8xl), com letter-spacing extremamente reduzido (tracking-tighter) e pesos variando entre font-black e font-thin.
-- Dark Mode de Alto Contraste: Fundo preto absoluto (bg-[#000000]) com texto em branco puro (text-white). Intercale frases com o efeito text-transparent e -webkit-text-stroke: 1px white para criar camadas de profundidade visual apenas com glifos.
-- Composição Dinâmica: Quebre o alinhamento padrão. Use textos rotacionados (-rotate-90), textos que se repetem em faixas horizontais (estilo marquee) e sobreposições ousadas onde o texto passa por trás ou pela frente de ícones e botões.
-- Animações de Scroll & Reveal: Use GSAP e ScrollTrigger (via CDN) para criar animações de texto que deslizam de direções opostas conforme o usuário rola a página. Adicione um efeito de ''Staggered Letter Reveal'' no carregamento inicial.
-- Interatividade: Implemente um ''Magnetic Button'' para o CTA principal: o botão deve ser atraído sutilmente pelo cursor do mouse usando JS suave.
-- Estrutura: Layout de ''Digital Agency Portfolio'' ou ''Event Editorial'', focado em impacto visual imediato com ícones Lucide agindo apenas como acentos minimalistas.
-
-Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    '<role>Atue como Desenvolvedor Front-end Sênior especialista em UI/UX.</role>
+<task>Gere HTML único e autônomo com Tailwind e JS nativo.</task>
+<technical_stack>Tailwind CSS CDN, Lucide Icons CDN, Google Fonts, Vanilla JS.</technical_stack>
+<strict_rules>SEM tags <a> externas. SEM navegação. SEM mídia. Interação via DOM.</strict_rules>
+<design_guidelines>
+- Estética Maximalista: Texto é a estrutura. Fontes Display (''Syne'' ou ''Bricolage Grotesque''). Títulos gigantes (text-7xl/8xl), tracking-tighter, pesos entre font-black e font-thin.
+- Dark Mode: bg-[#000000] absoluto, text-white. Efeito text-transparent com -webkit-text-stroke: 1px white.
+- Composição Dinâmica: Quebre alinhamentos. Textos rotacionados (-rotate-90), faixas repetitivas (marquee), sobreposições.
+- Animações: Animações de Scroll & Reveal de direções opostas. Staggered Letter Reveal na entrada.
+- Interatividade: CTA funciona como ''Magnetic Button'' (atraído pelo cursor).
+- Estrutura: Editorial de impacto, ícones Lucide agem apenas como acentos mínimos.
+- Conteúdo: [INSERIR TEMA AQUI]
+</design_guidelines>
+<output_format>Apenas HTML puro, sem markdown.</output_format>',
     true
 ),
 (
     NULL, 
     'Grainy Textures + Mono-Chrome', 
     'Visual analógico, editorial e cinematográfico com texturas de ruído e tipografia clássica.',
-    'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
-
-Diretrizes de Design & Sofisticação:
-- Estética Grainy (Ruído): Aplique um overlay de textura de ruído analógico em toda a página. Use um filtro de ruído SVG feTurbulence dentro de um rect absoluto com opacidade baixa (opacity-20) e pointer-events-none. O visual deve remeter a papel impresso ou fotografia de grão fino.
-- Paleta Monocromática Sofisticada: Use uma escala rigorosa de cinzas e pretos, fugindo do branco puro. Fundo em cinza médio-quente (bg-[#1a1a1a]) e elementos em tons contrastantes. Utilize mix-blend-mode (como difference ou overlay) para criar interações visuais ricas entre o texto e o fundo.
-- Minimalismo Editorial: Use tipografia serifada de alta classe (Google Fonts ''Cormorant Garamond'' ou ''Fraunces'') para corpo de texto e uma sans-serif geométrica (''Inter'') para metadados. Mantenha grandes margens e muito respiro (whitespace).
-- Profundidade Cinematográfica: Utilize imagens ou placeholders com filtros grayscale(100%) e contrast(120%). As transições entre seções devem ser suaves, simulando um ''fade out'' de cinema.
-- Interatividade & Animações: Use GSAP para criar um efeito de ''Lens Blur'' ou ''Focus In'' (o conteúdo começa desfocado e ganha nitidez ao entrar no viewport). O cursor deve ser um círculo simples que inverte as cores do que está por baixo.
-- Estrutura: Layout estilo ''Luxury Lookbook'' ou ''Architecture Portfolio'', com grid ortogonal e ícones Lucide com stroke-width: 0.75px para máxima elegância.
-
-Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    '<role>Atue como Desenvolvedor Front-end Sênior especialista em UI/UX.</role>
+<task>Gere HTML único e autônomo com Tailwind e JS nativo.</task>
+<technical_stack>Tailwind CSS CDN, Lucide Icons CDN, Google Fonts, Vanilla JS.</technical_stack>
+<strict_rules>SEM links externos. SEM cabeçalho/rodapé. SEM mídia externa. Interação via DOM.</strict_rules>
+<design_guidelines>
+- Estética Grainy: Overlay de ruído analógico (filtro SVG feTurbulence em rect absoluto, opacity-20, pointer-events-none). Remete a papel/fotografia analógica.
+- Paleta Monocromática: Fundo cinza médio-quente (bg-[#1a1a1a]), elementos em tons contrastantes usando mix-blend-mode (difference/overlay).
+- Minimalismo Editorial: Tipografia serifada premium (''Cormorant Garamond'') para corpo, sans-serif (''Inter'') para dados. Muito whitespace.
+- Profundidade Cinematográfica: Elementos simulando escala de cinza de alto contraste. Transições suaves simulando fade de cinema.
+- Interatividade: Efeito ''Lens Blur'' (começa desfocado, ganha nitidez). Cursor invertendo cores do fundo.
+- Estrutura: Layout ''Luxury Lookbook'', grid ortogonal, ícones Lucide ultra-finos (0.75px).
+- Conteúdo: [INSERIR TEMA AQUI]
+</design_guidelines>
+<output_format>Apenas HTML puro, sem markdown.</output_format>',
     true
 ),
 (
     NULL, 
     'Bauhaus Modernizado', 
     'Geometria pura, funcionalismo histórico e paleta primária sobre fundo papel.',
-    'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
-
-Diretrizes de Design & Sofisticação:
-- Estética Bauhaus Contemporânea: Baseie o design em formas geométricas puras (círculos, quadrados e triângulos perfeitos). Utilize um grid ortogonal rigoroso com divisórias sólidas de 1px (border-slate-900/10).
-- Paleta Primária Sofisticada: Use a tríade clássica (Amarelo #F4D03F, Vermelho #E74C3C, Azul #2E86C1), mas aplicadas sobre um fundo ''Papel'' (bg-[#FDFCF5]) para evitar um visual infantil. Use o preto (#1A1A1A) apenas para tipografia e formas estruturais.
-- Assimetria Equilibrada: Posicione elementos de forma assimétrica, mas mantendo o equilíbrio de pesos visuais. Use flex e grid do Tailwind para criar composições onde o texto e as formas se interceptam.
-- Tipografia Funcional: Use exclusivamente fontes sem serifa geométricas (Google Fonts ''Archivio'' ou ''Montserrat''). Títulos devem ser em caixa alta (uppercase) com font-bold e alinhamentos variados (esquerda e direita alternados).
-- Animações Construtivistas: Use GSAP para animar a montagem da página: formas geométricas devem deslizar de fora da tela e se encaixar em suas posições como um quebra-cabeça técnico. Adicione rotações de 90° ou 180° em ícones Lucide no hover.
-- Estrutura: Layout de ''Design Studio Concept'' ou ''Portfolio de Engenharia'', com seções numeradas (01, 02, 03) em fontes grandes e ícones Lucide simplificados.
-
-Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    '<role>Atue como Desenvolvedor Front-end Sênior especialista em UI/UX.</role>
+<task>Gere HTML único e autônomo com Tailwind e JS nativo.</task>
+<technical_stack>Tailwind CSS CDN, Lucide Icons CDN, Google Fonts, Vanilla JS.</technical_stack>
+<strict_rules>SEM links externos. SEM navegação externa. SEM mídia. Interação no próprio DOM.</strict_rules>
+<design_guidelines>
+- Estética Bauhaus: Formas geométricas puras (círculos, quadrados, triângulos). Grid ortogonal rigoroso com divisórias sólidas de 1px (border-slate-900/10).
+- Paleta Primária: Fundo ''Papel'' (bg-[#FDFCF5]). Cores base: Amarelo #F4D03F, Vermelho #E74C3C, Azul #2E86C1. Preto #1A1A1A para textos/linhas.
+- Assimetria: Posições assimétricas equilibradas. Flex/grid para interceptar textos e formas.
+- Tipografia Funcional: Apenas sans-serif geométricas (''Archivio'' ou ''Montserrat''). Títulos uppercase font-bold, alinhamentos variados.
+- Animações Construtivistas: Formas deslizam e se encaixam como quebra-cabeça na entrada. Rotações em ícones no hover.
+- Estrutura: Layout ''Design Studio'', seções numeradas grandes (01, 02).
+- Conteúdo: [INSERIR TEMA AQUI]
+</design_guidelines>
+<output_format>Apenas HTML puro, sem markdown.</output_format>',
     true
 ),
 (
     NULL, 
     'Holographic / Iridescent Design', 
     'Visual Web3 futurista com refração de luz, gradientes complexos e efeitos 3D de inclinação.',
-    'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
-
-Diretrizes de Design & Sofisticação:
-- Estética Holográfica: Crie superfícies que simulem a refração de luz metálica. Utilize gradientes lineares e radiais complexos com múltiplos stops de cor (azul ciano, rosa choque, lavanda e verde limão). Aplique um efeito de ''shimmer'' (brilho móvel) usando background-size: 200% e uma animação infinita de deslocamento de background.
-- Refração e Brilho: Use containers com bg-white/10 e um backdrop-blur-2xl. Adicione uma borda iridescente fina usando border-image-source com um gradiente colorido. Aplique um drop-shadow colorido que mude de matiz (hue-rotate) continuamente.
-- Profundidade Espacial: O fundo deve ser um ''Dark Space'' profundo (bg-[#030308]) para que as superfícies holográficas saltem aos olhos. Use pequenas partículas ou pontos de luz sutis flutuando no fundo.
-- Tipografia Futurista: Use a fonte ''Outfit'' ou ''Space Grotesk'' via Google Fonts. Títulos devem ter um leve efeito de brilho externo (text-shadow) e cores de gradiente que acompanham a paleta holográfica.
-- Interatividade & Animações: Use GSAP para criar um efeito de ''Tilt 3D'' baseado no movimento do mouse: os cards devem rotacionar levemente e o gradiente interno deve se deslocar conforme o cursor se move, simulando a mudança de reflexo da luz.
-- Estrutura: Layout de ''Web3 Dashboard'' ou ''NFT Marketplace Concept'', com botões de ação que possuem um brilho intenso no hover e ícones Lucide com acabamento metálico.
-
-Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    '<role>Atue como Desenvolvedor Front-end Sênior especialista em UI/UX.</role>
+<task>Gere HTML único e autônomo com Tailwind e JS nativo.</task>
+<technical_stack>Tailwind CSS CDN, Lucide Icons CDN, Google Fonts, Vanilla JS.</technical_stack>
+<strict_rules>SEM links externos. SEM navegação externa. SEM mídia. Interação no próprio DOM.</strict_rules>
+<design_guidelines>
+- Estética Holográfica: Superfícies simulando refração. Gradientes complexos (ciano, rosa, lavanda, lima). Efeito ''shimmer'' em movimento infinito.
+- Refração e Brilho: Containers bg-white/10, backdrop-blur-2xl. Borda iridescente fina. Drop-shadow mudando de matiz (hue-rotate).
+- Profundidade Espacial: Fundo ''Dark Space'' (bg-[#030308]). Partículas sutis.
+- Tipografia Futurista: ''Outfit'' ou ''Space Grotesk''. Títulos com leve text-shadow e cores holográficas.
+- Interatividade: Efeito ''Tilt 3D'' com mouse: cards rotacionam e o gradiente interno desloca simulando reflexo.
+- Estrutura: Layout ''Web3 Dashboard'', botões brilhantes, ícones Lucide metálicos.
+- Conteúdo: [INSERIR TEMA AQUI]
+</design_guidelines>
+<output_format>Apenas HTML puro, sem markdown.</output_format>',
     true
 ),
 (
     NULL, 
     'Swiss Design + Grid Brutalism', 
     'Precisão suíça com estrutura industrial aparente, tipografia radical e grid modular visível.',
-    'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
-
-Diretrizes de Design & Sofisticação:
-- Estética Swiss Design (Estilo Internacional): Foque em clareza absoluta e funcionalidade. Utilize um grid modular matemático e rigoroso, visível através de linhas de divisão finas (border-slate-200). O fundo deve ser um ''Paper White'' limpo (bg-[#f8f8f8]).
-- Grids Brutalistas: Use um layout de colunas fixas que não se escondem. Exiba o esqueleto do site com bordas sólidas. Crie seções com tamanhos variados que se encaixam como um sistema de prateleiras.
-- Tipografia Suíça Clássica: Use exclusivamente a fonte ''Inter'' ou ''Plus Jakarta Sans'' (como alternativa moderna à Helvetica). Aplique uma hierarquia tipográfica drástica: use text-xs uppercase tracking-[0.2em] para labels e text-6xl font-black para títulos principais, sempre com alinhamento à esquerda.
-- Uso Estratégico do Vermelho Suíço: Mantenha a interface quase inteiramente em preto, branco e cinza, utilizando o vermelho vibrante (bg-[#ff0000]) apenas para elementos de ação (CTAs) ou pontos de foco extremamente específicos.
-- Interatividade & Animações: Use GSAP para criar transições de ''Grid Reveal'' (as linhas do grid se desenham primeiro e o conteúdo preenche depois). As animações devem ser secas e rápidas (sem elasticidade), enfatizando a precisão técnica.
-- Estrutura: Layout de ''Index'' ou ''Product Catalog'', com numeração técnica para cada seção e ícones Lucide pequenos e precisos (stroke-width: 1.5px), sempre alinhados ao topo dos seus respectivos grids.
-
-Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    '<role>Atue como Desenvolvedor Front-end Sênior especialista em UI/UX.</role>
+<task>Gere HTML único e autônomo com Tailwind e JS nativo.</task>
+<technical_stack>Tailwind CSS CDN, Lucide Icons CDN, Google Fonts, Vanilla JS.</technical_stack>
+<strict_rules>SEM links externos. SEM navegação externa. SEM mídia. Interação no próprio DOM.</strict_rules>
+<design_guidelines>
+- Estética Swiss Design: Clareza absoluta. Grid modular visível (border-slate-200). Fundo ''Paper White'' (bg-[#f8f8f8]).
+- Grids Brutalistas: Colunas fixas visíveis. Seções como prateleiras.
+- Tipografia Suíça: Apenas ''Inter'' ou ''Plus Jakarta Sans''. Hierarquia drástica: labels em text-xs uppercase tracking-[0.2em], títulos text-6xl font-black alinhados à esquerda.
+- Uso Estratégico do Vermelho: Interface P/B/Cinza, com vermelho vibrante (bg-[#ff0000]) APENAS para CTAs ou focos.
+- Interatividade: Animações ''Grid Reveal'' (linhas desenham, depois o conteúdo). Secas e rápidas.
+- Estrutura: Layout ''Index/Catalog'', numeração técnica, ícones precisos (1.5px) alinhados ao topo.
+- Conteúdo: [INSERIR TEMA AQUI]
+</design_guidelines>
+<output_format>Apenas HTML puro, sem markdown.</output_format>',
     true
 ),
 (
     NULL, 
     'Minimalismo Japonês (Zen Design)', 
     'Foco no vazio (Ma), tipografia sutil, cores naturais e assimetria equilibrada.',
-    'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
-
-Diretrizes de Design & Sofisticação:
-- Estética Zen: Muito espaço em branco (whitespace), respiro entre os elementos. Fundo em tons de papel de arroz (bg-[#F9F6F0]).
-- Cores Naturais: Acentos em tons de bambu, chá verde, ou tinta nanquim (preto suave).
-- Tipografia: Fontes sans-serif muito limpas e finas (ex: ''Inter'' com font-light). Títulos com espaçamento generoso.
-- Estrutura: Layouts assimétricos, mas perfeitamente balanceados. Linhas divisórias extremamente finas e discretas.
-
-Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    '<role>Atue como Desenvolvedor Front-end Sênior especialista em UI/UX.</role>
+<task>Gere HTML autônomo único.</task>
+<technical_stack>Tailwind CSS CDN, Lucide Icons, Google Fonts, Vanilla JS.</technical_stack>
+<strict_rules>SEM links externos, SEM rodapé/cabeçalho de navegação. SEM imagens/vídeos.</strict_rules>
+<design_guidelines>
+- Estética Zen: Abundância de espaço em branco (vazio/Ma). Fundo papel de arroz (bg-[#F9F6F0]).
+- Cores Naturais: Acentos em tons de bambu, chá verde ou nanquim suave.
+- Tipografia: Sans-serif ultra limpa (''Inter'' font-light). Espaçamento generoso.
+- Estrutura: Assimetria perfeitamente balanceada, divisórias finíssimas.
+- Conteúdo: [INSERIR TEMA AQUI]
+</design_guidelines>
+<output_format>Apenas HTML puro, sem markdown.</output_format>',
     true
 ),
 (
     NULL, 
     'Dark Academia', 
     'Atmosfera acadêmica vintage, tons terrosos escuros, tipografia serifada clássica.',
-    'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
-
-Diretrizes de Design & Sofisticação:
-- Estética Dark Academia: Fundos em tons de marrom escuro, verde musgo profundo ou bordô (bg-[#2C241B]).
-- Tipografia Clássica: Uso predominante de fontes serifadas elegantes (ex: ''Playfair Display'' ou ''Merriweather'') para evocar livros antigos.
-- Detalhes: Bordas duplas, ornamentos sutis (usando CSS borders), paleta de cores que remete a bibliotecas antigas e luz de velas (textos em creme ou dourado envelhecido).
-- Estrutura: Layouts que lembram páginas de enciclopédias ou jornais antigos, com colunas de texto bem definidas.
-
-Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    '<role>Atue como Desenvolvedor Front-end Sênior especialista em UI/UX.</role>
+<task>Gere HTML autônomo único.</task>
+<technical_stack>Tailwind CSS CDN, Lucide Icons, Google Fonts, Vanilla JS.</technical_stack>
+<strict_rules>SEM links externos, SEM rotas de fuga. SEM mídia.</strict_rules>
+<design_guidelines>
+- Estética Dark Academia: Fundo marrom escuro, verde musgo profundo ou bordô (bg-[#2C241B]).
+- Tipografia Clássica: Serifadas elegantes (''Playfair Display'', ''Merriweather'') evocando livros antigos.
+- Detalhes: Bordas duplas (CSS borders), tons de creme ou dourado envelhecido para texto, imitando biblioteca/luz de velas.
+- Estrutura: Layouts de enciclopédia clássica ou jornal antigo com colunas.
+- Conteúdo: [INSERIR TEMA AQUI]
+</design_guidelines>
+<output_format>Apenas HTML puro, sem markdown.</output_format>',
     true
 ),
 (
     NULL, 
     'Y2K Cyber Web', 
     'Nostalgia dos anos 2000, cores metálicas, rosa choque, gradientes iridescentes e estética tech-pop.',
-    'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
-
-Diretrizes de Design & Sofisticação:
-- Estética Y2K: Cores vibrantes como rosa chiclete, azul ciano e prata metálico. Fundos com gradientes radiais intensos.
-- Elementos Visuais: Caixas com bordas arredondadas grossas, sombras duras coloridas, e efeitos que lembram plástico translúcido ou metal brilhante.
-- Tipografia: Fontes que remetem à tecnologia do início do milênio (ex: ''Space Grotesk'' ou fontes pixeladas/arredondadas).
-- Animações: Efeitos de marquee (texto rolando), piscar rápido, e cursores personalizados (via CSS).
-
-Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    '<role>Atue como Desenvolvedor Front-end Sênior especialista em UI/UX.</role>
+<task>Gere HTML autônomo único.</task>
+<technical_stack>Tailwind CSS CDN, Lucide Icons, Google Fonts, Vanilla JS.</technical_stack>
+<strict_rules>SEM links externos, SEM rotas de fuga. SEM mídia.</strict_rules>
+<design_guidelines>
+- Estética Y2K: Rosa chiclete, azul ciano, prata metálico. Fundos com gradiente radial intenso.
+- Elementos Visuais: Caixas com bordas arredondadas grossas, sombras duras coloridas, simulando plástico translúcido/metal.
+- Tipografia: ''Space Grotesk'' ou fontes pixeladas/arredondadas.
+- Animações: Marquee (texto rolando), cursores personalizados, piscar rápido (blink).
+- Conteúdo: [INSERIR TEMA AQUI]
+</design_guidelines>
+<output_format>Apenas HTML puro, sem markdown.</output_format>',
     true
 ),
 (
     NULL, 
     'Eco-Brutalismo', 
     'Mistura do brutalismo de concreto com elementos orgânicos e verdes vibrantes.',
-    'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
-
-Diretrizes de Design & Sofisticação:
-- Estética Eco-Brutalista: Fundo cinza concreto (bg-[#D1D5DB] ou texturas de ruído) contrastando fortemente com tons de verde neon ou verde folha vibrante.
-- Estrutura: Grids expostos, linhas pretas grossas dividindo seções, ausência de sombras suaves (uso de sombras duras ou nenhuma).
-- Tipografia: Fontes grotescas pesadas e grandes, muitas vezes em caixa alta, misturadas com ícones de natureza (folhas, sol) em estilo flat.
-- Contraste: O contraste entre o "frio" do cinza/preto e o "vivo" do verde é o ponto central do design.
-
-Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    '<role>Atue como Desenvolvedor Front-end Sênior especialista em UI/UX.</role>
+<task>Gere HTML autônomo único.</task>
+<technical_stack>Tailwind CSS CDN, Lucide Icons, Google Fonts, Vanilla JS.</technical_stack>
+<strict_rules>SEM links externos, SEM rotas de fuga. SEM mídia.</strict_rules>
+<design_guidelines>
+- Estética Eco-Brutalista: Fundo cinza concreto (bg-[#D1D5DB]) com texturas, alto contraste com verde neon/folha vibrante.
+- Estrutura: Grids expostos, linhas pretas grossas, sombras duras (shadow-solid) ou nenhuma.
+- Tipografia: Grotescas pesadas e gigantes, caixa alta. Ícones orgânicos (folhas) flat via Lucide.
+- Contraste: Frio (cinza) contra Vivo (verde) como guia visual principal.
+- Conteúdo: [INSERIR TEMA AQUI]
+</design_guidelines>
+<output_format>Apenas HTML puro, sem markdown.</output_format>',
     true
 ),
 (
     NULL, 
     'Cyber-Glass (Neon + Glassmorphism)', 
     'Painéis de vidro translúcido flutuando sobre luzes neon intensas e fundos escuros.',
-    'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
-
-Diretrizes de Design & Sofisticação:
-- Estética Cyber-Glass: Fundo quase preto (bg-[#09090b]). Elementos contidos em painéis com backdrop-blur-2xl e bg-white/5.
-- Iluminação Neon: Sombras externas coloridas (box-shadow com cores neon como ciano, magenta, lima) simulando LEDs por trás dos painéis de vidro.
-- Tipografia: Fontes modernas e limpas, com títulos brilhantes (text-shadow neon).
-- Animações: Pulsação suave das luzes neon de fundo, dando vida ao ambiente escuro.
-
-Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    '<role>Atue como Desenvolvedor Front-end Sênior especialista em UI/UX.</role>
+<task>Gere HTML autônomo único.</task>
+<technical_stack>Tailwind CSS CDN, Lucide Icons, Google Fonts, Vanilla JS.</technical_stack>
+<strict_rules>SEM links externos, SEM rotas de fuga. SEM mídia.</strict_rules>
+<design_guidelines>
+- Estética Cyber-Glass: Fundo quase preto (bg-[#09090b]). Painéis contendo backdrop-blur-2xl e bg-white/5.
+- Iluminação Neon: Sombras externas coloridas (box-shadow neon: ciano, magenta, lima) simulando LEDs ocultos atrás dos vidros.
+- Tipografia: Modernas e limpas, títulos brilhantes (text-shadow neon).
+- Animações: Pulsação suave (pulse) dos LEDs de fundo.
+- Conteúdo: [INSERIR TEMA AQUI]
+</design_guidelines>
+<output_format>Apenas HTML puro, sem markdown.</output_format>',
     true
 ),
 (
     NULL, 
     'Retro 70s Groovy', 
     'Cores quentes (laranja, mostarda, marrom), formas fluidas e tipografia arredondada e espessa.',
-    'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
-
-Diretrizes de Design & Sofisticação:
-- Estética 70s: Paleta de cores terrosas e quentes (Laranja queimado, Amarelo mostarda, Marrom, Verde abacate).
-- Formas: Uso intenso de bordas arredondadas (pill-shapes), ondas SVG dividindo seções, e formas orgânicas.
-- Tipografia: Fontes grossas, arredondadas e com personalidade (ex: ''Cooper Black'' ou equivalentes do Google Fonts como ''Fraunces'' em peso black).
-- Vibração: Um design alegre, nostálgico e acolhedor, sem linhas retas duras.
-
-Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    '<role>Atue como Desenvolvedor Front-end Sênior especialista em UI/UX.</role>
+<task>Gere HTML autônomo único.</task>
+<technical_stack>Tailwind CSS CDN, Lucide Icons, Google Fonts, Vanilla JS.</technical_stack>
+<strict_rules>SEM links externos, SEM rotas de fuga. SEM mídia.</strict_rules>
+<design_guidelines>
+- Estética 70s: Paleta quente (Laranja queimado, Mostarda, Marrom, Verde abacate).
+- Formas: Bordas pill-shaped (arredondamento máximo), divisórias em ondas orgânicas (SVG inline).
+- Tipografia: Fontes grossas com personalidade (ex: ''Fraunces'' Black/Cooper Black style).
+- Vibração: Alegre, nostálgico, ausência de cantos duros.
+- Conteúdo: [INSERIR TEMA AQUI]
+</design_guidelines>
+<output_format>Apenas HTML puro, sem markdown.</output_format>',
     true
 ),
 (
     NULL, 
     'Geometria Lúdica (Modern Memphis)', 
     'Padrões geométricos, cores primárias brilhantes, confetes visuais e design divertido.',
-    'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
-
-Diretrizes de Design & Sofisticação:
-- Estética Memphis: Fundo claro com padrões de bolinhas, zigue-zagues ou rabiscos sutis.
-- Cores e Formas: Blocos de cores sólidas e vibrantes (Ciano, Amarelo, Rosa, Roxo). Elementos flutuantes como círculos, triângulos e squiggles.
-- Tipografia: Fontes sans-serif amigáveis e geométricas (''Poppins'' ou ''Quicksand'').
-- Estrutura: Layouts não convencionais, onde os elementos parecem ter sido "espalhados" de forma divertida, mas legível.
-
-Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    '<role>Atue como Desenvolvedor Front-end Sênior especialista em UI/UX.</role>
+<task>Gere HTML autônomo único.</task>
+<technical_stack>Tailwind CSS CDN, Lucide Icons, Google Fonts, Vanilla JS.</technical_stack>
+<strict_rules>SEM links externos, SEM rotas de fuga. SEM mídia.</strict_rules>
+<design_guidelines>
+- Estética Memphis: Fundo claro com patterns sutis (bolinhas, zigue-zague via CSS).
+- Cores e Formas: Blocos sólidos vibrantes (Ciano, Amarelo, Rosa). Elementos flutuantes independentes (triângulos, círculos).
+- Tipografia: Amigável e geométrica (''Poppins'', ''Quicksand'').
+- Estrutura: Layout "espalhado" ludicamente, mas com legibilidade impecável.
+- Conteúdo: [INSERIR TEMA AQUI]
+</design_guidelines>
+<output_format>Apenas HTML puro, sem markdown.</output_format>',
     true
 ),
 (
     NULL, 
     'Digital Scrapbook', 
     'Visual de colagem, texturas de papel rasgado, fitas adesivas e sobreposições caóticas controladas.',
-    'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
-
-Diretrizes de Design & Sofisticação:
-- Estética Scrapbook: Elementos devem parecer colados na tela. Use rotações leves (rotate-2, -rotate-3) nos containers.
-- Texturas: Fundos que simulam papel pardo ou quadriculado. Efeitos de sombra dura para simular recortes de papel.
-- Detalhes: Adicione elementos visuais que lembram fita adesiva (washi tape) usando divs semi-transparentes sobrepondo as bordas dos cards.
-- Tipografia: Mistura de fontes que parecem máquina de escrever (''Courier Prime'') com fontes manuscritas (''Caveat'' ou ''Permanent Marker'').
-
-Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    '<role>Atue como Desenvolvedor Front-end Sênior especialista em UI/UX.</role>
+<task>Gere HTML autônomo único.</task>
+<technical_stack>Tailwind CSS CDN, Lucide Icons, Google Fonts, Vanilla JS.</technical_stack>
+<strict_rules>SEM links externos, SEM rotas de fuga. SEM mídia.</strict_rules>
+<design_guidelines>
+- Estética Scrapbook: Rotações leves em elementos (rotate-2, -rotate-3) simulando colagem.
+- Texturas: Fundos papel pardo/quadriculado via CSS. Sombras duras estilo recorte.
+- Detalhes: Divs semi-transparentes simulando washi tape (fita adesiva) prendendo os cards.
+- Tipografia: Mistura de fonte máquina de escrever (''Courier Prime'') com manuscrita (''Caveat'').
+- Conteúdo: [INSERIR TEMA AQUI]
+</design_guidelines>
+<output_format>Apenas HTML puro, sem markdown.</output_format>',
     true
 ),
 (
     NULL, 
     'High-Fashion Editorial', 
     'Elegância extrema, margens imensas, tipografia fina e contraste dramático.',
-    'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
-
-Diretrizes de Design & Sofisticação:
-- Estética Editorial: Inspirado em revistas de alta costura (Vogue, Harper''s Bazaar). Fundo branco puro ou off-white muito sofisticado.
-- Tipografia: Títulos gigantescos em fontes serifadas ultra-finas ou itálicas elegantes. Textos de corpo muito pequenos e espaçados.
-- Layout: Uso dramático do espaço em branco. Linhas divisórias finíssimas (1px, cinza muito claro).
-- Alinhamento: Mistura de alinhamentos justificados para blocos de texto e centralizados para grandes citações.
-
-Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    '<role>Atue como Desenvolvedor Front-end Sênior especialista em UI/UX.</role>
+<task>Gere HTML autônomo único.</task>
+<technical_stack>Tailwind CSS CDN, Lucide Icons, Google Fonts, Vanilla JS.</technical_stack>
+<strict_rules>SEM links externos, SEM rotas de fuga. SEM mídia.</strict_rules>
+<design_guidelines>
+- Estética Editorial: Estilo revista Vogue. Fundo branco puro ou off-white sofisticado.
+- Tipografia: Títulos gigantes serifados ultra-finos/itálicos. Corpo de texto pequeno, hiper espaçado.
+- Layout: Espaço em branco dramático. Linhas divisórias finíssimas em cinza claro.
+- Alinhamento: Mistura blocos justificados e grandes citações centralizadas.
+- Conteúdo: [INSERIR TEMA AQUI]
+</design_guidelines>
+<output_format>Apenas HTML puro, sem markdown.</output_format>',
     true
 ),
 (
     NULL, 
     'Vaporwave Aesthetic', 
-    'Nostalgia dos anos 80/90, gradientes rosa e ciano, estátuas clássicas (implícitas) e grids de perspectiva.',
-    'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
-
-Diretrizes de Design & Sofisticação:
-- Estética Vaporwave: Paleta de cores focada em magenta, ciano, lavanda e pêssego. Gradientes lineares do pôr do sol.
-- Elementos Visuais: Janelas estilo Windows 95 (bordas cinzas com relevo), grids de perspectiva no fundo.
-- Tipografia: Fontes serifadas espaçadas (V A P O R W A V E style) misturadas com fontes pixeladas de sistema antigo.
-- Atmosfera: Um visual surreal, nostálgico e levemente "glitchy".
-
-Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    'Nostalgia dos anos 80/90, gradientes rosa e ciano, grids de perspectiva.',
+    '<role>Atue como Desenvolvedor Front-end Sênior especialista em UI/UX.</role>
+<task>Gere HTML autônomo único.</task>
+<technical_stack>Tailwind CSS CDN, Lucide Icons, Google Fonts, Vanilla JS.</technical_stack>
+<strict_rules>SEM links externos, SEM rotas de fuga. SEM mídia.</strict_rules>
+<design_guidelines>
+- Estética Vaporwave: Magenta, ciano, lavanda. Gradientes de pôr do sol sintético.
+- Elementos Visuais: Janelas Win95 (bordas cinzas com relevo em inset shadows), grids de perspectiva em SVG no fundo.
+- Tipografia: Serifadas espaçadas (V A P O R W A V E) misturadas com monospace retro.
+- Atmosfera: Surreal, nostálgica, "glitchy".
+- Conteúdo: [INSERIR TEMA AQUI]
+</design_guidelines>
+<output_format>Apenas HTML puro, sem markdown.</output_format>',
     true
 ),
 (
     NULL, 
     'Monocromático Vibrante', 
     'Uso de uma única cor forte em várias tonalidades para criar uma experiência visual imersiva.',
-    'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
-
-Diretrizes de Design & Sofisticação:
-- Estética Monocromática: Escolha uma cor base vibrante (ex: Azul Klein, Laranja Neon, ou Roxo Profundo) e use apenas variações de luminosidade e saturação dessa cor.
-- Contraste: O texto deve ser da mesma cor, mas em tons extremamente escuros ou extremamente claros para garantir a leitura.
-- Profundidade: Use opacidades (bg-blue-500/20) e sombras tonais (shadow-blue-900) em vez de sombras pretas ou cinzas.
-- Impacto: Um design ousado que banha o usuário em uma única atmosfera de cor.
-
-Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    '<role>Atue como Desenvolvedor Front-end Sênior especialista em UI/UX.</role>
+<task>Gere HTML autônomo único.</task>
+<technical_stack>Tailwind CSS CDN, Lucide Icons, Google Fonts, Vanilla JS.</technical_stack>
+<strict_rules>SEM links externos, SEM rotas de fuga. SEM mídia.</strict_rules>
+<design_guidelines>
+- Estética Monocromática: Cor base única e intensa (ex: Azul Klein, Laranja Neon). Variações apenas via luminosidade.
+- Contraste: Textos na mesma cor base, mas forçando contraste (ultra claros/ultra escuros).
+- Profundidade: Sombras e fundos com opacidade tonal da mesma cor (shadow-blue-900), nunca preto puro.
+- Impacto: Interface "banhada" na atmosfera colorida.
+- Conteúdo: [INSERIR TEMA AQUI]
+</design_guidelines>
+<output_format>Apenas HTML puro, sem markdown.</output_format>',
     true
 ),
 (
     NULL, 
     'Soft UI Clássico (Neumorphism 1.0)', 
     'Elementos que parecem extrudados do próprio fundo, com sombras suaves e baixo contraste.',
-    'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
-
-Diretrizes de Design & Sofisticação:
-- Estética Neumórfica: Fundo e elementos na exata mesma cor (geralmente um cinza muito claro ou azul pálido, ex: #e0e5ec).
-- Sombras: O efeito é criado inteiramente por duas sombras em cada elemento: uma clara no canto superior esquerdo e uma escura no canto inferior direito.
-- Suavidade: Bordas arredondadas, ausência de linhas duras ou bordas coloridas. Tudo parece macio e tátil.
-- Tipografia: Fontes limpas, com cores de texto em tons de cinza médio para manter o baixo contraste elegante.
-
-Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    '<role>Atue como Desenvolvedor Front-end Sênior especialista em UI/UX.</role>
+<task>Gere HTML autônomo único.</task>
+<technical_stack>Tailwind CSS CDN, Lucide Icons, Google Fonts, Vanilla JS.</technical_stack>
+<strict_rules>SEM links externos, SEM rotas de fuga. SEM mídia.</strict_rules>
+<design_guidelines>
+- Estética Neumórfica: Fundo e elementos possuem A MESMA COR (ex: #e0e5ec).
+- Sombras: O elemento "surge" via dupla box-shadow (luz branca topo-esquerda, sombra escura base-direita).
+- Suavidade: Bordas arredondadas macias, nada de hard lines.
+- Tipografia: Fontes limpas, textos em cinza médio para manter contraste baixo e elegante.
+- Conteúdo: [INSERIR TEMA AQUI]
+</design_guidelines>
+<output_format>Apenas HTML puro, sem markdown.</output_format>',
     true
 ),
 (
     NULL, 
     'Industrial Tech Wear', 
     'Design utilitário, preto fosco, acentos em laranja segurança, tipografia técnica e códigos de barras.',
-    'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
-
-Diretrizes de Design & Sofisticação:
-- Estética Industrial: Fundo preto fosco ou cinza asfalto (bg-[#111111]). Acentos em cores de alerta (Laranja Segurança #FF6600 ou Amarelo Cuidado).
-- Elementos Técnicos: Uso de linhas diagonais, padrões de hachura (stripes), e cantos chanfrados (usando clip-path).
-- Tipografia: Fontes monospace ou grotescas muito rígidas. Inclusão de pequenos textos técnicos, números de série falsos ou coordenadas para compor o visual.
-- Estrutura: Layout que lembra a interface de um equipamento militar ou maquinário pesado.
-
-Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    '<role>Atue como Desenvolvedor Front-end Sênior especialista em UI/UX.</role>
+<task>Gere HTML autônomo único.</task>
+<technical_stack>Tailwind CSS CDN, Lucide Icons, Google Fonts, Vanilla JS.</technical_stack>
+<strict_rules>SEM links externos, SEM rotas de fuga. SEM mídia.</strict_rules>
+<design_guidelines>
+- Estética Industrial: Preto fosco/Asfalto (bg-[#111111]). Acentos vibrantes (Laranja #FF6600).
+- Elementos Técnicos: Linhas diagonais, listras de aviso (stripes), cantos cortados (clip-path chanfrado).
+- Tipografia: Monospace ou grotesca rígida. Uso de labels técnicos falsos (coordenadas, serial numbers) como UI ornament.
+- Estrutura: HUD tático ou console militar.
+- Conteúdo: [INSERIR TEMA AQUI]
+</design_guidelines>
+<output_format>Apenas HTML puro, sem markdown.</output_format>',
     true
 ),
 (
     NULL, 
     'Gothic / Dark Fantasy', 
     'Atmosfera sombria, elegante e misteriosa, com vermelhos profundos, dourados envelhecidos e preto.',
-    'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
-
-Diretrizes de Design & Sofisticação:
-- Estética Gótica: Fundo preto absoluto ou texturas de veludo escuro. Cores de destaque em vermelho sangue, roxo profundo ou ouro envelhecido.
-- Tipografia: Fontes serifadas dramáticas, com alto contraste entre traços finos e grossos (ex: ''Cinzel'' ou ''Cormorant'').
-- Ornamentos: Linhas divisórias elegante, bordas finas douradas, e um layout que evoca a diagramação de um grimório ou convite de luxo obscuro.
-- Iluminação: Efeitos de gradiente radial sutis que parecem luz de velas iluminando o centro da tela.
-
-Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    '<role>Atue como Desenvolvedor Front-end Sênior especialista em UI/UX.</role>
+<task>Gere HTML autônomo único.</task>
+<technical_stack>Tailwind CSS CDN, Lucide Icons, Google Fonts, Vanilla JS.</technical_stack>
+<strict_rules>SEM links externos, SEM rotas de fuga. SEM mídia.</strict_rules>
+<design_guidelines>
+- Estética Gótica: Fundo preto profundo. Destaques em vermelho sangue, roxo ou dourado escuro.
+- Tipografia: Serifadas dramáticas de alto contraste (''Cinzel'', ''Cormorant'').
+- Ornamentos: Linhas elegantes, emulação de bordas de grimório antigo, layout centralizado luxuoso.
+- Iluminação: Gradiente radial ao centro emulando luz de velas no breu.
+- Conteúdo: [INSERIR TEMA AQUI]
+</design_guidelines>
+<output_format>Apenas HTML puro, sem markdown.</output_format>',
     true
 ),
 (
     NULL, 
     'Pop Art / Comic Book', 
     'Estilo história em quadrinhos, padrões de retícula (halftone), cores primárias estouradas e bordas grossas.',
-    'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
-
-Diretrizes de Design & Sofisticação:
-- Estética Comic Book: Bordas pretas muito grossas e irregulares. Uso de padrões de pontos (halftone) no fundo ou em sombras.
-- Cores: Paleta CMYK pura (Ciano, Magenta, Amarelo, Preto). Cores sólidas sem gradientes suaves.
-- Tipografia: Fontes em itálico pesado, caixa alta, que lembram letreiros de quadrinhos (ex: ''Bangers'' ou ''Komika'').
-- Elementos Visuais: Caixas de texto que lembram balões de fala ou quadros de HQ, com sombras pretas sólidas e deslocadas.
-
-Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    '<role>Atue como Desenvolvedor Front-end Sênior especialista em UI/UX.</role>
+<task>Gere HTML autônomo único.</task>
+<technical_stack>Tailwind CSS CDN, Lucide Icons, Google Fonts, Vanilla JS.</technical_stack>
+<strict_rules>SEM links externos, SEM rotas de fuga. SEM mídia.</strict_rules>
+<design_guidelines>
+- Estética Comic Book: Bordas pretas irregulares e grossas. Padrões halftone (pontilhados) em fundos via CSS.
+- Cores: Paleta CMYK saturada. Cores flat sem degradê liso.
+- Tipografia: Itálicos pesados, uppercase (''Bangers''). Letreiros estilo HQ.
+- Elementos Visuais: Containers simulando quadros de HQ ou balões de fala, sombras pretas sólidas duras.
+- Conteúdo: [INSERIR TEMA AQUI]
+</design_guidelines>
+<output_format>Apenas HTML puro, sem markdown.</output_format>',
     true
 ),
 (
     NULL, 
     'Abstract Fluid Gradients', 
     'Formas orgânicas derretidas, gradientes complexos em movimento e visual onírico.',
-    'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
-
-Diretrizes de Design & Sofisticação:
-- Estética Fluida: O design é dominado por gradientes de malha (mesh gradients) com cores suaves e misturadas (ex: pêssego, lavanda, azul claro).
-- Formas: Ausência total de cantos retos. Tudo usa border-radius extremos ou clip-paths orgânicos (blobs).
-- Tipografia: Fontes sans-serif muito limpas e arredondadas, em branco ou preto translúcido para não brigar com o fundo colorido.
-- Atmosfera: Um visual calmante, moderno e altamente estético, focado na transição suave de cores.
-
-Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    '<role>Atue como Desenvolvedor Front-end Sênior especialista em UI/UX.</role>
+<task>Gere HTML autônomo único.</task>
+<technical_stack>Tailwind CSS CDN, Lucide Icons, Google Fonts, Vanilla JS.</technical_stack>
+<strict_rules>SEM links externos, SEM rotas de fuga. SEM mídia.</strict_rules>
+<design_guidelines>
+- Estética Fluida: Mesh gradients suaves e misturados (pêssego, lavanda).
+- Formas: Sem cantos retos. Elementos em blobs (clip-paths orgânicos) ou bordas circulares totais.
+- Tipografia: Sans-serif arredondada branca/translúcida, integrada ao mar de cores fluídas.
+- Atmosfera: Onírica, calmante e em constante movimento suave.
+- Conteúdo: [INSERIR TEMA AQUI]
+</design_guidelines>
+<output_format>Apenas HTML puro, sem markdown.</output_format>',
     true
 ),
 (
     NULL, 
     'Terminal / Hacker UI', 
     'Visual de linha de comando, texto verde brilhante sobre fundo preto, estética de código puro.',
-    'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
-
-Diretrizes de Design & Sofisticação:
-- Estética Terminal: Fundo preto absoluto (bg-black). Todo o texto e bordas em verde neon (text-[#00FF00]) ou âmbar.
-- Tipografia: Exclusivamente fontes Monospace (''Courier New'', ''Fira Code'').
-- Estrutura: Layout em blocos de texto alinhados à esquerda, simulando o output de um console. Uso de caracteres ASCII para criar divisórias (ex: ===, ---, ou +--+).
-- Animações: Efeito de digitação (typewriter) no carregamento e cursores retangulares piscantes.
-
-Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    '<role>Atue como Desenvolvedor Front-end Sênior especialista em UI/UX.</role>
+<task>Gere HTML autônomo único.</task>
+<technical_stack>Tailwind CSS CDN, Lucide Icons, Google Fonts, Vanilla JS.</technical_stack>
+<strict_rules>SEM links externos, SEM rotas de fuga. SEM mídia.</strict_rules>
+<design_guidelines>
+- Estética Terminal: bg-black puro. Texto, bordas e ícones EXCLUSIVAMENTE em verde neon (#00FF00).
+- Tipografia: 100% Monospace (''Courier New'', ''Fira Code'').
+- Estrutura: Blocos de console alinhados à esquerda. Divisórias feitas em ASCII (===, ---).
+- Animações: Typewriter effect na inicialização, cursor text block piscando.
+- Conteúdo: [INSERIR TEMA AQUI]
+</design_guidelines>
+<output_format>Apenas HTML puro, sem markdown.</output_format>',
     true
 ),
 (
     NULL, 
     'Surrealist Web', 
     'Layouts oníricos, proporções distorcidas, elementos flutuantes e quebra de expectativas.',
-    'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
-
-Diretrizes de Design & Sofisticação:
-- Estética Surreal: Paletas de cores inusitadas (ex: céu laranja, chão roxo). Elementos que parecem desafiar a gravidade.
-- Tipografia: Mistura caótica mas esteticamente agradável de fontes gigantes e minúsculas, serifadas e sem serifa.
-- Estrutura: Quebra total do grid tradicional. Textos sobrepostos a formas, elementos parcialmente cortados fora da tela.
-- Atmosfera: Um design que parece um sonho ou uma obra de arte moderna, priorizando a expressão visual sobre a estrutura rígida.
-
-Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    '<role>Atue como Desenvolvedor Front-end Sênior especialista em UI/UX.</role>
+<task>Gere HTML autônomo único.</task>
+<technical_stack>Tailwind CSS CDN, Lucide Icons, Google Fonts, Vanilla JS.</technical_stack>
+<strict_rules>SEM links externos, SEM rotas de fuga. SEM mídia.</strict_rules>
+<design_guidelines>
+- Estética Surreal: Paletas ilógicas (céu laranja, chão roxo). Elementos quebrando a gravidade física via posições absolutas.
+- Tipografia: Caos belo. Mistura de fontes gigantes e minúsculas.
+- Estrutura: Quebra total de grids. Sobreposição intencional de textos sobre formas, partes vazadas fora da viewport.
+- Atmosfera: Obra de arte moderna desconstruída.
+- Conteúdo: [INSERIR TEMA AQUI]
+</design_guidelines>
+<output_format>Apenas HTML puro, sem markdown.</output_format>',
     true
 ),
 (
     NULL, 
     'Art Deco Luxuoso', 
     'Glamour dos anos 1920, simetria geométrica, preto profundo e detalhes em dourado metálico.',
-    'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
-
-Diretrizes de Design & Sofisticação:
-- Estética Art Deco: Fundo preto rico ou azul marinho muito escuro. Todos os acentos, bordas e ícones em tom de ouro metálico (ex: #D4AF37).
-- Formas: Padrões geométricos repetitivos, linhas retas combinadas com arcos perfeitos, simetria central estrita.
-- Tipografia: Fontes altas, finas e elegantes, em caixa alta (ex: ''Oswald'' ou fontes estilo Gatsby).
-- Estrutura: Layouts emoldurados com bordas duplas ou triplas, criando uma sensação de convite VIP ou arquitetura de luxo.
-
-Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    '<role>Atue como Desenvolvedor Front-end Sênior especialista em UI/UX.</role>
+<task>Gere HTML autônomo único.</task>
+<technical_stack>Tailwind CSS CDN, Lucide Icons, Google Fonts, Vanilla JS.</technical_stack>
+<strict_rules>SEM links externos, SEM rotas de fuga. SEM mídia.</strict_rules>
+<design_guidelines>
+- Estética Art Deco: Preto profundo (ou marinho escuro). Bordas, textos e ícones em ouro metálico (ex: #D4AF37).
+- Formas: Geometria repetitiva, arcos perfeitos sobrepondo linhas retas, simetria central rígida.
+- Tipografia: Fontes altas, finas e elegantes, uppercase (''Oswald'').
+- Estrutura: Molduras com bordas múltiplas, evocando convite VIP Gatsby.
+- Conteúdo: [INSERIR TEMA AQUI]
+</design_guidelines>
+<output_format>Apenas HTML puro, sem markdown.</output_format>',
     true
 ),
 (
     NULL, 
     'Space Age / Atomic 60s', 
     'Retro-futurismo dos anos 60, formas de estrelas, órbitas, cores pastéis espaciais e design otimista.',
-    'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
-
-Diretrizes de Design & Sofisticação:
-- Estética Space Age: Inspirado em Os Jetsons e na corrida espacial. Cores como azul celeste, coral, menta e branco estelar.
-- Formas: Uso de formas de bumerangue, estrelas de quatro pontas (sparkles), ovais inclinados simulando órbitas planetárias.
-- Tipografia: Fontes geométricas com um toque retrô (ex: ''Jost'' ou ''Futura'').
-- Atmosfera: Um design limpo, otimista, com muito espaço em branco e elementos que parecem flutuar em gravidade zero.
-
-Restrições Técnicas:
-NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (```html).
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.',
+    '<role>Atue como Desenvolvedor Front-end Sênior especialista em UI/UX.</role>
+<task>Gere HTML autônomo único.</task>
+<technical_stack>Tailwind CSS CDN, Lucide Icons, Google Fonts, Vanilla JS.</technical_stack>
+<strict_rules>SEM links externos, SEM rotas de fuga. SEM mídia.</strict_rules>
+<design_guidelines>
+- Estética Space Age: Retro-futurismo otimista dos Jetsons. Azul celeste, coral, menta, branco estelar.
+- Formas: Bumerangues, estrelas 4 pontas (sparkles SVG), ovais em rotação simulando órbitas.
+- Tipografia: Geométrica retrô (''Jost'', ''Futura'').
+- Atmosfera: Gravidade zero, clean, muito espaço em branco, flutuação lúdica.
+- Conteúdo: [INSERIR TEMA AQUI]
+</design_guidelines>
+<output_format>Apenas HTML puro, sem markdown.</output_format>',
     true
 );

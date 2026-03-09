@@ -144,23 +144,35 @@ const StylePreview: React.FC<StylePreviewProps> = ({ styleTitle, brandConfig }) 
     );
   }
 
-  // Default / Branding
+  // Default / Branding (Medical Luxury)
   return (
-    <div className="w-full h-full bg-slate-900 p-6 flex flex-col gap-6 font-sans">
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: brandConfig.primaryBlue }}>
-          <Layout className="text-white" size={20} />
+    <div className="w-full h-full bg-[#fdfbf7] p-6 flex flex-col gap-6 font-serif overflow-hidden relative">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-slate-200/20 rounded-full -mr-16 -mt-16" />
+      <div className="flex items-center justify-between border-b border-black/5 pb-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg shadow-blue-900/10" style={{ backgroundColor: brandConfig.primaryBlue }}>
+            <Layout className="text-white" size={20} />
+          </div>
+          <div className="space-y-1">
+            <div className="h-3 w-32 bg-slate-900/80 rounded-full" />
+            <div className="h-2 w-20 bg-slate-400/30 rounded-full" />
+          </div>
         </div>
-        <div className="space-y-1">
-          <div className="h-3 w-32 bg-slate-700 rounded-full" />
-          <div className="h-2 w-20 bg-slate-800 rounded-full" />
+        <div className="w-8 h-8 rounded-full border border-black/5 flex items-center justify-center">
+          <MousePointer2 size={12} className="text-slate-400" />
         </div>
       </div>
-      <div className="flex-1 bg-slate-800/50 rounded-2xl border border-slate-700 p-4 flex flex-col gap-3">
-        <div className="h-4 w-full bg-slate-700 rounded-lg" />
-        <div className="h-4 w-full bg-slate-700 rounded-lg" />
-        <div className="h-4 w-2/3 bg-slate-700 rounded-lg" />
-        <div className="mt-auto h-10 w-full rounded-xl" style={{ backgroundColor: brandConfig.primaryGold }} />
+      <div className="flex-1 flex flex-col gap-4">
+        <div className="h-8 w-3/4 bg-slate-900/90 rounded-lg" />
+        <div className="space-y-2">
+          <div className="h-2 w-full bg-slate-300/40 rounded-full" />
+          <div className="h-2 w-full bg-slate-300/40 rounded-full" />
+          <div className="h-2 w-2/3 bg-slate-300/40 rounded-full" />
+        </div>
+        <div className="mt-auto flex items-center gap-4">
+          <div className="h-10 flex-1 rounded-full shadow-md shadow-gold-900/10" style={{ backgroundColor: brandConfig.primaryGold }} />
+          <div className="w-10 h-10 rounded-full border border-black/5" />
+        </div>
       </div>
     </div>
   );

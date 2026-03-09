@@ -55,7 +55,7 @@ import { SUPABASE_TABLES_SQL } from './constants/supabaseSql';
 
 // --- Types & Constants ---
 
-type ViewType = 'keys' | 'supabase' | 'branding' | 'converter' | 'editor' | 'preview' | 'materials';
+type ViewType = 'keys' | 'supabase' | 'branding' | 'editor' | 'preview' | 'materials';
 type ComponentType = 'hero' | 'grid' | 'comparison' | 'callout' | 'list';
 
 interface MetadataItem {
@@ -118,35 +118,41 @@ interface PromptLibraryEntry {
 
 const DEFAULT_PROMPTS = [
   {
-    title: "Padrão",
-    description: "Estilo que utiliza as cores do branding",
+    title: "Modern Medical Luxury (Padrão)",
+    description: "Estilo limpo, sofisticado e profissional. Ideal para clínicas e produtos de alto padrão.",
     content: `Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
-Diretrizes de Design:
-Gere um ÚNICO arquivo HTML autônomo contendo HTML, CSS (use Tailwind via CDN: https://cdn.tailwindcss.com) e JS (use Lucide Icons via CDN: https://unpkg.com/lucide@latest).
+OBRIGATÓRIO INCLUIR NO <head> OU ANTES DO fechamento do <body>:
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
 
-NÃO inclua cabeçalhos ou rodapés externos do construtor.
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.
+DIRETRIZES DE DESIGN & ESTRUTURA:
+- ESTRUTURA DE LANDING PAGE: Divida o conteúdo em seções claras (<section>). Crie um fluxo de navegação envolvente.
+- HERO: Use um fundo com gradiente linear suave usando o Azul da marca. Título em 'Cormorant Garamond' com font-light e tracking-tight. Adicione um efeito de Glassmorphism sutil.
+- BENTO GRIDS: Transforme listas de benefícios em Bento Grids (grids assimétricos) com bg-white, bordas finas (border-slate-200) e sombras suaves (shadow-xl shadow-black/5). Use ícones Lucide em dourado.
+- CORES: Fundo principal bg-[#fdfbf7]. Use o Azul (#004a8e) para títulos de seção e o Dourado (#c5a059) para detalhes e ícones.
+- ANIMAÇÕES (GSAP): Você DEVE escrever o script JS no final do arquivo para inicializar o GSAP e ScrollTrigger. Crie animações de fade-in e slide-up para os cards e textos conforme o usuário rola a página.
 
-Aplique o branding fornecido de forma elegante e profissional.
-
-Use animações suaves (pode usar CSS puro ou bibliotecas via CDN se necessário).
-
-O arquivo deve ser auto-contido e pronto para ser aberto em qualquer navegador.
-
-Retorne APENAS o código HTML completo, sem blocos de código markdown (html)`
+RESTRIÇÕES:
+Retorne APENAS o código HTML. Sem botões de link externo, vídeos ou imagens.`
   },
   {
     title: "Neobrutalismo + Pastel Pop",
     description: "Estilo de alto contraste com bordas pretas espessas, sombras sólidas (Shadow-Pop) e paleta pastel vibrante. Ideal para fintechs e ferramentas modernas.",
     content: `Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
+OBRIGATÓRIO INCLUIR NO <head> OU ANTES DO fechamento do <body>:
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+
 Diretrizes de Design & Sofisticação:
 - Estética Neobrutalista: Utilize bordas pretas sólidas e espessas (border-2 ou border-4 border-black). Remova arredondamentos excessivos em favor de cantos vivos ou levemente arredondados (rounded-none ou rounded-lg).
 - Sombras Hard-Edge: Implemente o efeito 'Shadow-Pop'. Em vez de sombras suaves e esfumaçadas, use sombras sólidas e deslocadas (box-shadow: 8px 8px 0px 0px #000;) que não possuem desfoque.
 - Paleta Pastel Pop: Combine um fundo off-white (bg-[#f4f4f0]) com elementos em cores pastéis vibrantes e saturadas (Amarelo #FFD100, Rosa #FF90E8, Verde Menta #B1F1CB).
 - Tipografia e Peso: Use a fonte 'Inter' ou 'Lexend' via Google Fonts. Títulos devem ter peso font-black (900) e letras levemente comprimidas (tracking-tighter).
-- Interatividade: Use GSAP para criar animações de 'mola' (spring). Ao passar o mouse (hover), os elementos devem se deslocar na direção oposta da sombra, simulando um clique físico real.
+- Interatividade: Escreva o script JS para usar GSAP e criar animações de 'mola' (spring). Ao passar o mouse (hover), os elementos devem se deslocar na direção oposta da sombra, simulando um clique físico real.
 - Estrutura: Layout estilo 'Service Grid' ou 'Feature List', com ícones Lucide grandes, sempre dentro de containers com bordas pretas.
 
 Restrições Técnicas:
@@ -158,13 +164,18 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
     description: "Organização modular inspirada na Apple com efeitos de vidro, desfoque e profundidade. Layout assimétrico e moderno.",
     content: `Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
+OBRIGATÓRIO INCLUIR NO <head> OU ANTES DO fechamento do <body>:
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+
 Diretrizes de Design & Sofisticação:
 - Estrutura Bento Grid: Utilize um layout grid de 4 ou 6 colunas com auto-rows. Os cards devem ter tamanhos variados (col-span-1, col-span-2, row-span-2) para criar um ritmo visual assimétrico e moderno.
 - Estética Glassmorphism: Aplique backdrop-blur-xl e fundos semi-transparentes (bg-white/5 ou bg-white/10). O segredo está na borda: use uma borda fina de 1px com transparência (border-white/20) para simular a quina de um vidro lapidado.
 - Profundidade Visual: Use camadas de sombras muito suaves e amplas (shadow-[0_20px_50px_rgba(0,0,0,0.3)]). Os cards devem parecer flutuar sobre o fundo.
 - Liquid Background Animado: Crie um fundo escuro profundo (bg-[#0a0a0c]) com pelo menos dois 'blobs' de gradiente orgânico (um ciano e um violeta) que se movam lentamente usando animate-pulse ou Keyframes CSS personalizados com blur(100px).
 - Tipografia e Ícones: Use a fonte 'Plus Jakarta Sans' via Google Fonts. Os títulos devem ser font-bold e os ícones Lucide devem estar dentro de círculos ou quadrados de vidro com opacidade reduzida.
-- Interatividade: Use GSAP para uma animação de 'Stagger' (entrada em cascata) onde os cards aparecem um após o outro com um leve movimento de baixo para cima e escala.
+- Interatividade: Escreva o script JS para usar GSAP para uma animação de 'Stagger' (entrada em cascata) onde os cards aparecem um após o outro com um leve movimento de baixo para cima e escala.
 
 Restrições Técnicas:
 NÃO inclua cabeçalhos/rodapés externos. O arquivo deve ser 100% auto-contido. Retorne APENAS o código HTML completo, sem blocos de código markdown (html).
@@ -175,11 +186,16 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
     description: "Elegância etérea com fundos dinâmicos de gradiente suave e tipografia serifada premium.",
     content: `Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
+OBRIGATÓRIO INCLUIR NO <head> OU ANTES DO fechamento do <body>:
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+
 Diretrizes de Design & Sofisticação:
 - Estética Aurora: Crie um fundo dinâmico usando 3 ou 4 esferas de gradiente (blur-[120px]) com cores análogas (ex: Índigo, Violeta e fúcsia) que se movem lentamente em órbitas irregulares via CSS Keyframes. O fundo base deve ser um cinza quase preto (bg-[#050505]).
 - Minimalismo Orgânico: Use tipografia serifada premium para títulos (Google Fonts 'Playfair Display' ou 'Instrument Serif') e sans-serif para corpo ('Inter'). Garanta um letter-spacing negativo nos títulos (tracking-tighter).
 - Contraste de Superfície: O conteúdo principal deve flutuar em um container central com bg-white/[0.02] e backdrop-blur-3xl. As bordas devem ser quase invisíveis (border-white/5).
-- Interatividade & Animações: Use GSAP para um efeito de 'Reveal' suave no carregamento (opacity 0 para 1 com deslocamento de 20px no eixo Y). Adicione um cursor personalizado que reage ao passar sobre elementos clicáveis (escala e mudança de mix-blend-mode).
+- Interatividade & Animações: Escreva o script JS para usar GSAP para um efeito de 'Reveal' suave no carregamento (opacity 0 para 1 com deslocamento de 20px no eixo Y). Adicione um cursor personalizado que reage ao passar sobre elementos clicáveis (escala e mudança de mix-blend-mode).
 - Estrutura: Layout de 'Landing Page Hero' ultra-clean, com um CTA central minimalista e ícones Lucide com traço fino (stroke-width: 1px).
 
 Restrições Técnicas:
@@ -191,10 +207,15 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
     description: "Interfaces táteis e amigáveis que parecem feitas de argila ou plástico macio, com cores pastéis.",
     content: `Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
+OBRIGATÓRIO INCLUIR NO <head> OU ANTES DO fechamento do <body>:
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+
 Diretrizes de Design & Sofisticação:
 - Estética Claymorphism: Os elementos devem parecer feitos de argila ou plástico macio. Utilize border-radius extremo (rounded-[3rem]) e uma combination de box-shadow externa suave com duas sombras internas (inset) — uma clara no topo esquerdo e uma escura no canto inferior direito — para criar volume 3D tátil.
 - Paleta de Cores: Use tons pastéis "doces" (ex: Azul bebê #A5D8FF, Rosa chiclete #FFD6E8, Lilás #E5DBFF). O fundo deve ser um gradiente radial muito suave entre duas cores pastéis próximas.
-- Profundidade e Camadas: Implemente o efeito de flutuação. Use GSAP para criar uma animação de 'Floating' contínua (bobbing) nos elementos principais, fazendo-os subir e descer levemente em tempos diferentes.
+- Profundidade e Camadas: Implemente o efeito de flutuação. Escreva o script JS para usar GSAP para criar uma animação de 'Floating' contínua (bobbing) nos elementos principais, fazendo-os subir e descer levemente em tempos diferentes.
 - Tipografia: Use a fonte 'Outfit' ou 'Quicksand' via Google Fonts para manter o aspecto amigável e arredondado. Títulos em font-bold e cores de texto em tons de cinza azulado escuro (text-slate-700).
 - Interatividade: Adicione um efeito de 'Squeeze' (compressão) no clique via CSS active:scale-95 e transições de hover:scale-105 extremamente suaves.
 - Estrutura: Layout estilo 'Onboarding Cards' ou 'Feature Showcase' com ícones Lucide estilizados com traços grossos e cores vibrantes.
@@ -208,12 +229,17 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
     description: "Nostalgia tecnológica com acabamento premium, luzes neon refinadas e tipografia monospace.",
     content: `Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
+OBRIGATÓRIO INCLUIR NO <head> OU ANTES DO fechamento do <body>:
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+
 Diretrizes de Design & Sofisticação:
 - Estética Retro-Futurista Clean: Combine o estilo noir tecnológico com elegância moderna. Utilize um fundo sólido ultra-escuro (bg-[#020205]) com uma grade de perspectiva (CSS grid floor) no rodapé que desaparece no horizonte com mask-image linear-gradient.
 - Neon Refinado: Evite o excesso de brilho. Use cores neon (Ciano #00f3ff e Magenta #ff00ff) apenas como luzes de contorno (border com drop-shadow de 5px) e detalhes em pequenos LEDs indicadores.
 - Tipografia Monospace & Display: Use a fonte 'Space Mono' para dados e labels, e 'Syncopate' ou 'Orbitron' via Google Fonts para títulos principais. Aplique um efeito sutil de 'flicker' (piscar) via CSS Keyframes em elementos de destaque.
 - Interatividade & Efeitos de Vidro Negro: Utilize containers com bg-black/60 e backdrop-blur-lg. Ao passar o mouse, a borda neon do elemento deve aumentar de intensidade e o texto deve ganhar um efeito de 'glitch' controlado e rápido.
-- Animações: Use GSAP para criar uma linha de 'scanline' que percorre a tela verticalmente e animações de entrada estilo 'terminal boot' (texto surgindo caractere por caractere).
+- Animações: Escreva o script JS para usar GSAP para criar uma linha de 'scanline' que percorre a tela verticalmente e animações de entrada estilo 'terminal boot' (texto surgindo caractere por caractere).
 - Estrutura: Layout de 'Command Center' ou 'Tech Dashboard', com ícones Lucide estilizados em modo duotone usando as cores neon da paleta.
 
 Restrições Técnicas:
@@ -225,12 +251,17 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
     description: "Realismo tátil minimalista com sombras duplas precisas e sofisticação monocromática.",
     content: `Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
+OBRIGATÓRIO INCLUIR NO <head> OU ANTES DO fechamento do <body>:
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+
 Diretrizes de Design & Sofisticação:
 - Estética Neuomorphism 2.0: Diferente da primeira versão, esta deve ser refinada. Utilize uma cor de base única para fundo e elementos (ex: Cinza Suave #E0E5EC ou Azul Gelo #E2E8F0). Crie volume usando sombras duplas precisas: uma sombra clara (white) no topo/esquerda e uma sombra escura (rgba(163,177,198,0.6)) na base/direita.
 - Textura e Material: Adicione uma leve curvatura côncava ou convexa aos cards usando gradientes lineares quase imperceptíveis que seguem a direção da luz.
 - Acentos de Cor: Escolha uma única cor de destaque vibrante (ex: Azul Elétrico ou Verde Esmeralda) apenas para estados ativos, indicadores de Toggle ou ícones principais, quebrando a monocromia.
 - Tipografia: Use a fonte 'Inter' ou 'Satoshi' com pesos variados. Títulos devem ter baixo contraste de cor com o fundo para manter a estética minimalista, mas com font-bold para legibilidade.
-- Interatividade & Micro-animações: Use GSAP para animar a transição entre estados. Quando um botão for clicado, ele deve trocar as sombras externas por sombras internas (inset), simulando o movimento físico de ser pressionado para dentro do material.
+- Interatividade & Micro-animações: Escreva o script JS para usar GSAP para animar a transição entre estados. Quando um botão for clicado, ele deve trocar as sombras externas por sombras internas (inset), simulando o movimento físico de ser pressionado para dentro do material.
 - Estrutura: Layout de 'Smart Home Controller' ou 'Music Player', com botões circulares, sliders personalizados e ícones Lucide que parecem gravados na superfície.
 
 Restrições Técnicas:
@@ -242,11 +273,16 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
     description: "Impacto visual extremo através de fontes gigantes, alto contraste e composições dinâmicas.",
     content: `Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
+OBRIGATÓRIO INCLUIR NO <head> OU ANTES DO fechamento do <body>:
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+
 Diretrizes de Design & Sofisticação:
 - Estética Maximalista: O texto deve ser o elemento estrutural. Utilize fontes 'Display' de impacto (Google Fonts 'Syne' ou 'Bricolage Grotesque'). Títulos principais devem ser gigantes (text-7xl ou text-8xl), com letter-spacing extremamente reduzido (tracking-tighter) e pesos variando entre font-black e font-thin.
 - Dark Mode de Alto Contraste: Fundo preto absoluto (bg-[#000000]) com texto em branco puro (text-white). Intercale frases com o efeito text-transparent e -webkit-text-stroke: 1px white para criar camadas de profundidade visual apenas com glifos.
 - Composição Dinâmica: Quebre o alinhamento padrão. Use textos rotacionados (-rotate-90), textos que se repetem em faixas horizontais (estilo marquee) e sobreposições ousadas onde o texto passa por trás ou pela frente de ícones e botões.
-- Animações de Scroll & Reveal: Use GSAP e ScrollTrigger (via CDN) para criar animações de texto que deslizam de direções opostas conforme o usuário rola a página. Adicione um efeito de 'Staggered Letter Reveal' no carregamento inicial.
+- Animações de Scroll & Reveal: Escreva o script JS para usar GSAP e ScrollTrigger para criar animações de texto que deslizam de direções opostas conforme o usuário rola a página. Adicione um efeito de 'Staggered Letter Reveal' no carregamento inicial.
 - Interatividade: Implemente um 'Magnetic Button' para o CTA principal: o botão deve ser atraído sutilmente pelo cursor do mouse usando JS suave.
 - Estrutura: Layout de 'Digital Agency Portfolio' ou 'Event Editorial', focado em impacto visual imediato com ícones Lucide agindo apenas como acentos minimalistas.
 
@@ -259,12 +295,17 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
     description: "Visual analógico, editorial e cinematográfico com texturas de ruído e tipografia clássica.",
     content: `Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
+OBRIGATÓRIO INCLUIR NO <head> OU ANTES DO fechamento do <body>:
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+
 Diretrizes de Design & Sofisticação:
 - Estética Grainy (Ruído): Aplique um overlay de textura de ruído analógico em toda a página. Use um filtro de ruído SVG feTurbulence dentro de um rect absoluto com opacidade baixa (opacity-20) e pointer-events-none. O visual deve remeter a papel impresso ou fotografia de grão fino.
 - Paleta Monocromática Sofisticada: Use uma escala rigorosa de cinzas e pretos, fugindo do branco puro. Fundo em cinza médio-quente (bg-[#1a1a1a]) e elementos em tons contrastantes. Utilize mix-blend-mode (como difference ou overlay) para criar interações visuais ricas entre o texto e o fundo.
 - Minimalismo Editorial: Use tipografia serifada de alta classe (Google Fonts 'Cormorant Garamond' ou 'Fraunces') para corpo de texto e uma sans-serif geométrica ('Inter') para metadados. Mantenha grandes margens e muito respiro (whitespace).
 - Profundidade Cinematográfica: Utilize imagens ou placeholders com filtros grayscale(100%) e contrast(120%). As transições entre seções devem ser suaves, simulando um 'fade out' de cinema.
-- Interatividade & Animações: Use GSAP para criar um efeito de 'Lens Blur' ou 'Focus In' (o conteúdo começa desfocado e ganha nitidez ao entrar no viewport). O cursor deve ser um círculo simples que inverte as cores do que está por baixo.
+- Interatividade & Animações: Escreva o script JS para usar GSAP para criar um efeito de 'Lens Blur' ou 'Focus In' (o conteúdo começa desfocado e ganha nitidez ao entrar no viewport). O cursor deve ser um círculo simples que inverte as cores do que está por baixo.
 - Estrutura: Layout estilo 'Luxury Lookbook' ou 'Architecture Portfolio', com grid ortogonal e ícones Lucide com stroke-width: 0.75px para máxima elegância.
 
 Restrições Técnicas:
@@ -276,12 +317,17 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
     description: "Geometria pura, funcionalismo histórico e paleta primária sobre fundo papel.",
     content: `Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
+OBRIGATÓRIO INCLUIR NO <head> OU ANTES DO fechamento do <body>:
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+
 Diretrizes de Design & Sofisticação:
 - Estética Bauhaus Contemporânea: Baseie o design em formas geométricas puras (círculos, quadrados e triângulos perfeitos). Utilize um grid ortogonal rigoroso com divisórias sólidas de 1px (border-slate-900/10).
 - Paleta Primária Sofisticada: Use a tríade clássica (Amarelo #F4D03F, Vermelho #E74C3C, Azul #2E86C1), mas aplicadas sobre um fundo 'Papel' (bg-[#FDFCF5]) para evitar um visual infantil. Use o preto (#1A1A1A) apenas para tipografia e formas estruturais.
 - Assimetria Equilibrada: Posicione elementos de forma assimétrica, mas mantendo o equilíbrio de pesos visuais. Use flex e grid do Tailwind para criar composições onde o texto e as formas se interceptam.
 - Tipografia Funcional: Use exclusivamente fontes sem serifa geométricas (Google Fonts 'Archivio' ou 'Montserrat'). Títulos devem ser em caixa alta (uppercase) com font-bold e alinhamentos variados (esquerda e direita alternados).
-- Animações Construtivistas: Use GSAP para animar a montagem da página: formas geométricas devem deslizar de fora da tela e se encaixar em suas posições como um quebra-cabeça técnico. Adicione rotações de 90° ou 180° em ícones Lucide no hover.
+- Animações Construtivistas: Escreva o script JS para usar GSAP para animar a montagem da página: formas geométricas devem deslizar de fora da tela e se encaixar em suas posições como um quebra-cabeça técnico. Adicione rotações de 90° ou 180° em ícones Lucide no hover.
 - Estrutura: Layout de 'Design Studio Concept' ou 'Portfolio de Engenharia', com seções numeradas (01, 02, 03) em fontes grandes e ícones Lucide simplificados.
 
 Restrições Técnicas:
@@ -293,12 +339,17 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
     description: "Visual Web3 futurista com refração de luz, gradientes complexos e efeitos 3D de inclinação.",
     content: `Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
+OBRIGATÓRIO INCLUIR NO <head> OU ANTES DO fechamento do <body>:
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+
 Diretrizes de Design & Sofisticação:
 - Estética Holográfica: Crie superfícies que simulem a refração de luz metálica. Utilize gradientes lineares e radiais complexos com múltiplos stops de cor (azul ciano, rosa choque, lavanda e verde limão). Aplique um efeito de 'shimmer' (brilho móvel) usando background-size: 200% e uma animação infinita de deslocamento de background.
 - Refração e Brilho: Use containers com bg-white/10 e um backdrop-blur-2xl. Adicione uma borda iridescente fina usando border-image-source com um gradiente colorido. Aplique um drop-shadow colorido que mude de matiz (hue-rotate) continuamente.
 - Profundidade Espacial: O fundo deve ser um 'Dark Space' profundo (bg-[#030308]) para que as superfícies holográficas saltem aos olhos. Use pequenas partículas ou pontos de luz sutis flutuando no fundo.
 - Tipografia Futurista: Use a fonte 'Outfit' ou 'Space Grotesk' via Google Fonts. Títulos devem ter um leve efeito de brilho externo (text-shadow) e cores de gradiente que acompanham a paleta holográfica.
-- Interatividade & Animações: Use GSAP para criar um efeito de 'Tilt 3D' baseado no movimento do mouse: os cards devem rotacionar levemente e o gradiente interno deve se deslocar conforme o cursor se move, simulando a mudança de reflexo da luz.
+- Interatividade & Animações: Escreva o script JS para usar GSAP para criar um efeito de 'Tilt 3D' baseado no movimento do mouse: os cards devem rotacionar levemente e o gradiente interno deve se deslocar conforme o cursor se move, simulando a mudança de reflexo da luz.
 - Estrutura: Layout de 'Web3 Dashboard' ou 'NFT Marketplace Concept', com botões de ação que possuem um brilho intenso no hover e ícones Lucide com acabamento metálico.
 
 Restrições Técnicas:
@@ -822,12 +873,20 @@ export default function App() {
     primaryBlue: '#004a8e',
     primaryGold: '#c5a059',
     description: 'A Conexão Sistemas de Prótese é líder em inovação para implantodontia...',
-    systemPrompt: `Gere um ÚNICO arquivo HTML autônomo contendo HTML, CSS (use Tailwind via CDN: https://cdn.tailwindcss.com) e JS (use Lucide Icons via CDN: https://unpkg.com/lucide@latest).
-NÃO inclua cabeçalhos ou rodapés externos do construtor.
-Aplique o branding fornecido de forma elegante e profissional.
-Use animações suaves (pode usar CSS puro ou bibliotecas via CDN se necessário).
-O arquivo deve ser auto-contido e pronto para ser aberto em qualquer navegador.
-Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).`
+    systemPrompt: `Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
+
+DIRETRIZES DE DESIGN & ESTRUTURA (ESTILO MEDICAL LUXURY):
+- ESTRUTURA DE LANDING PAGE: O conteúdo DEVE ser dividido em seções (<section>) com paddings generosos (py-20).
+- HERO SECTION: O primeiro título (#) deve ser transformado em um Hero de alto impacto, com fundo em gradiente azul (#004a8e para #002d5a) e texto em branco/dourado.
+- TRANSFORMAÇÃO DE LISTAS: Listas de benefícios ou características devem ser convertidas em GRIDS de cards (grid-cols-1 md:grid-cols-3) com ícones Lucide e bordas sutis.
+- RITMO VISUAL: Alterne as cores de fundo entre as seções (ex: bg-[#fdfbf7] para bg-white ou bg-slate-50).
+- TIPOGRAFIA: Use 'Cormorant Garamond' (Serif) para títulos e 'Inter' (Sans) para o corpo.
+- ANIMAÇÕES: Use GSAP para revelação de elementos ao rolar a página.
+
+RESTRIÇÕES TÉCNICAS:
+- NÃO inclua cabeçalhos ou rodapés externos.
+- NÃO use vídeos ou imagens reais.
+- Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).`
   });
 
   const [apiKeys, setApiKeys] = useState<ApiKeys>({
@@ -879,7 +938,7 @@ O Flex Gold é a tendência atual para clínicas que buscam um implante para tud
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const [editorTab, setEditorTab] = useState<'content' | 'style' | 'metadata'>('content');
+  const [editorTab, setEditorTab] = useState<'converter' | 'content' | 'style' | 'metadata'>('converter');
   const [suggestedMetadata, setSuggestedMetadata] = useState<SuggestedMetadata | null>(null);
   const [metadataLang, setMetadataLang] = useState<'pt' | 'en' | 'es'>('pt');
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -916,12 +975,20 @@ O Flex Gold é a tendência atual para clínicas que buscam um implante para tud
         primaryBlue: '#004a8e',
         primaryGold: '#c5a059',
         description: 'A Conexão Sistemas de Prótese é líder em inovação para implantodontia...',
-        systemPrompt: `Gere um ÚNICO arquivo HTML autônomo contendo HTML, CSS (use Tailwind via CDN: https://cdn.tailwindcss.com) e JS (use Lucide Icons via CDN: https://unpkg.com/lucide@latest).
-NÃO inclua cabeçalhos ou rodapés externos do construtor.
-Aplique o branding fornecido de forma elegante e profissional.
-Use animações suaves (pode usar CSS puro ou bibliotecas via CDN se necessário).
-O arquivo deve ser auto-contido e pronto para ser aberto em qualquer navegador.
-Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).`
+        systemPrompt: `Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
+
+DIRETRIZES DE DESIGN & ESTRUTURA (ESTILO MEDICAL LUXURY):
+- ESTRUTURA DE LANDING PAGE: O conteúdo DEVE ser dividido em seções (<section>) com paddings generosos (py-20).
+- HERO SECTION: O primeiro título (#) deve ser transformado em um Hero de alto impacto, com fundo em gradiente azul (#004a8e para #002d5a) e texto em branco/dourado.
+- TRANSFORMAÇÃO DE LISTAS: Listas de benefícios ou características devem ser convertidas em GRIDS de cards (grid-cols-1 md:grid-cols-3) com ícones Lucide e bordas sutis.
+- RITMO VISUAL: Alterne as cores de fundo entre as seções (ex: bg-[#fdfbf7] para bg-white ou bg-slate-50).
+- TIPOGRAFIA: Use 'Cormorant Garamond' (Serif) para títulos e 'Inter' (Sans) para o corpo.
+- ANIMAÇÕES: Use GSAP para revelação de elementos ao rolar a página.
+
+RESTRIÇÕES TÉCNICAS:
+- NÃO inclua cabeçalhos ou rodapés externos.
+- NÃO use vídeos ou imagens reais.
+- Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).`
       });
       loadDefaultPrompts();
     }
@@ -1331,27 +1398,34 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
         contents[0].text += "\n\nUse o PDF de branding anexado como referência para o tom de voz e estrutura.";
       }
 
-      const response = await ai.models.generateContent({
-        model: "gemini-2.0-flash",
-        contents: { parts: contents },
-        config: {
-          systemInstruction: "Você é um assistente especializado em estruturação de conteúdo técnico em Markdown."
+      try {
+        const response = await ai.models.generateContent({
+          model: "gemini-3-flash-preview",
+          contents: { parts: contents },
+          config: {
+            systemInstruction: "Você é um assistente especializado em estruturação de conteúdo técnico em Markdown."
+          }
+        });
+
+        if (!response.text) throw new Error("Sem resposta do modelo.");
+
+        setLoadingSteps(prev => prev.map(s => s.id === 'structure' ? { ...s, status: 'completed' } : s.id === 'clean' ? { ...s, status: 'loading' } : s));
+
+        let text = response.text;
+        // Limpar blocos de código markdown se o modelo retornar
+        text = text.replace(/^```markdown\n?/, '').replace(/```$/, '').trim();
+
+        setMarkdownText(text);
+        setEditorTab('content');
+        setView('editor');
+
+        setLoadingSteps(prev => prev.map(s => ({ ...s, status: 'completed' })));
+      } catch (apiError: any) {
+        if (apiError.message?.includes('429') || apiError.message?.toLowerCase().includes('quota')) {
+          throw new Error("Limite de quota do Gemini excedido. Por favor, configure sua própria API Key na aba 'Configurações' para continuar testando sem interrupções.");
         }
-      });
-
-      if (!response.text) throw new Error("Sem resposta do modelo.");
-
-      setLoadingSteps(prev => prev.map(s => s.id === 'structure' ? { ...s, status: 'completed' } : s.id === 'clean' ? { ...s, status: 'loading' } : s));
-
-      let text = response.text;
-      // Limpar blocos de código markdown se o modelo retornar
-      text = text.replace(/^```markdown\n?/, '').replace(/```$/, '').trim();
-
-      setMarkdownText(text);
-      setEditorTab('content');
-      setView('editor');
-
-      setLoadingSteps(prev => prev.map(s => ({ ...s, status: 'completed' })));
+        throw apiError;
+      }
     } catch (error: any) {
       alert(`Erro: ${error.message}`);
     } finally {
@@ -1380,37 +1454,44 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
 
       setLoadingSteps(prev => prev.map(s => s.id === 'analyze' ? { ...s, status: 'completed' } : s.id === 'creative' ? { ...s, status: 'loading' } : s));
 
-      const response = await ai.models.generateContent({
-        model: "gemini-2.0-flash",
-        contents: `Analise o seguinte Markdown e sugira metadados estratégicos para uma landing page.
-        Retorne APENAS um JSON válido seguindo exatamente esta estrutura:
-        {
-          "pt": { "title": "...", "filename": "...", "description": "...", "tags": ["...", "..."] },
-          "en": { "title": "...", "filename": "...", "description": "...", "tags": ["...", "..."] },
-          "es": { "title": "...", "filename": "...", "description": "...", "tags": ["...", "..."] }
+      try {
+        const response = await ai.models.generateContent({
+          model: "gemini-3-flash-preview",
+          contents: `Analise o seguinte Markdown e sugira metadados estratégicos para uma landing page.
+          Retorne APENAS um JSON válido seguindo exatamente esta estrutura:
+          {
+            "pt": { "title": "...", "filename": "...", "description": "...", "tags": ["...", "..."] },
+            "en": { "title": "...", "filename": "...", "description": "...", "tags": ["...", "..."] },
+            "es": { "title": "...", "filename": "...", "description": "...", "tags": ["...", "..."] }
+          }
+          
+          Regras:
+          - filename deve ser um slug (ex: meu-produto-novo) sem extensão.
+          - description deve ser curta e persuasiva (máx 160 caracteres).
+          - tags devem ser relevantes para SEO.
+          
+          Markdown:
+          ${markdownText}`,
+          config: {
+            responseMimeType: "application/json",
+            systemInstruction: "Você é um especialista em SEO e Copywriting multilíngue."
+          }
+        });
+
+        setLoadingSteps(prev => prev.map(s => s.id === 'creative' ? { ...s, status: 'completed' } : s.id === 'translate' ? { ...s, status: 'loading' } : s));
+
+        if (!response.text) throw new Error("Sem resposta do modelo.");
+        const data = JSON.parse(response.text);
+        setSuggestedMetadata(data);
+        setEditorTab('metadata');
+
+        setLoadingSteps(prev => prev.map(s => ({ ...s, status: 'completed' })));
+      } catch (apiError: any) {
+        if (apiError.message?.includes('429') || apiError.message?.toLowerCase().includes('quota')) {
+          throw new Error("Limite de quota do Gemini excedido. Por favor, aguarde um momento ou configure sua própria API Key na aba 'Configurações'.");
         }
-        
-        Regras:
-        - filename deve ser um slug (ex: meu-produto-novo) sem extensão.
-        - description deve ser curta e persuasiva (máx 160 caracteres).
-        - tags devem ser relevantes para SEO.
-        
-        Markdown:
-        ${markdownText}`,
-        config: {
-          responseMimeType: "application/json",
-          systemInstruction: "Você é um especialista em SEO e Copywriting multilíngue."
-        }
-      });
-
-      setLoadingSteps(prev => prev.map(s => s.id === 'creative' ? { ...s, status: 'completed' } : s.id === 'translate' ? { ...s, status: 'loading' } : s));
-
-      if (!response.text) throw new Error("Sem resposta do modelo.");
-      const data = JSON.parse(response.text);
-      setSuggestedMetadata(data);
-      setEditorTab('metadata');
-
-      setLoadingSteps(prev => prev.map(s => ({ ...s, status: 'completed' })));
+        throw apiError;
+      }
     } catch (error: any) {
       alert(`Erro ao gerar metadados: ${error.message}`);
     } finally {
@@ -1418,58 +1499,189 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
     }
   };
 
-  const generateSinglePage = async (lang: 'pt' | 'en' | 'es', customFilename: string) => {
+  const generateSinglePage = async (lang: 'pt' | 'en' | 'es', customFilename: string, templateHtml?: string) => {
     const apiKey = apiKeys[selectedApi] || (selectedApi === 'gemini' ? process.env.GEMINI_API_KEY : '');
     if (!apiKey) throw new Error(`API Key para ${selectedApi.toUpperCase()} não encontrada na aba API Keys.`);
-
-    const ai = new GoogleGenAI({ apiKey: selectedApi === 'gemini' ? apiKey : (apiKeys.gemini || process.env.GEMINI_API_KEY || '') });
 
     setLoadingSteps(prev => prev.map(s => s.id === 'analyze' ? { ...s, status: 'completed' } : s.id === 'style' ? { ...s, status: 'loading' } : s));
 
     const langNames = { pt: 'Português (Brasil)', en: 'Inglês (EN-US)', es: 'Espanhol (ES-ES)' };
+    const currentMetadata = suggestedMetadata ? suggestedMetadata[lang] : null;
 
-    const parts: any[] = [
-      {
-        text: `
+    let promptText = "";
+
+    if (templateHtml) {
+      promptText = `
+        VOCÊ DEVE ATUAR COMO UM TRADUTOR TÉCNICO DE ELITE.
+        
+        OBJETIVO: Traduzir o conteúdo de um HTML Master para o idioma ${langNames[lang]}.
+        
+        REGRAS DE OURO (NÃO NEGOCIÁVEIS):
+        1. MANTENHA A ESTRUTURA HTML EXATAMENTE IGUAL. Não adicione, remova ou altere nenhuma tag, classe CSS, ID ou script.
+        2. TRADUZA APENAS OS TEXTOS VISÍVEIS (conteúdo de tags, placeholders, títulos, etc).
+        3. MANTENHA A CONSISTÊNCIA: Se um ícone Lucide foi usado no Master, ele deve permanecer exatamente o mesmo.
+        4. NÃO ADICIONE LINKS OU BOTÕES: Se o Master não tem links (e não deve ter), a tradução também não deve ter.
+        5. OUTPUT: Retorne APENAS o código HTML completo traduzido.
+        
+        HTML MASTER PARA TRADUÇÃO:
+        ${templateHtml}
+      `;
+    } else {
+      promptText = `
         Markdown de entrada:
         ${markdownText}
+
+        METADADOS DA PÁGINA (Use no <head> e no conteúdo se apropriado):
+        Título: ${currentMetadata?.title || 'Landing Page'}
+        Descrição: ${currentMetadata?.description || ''}
+        Tags: ${currentMetadata?.tags?.join(', ') || ''}
+        Slug/Arquivo: ${customFilename}
 
         Diretrizes de Branding:
         ${brandConfig.description}
         Cores: Azul (${brandConfig.primaryBlue}), Dourado (${brandConfig.primaryGold})
 
         IDIOMA DA PÁGINA: ${langNames[lang]}
-        TRADUÇÃO: Traduza todo o conteúdo do Markdown fielmente para o idioma ${langNames[lang]}, mantendo a precisão técnica.
-
+        
         INSTRUÇÃO DE GERAÇÃO:
         ${brandConfig.systemPrompt}
-      ` }
-    ];
 
-    if (brandConfig.pdfBase64) {
-      parts.push({
-        inlineData: {
-          mimeType: "application/pdf",
-          data: brandConfig.pdfBase64
+        MUITO IMPORTANTE: O seu output DEVE ser EXCLUSIVAMENTE o código HTML completo da página.
+        Não inclua NENHUM texto antes ou depois do código HTML.
+        Não responda com o nome do arquivo, apenas o código.
+    `;
+    }
+
+    const systemInstruction = `Você é um Diretor de Arte e Desenvolvedor Front-end de elite, especializado em Landing Pages de LUXO para o mercado médico/odontológico.
+
+SUA MISSÃO:
+Transformar o conteúdo fornecido em uma EXPERIÊNCIA DIGITAL de altíssimo padrão. Não gere apenas um site; gere uma peça de design que transmita autoridade, tecnologia e sofisticação.
+
+REGRAS CRÍTICAS DE NAVEGAÇÃO:
+- É TERMINANTEMENTE PROIBIDO o uso de tags <a> (links) ou <button> (botões).
+- A página deve ser puramente contemplativa e informativa.
+- Para chamadas de ação (CTAs), use elementos visuais como <div> ou <span> estilizados com bordas douradas, gradientes e sombras para atrair o olhar, mas eles NÃO devem ser clicáveis nem levar a lugar nenhum.
+- Não use atributos 'href', 'onclick' ou qualquer forma de navegação.
+
+DESIGN SYSTEM OBRIGATÓRIO:
+1. PALETA DE CORES:
+   - Primária: ${brandConfig.primaryBlue} (Azul Conexão)
+   - Accent: ${brandConfig.primaryGold} (Dourado Premium)
+   - Backgrounds: Use Off-white (#FDFDFD), Slate-950 (#020617) e variações de Glassmorphism.
+2. TIPOGRAFIA:
+   - Títulos: 'Cormorant Garamond', serif (Elegância e Tradição).
+   - Corpo: 'Inter', sans-serif (Clareza e Modernidade).
+   - Use pesos leves (300/400) para um ar mais sofisticado.
+3. COMPONENTES DE IMPACTO:
+   - HERO: Layout 50/50 ou Centralizado com tipografia massiva (text-7xl+), gradientes sutis e animação de entrada.
+   - BENTO GRIDS: Use grids assimétricos para seções de benefícios.
+   - GLASSMORPHISM: Cards com 'backdrop-blur-xl' e bordas semi-transparentes 'border-white/10'.
+   - RAIL TEXT: Use textos verticais decorativos nas laterais das seções.
+   - DIVIDERS: Use linhas finas (1px) com opacidade baixa.
+
+REGRAS TÉCNICAS:
+1. ANIMAÇÕES (GSAP): Você DEVE incluir a CDN do GSAP e ScrollTrigger. Adicione scripts para animar seções conforme o scroll (fade-in, slide-up, stagger).
+2. ÍCONES: Use Lucide React (via CDN). Escolha ícones que remetam a tecnologia e precisão.
+3. RESPONSIVIDADE: Mobile-first impecável.
+4. SEO: Injetar título, descrição e tags nos locais corretos do <head>.
+
+ESTRUTURA DE SEÇÕES:
+- Hero -> Prova Social -> Benefícios (Bento Grid) -> Detalhes Técnicos (Acordeões ou Tabs) -> Tabela de Comparação (Luxury Style) -> CTA Final (Visual, não clicável).
+
+NUNCA gere um layout linear ou genérico. Use o Dourado para elementos de destaque e bordas finas.`;
+
+    let html = '';
+
+    if (selectedApi === 'gemini') {
+      const ai = new GoogleGenAI({ apiKey });
+      const parts: any[] = [{ text: promptText }];
+
+      if (brandConfig.pdfBase64) {
+        parts.push({
+          inlineData: {
+            mimeType: "application/pdf",
+            data: brandConfig.pdfBase64
+          }
+        });
+        parts[0].text += "\n\nIMPORTANTE: Siga rigorosamente a identidade visual e diretrizes contidas no PDF de branding anexado.";
+      }
+
+      try {
+        const response = await ai.models.generateContent({
+          model: "gemini-3-flash-preview",
+          contents: { parts },
+          config: { systemInstruction }
+        });
+        html = response.text || '';
+      } catch (apiError: any) {
+        if (apiError.message?.includes('429') || apiError.message?.toLowerCase().includes('quota')) {
+          throw new Error("Limite de quota do Gemini excedido. Por favor, aguarde um momento ou configure sua própria API Key na aba 'Configurações'.");
         }
+        throw apiError;
+      }
+    } else if (selectedApi === 'openai') {
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: "gpt-4o",
+          messages: [
+            { role: "system", content: systemInstruction },
+            { role: "user", content: promptText }
+          ]
+        })
       });
-      parts[0].text += "\n\nIMPORTANTE: Siga rigorosamente a identidade visual e diretrizes contidas no PDF de branding anexado.";
+      const data = await response.json();
+      html = data.choices[0].message.content;
+    } else if (selectedApi === 'claude') {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'dangerously-allow-browser': 'true'
+        },
+        body: JSON.stringify({
+          model: "claude-3-5-sonnet-20240620",
+          max_tokens: 4096,
+          system: systemInstruction,
+          messages: [{ role: "user", content: promptText }]
+        })
+      });
+      const data = await response.json();
+      html = data.content[0].text;
+    } else if (selectedApi === 'groq') {
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: "llama3-70b-8192",
+          messages: [
+            { role: "system", content: systemInstruction },
+            { role: "user", content: promptText }
+          ]
+        })
+      });
+      const data = await response.json();
+      html = data.choices[0].message.content;
     }
 
     setLoadingSteps(prev => prev.map(s => s.id === 'style' ? { ...s, status: 'completed' } : s.id === 'branding' ? { ...s, status: 'loading' } : s));
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash",
-      contents: { parts },
-      config: {
-        systemInstruction: "Você é um desenvolvedor front-end sênior e tradutor técnico especializado em criar páginas de destino (landing pages) de alta conversão."
-      }
-    });
-
-    setLoadingSteps(prev => prev.map(s => s.id === 'branding' ? { ...s, status: 'completed' } : s.id === 'generate' ? { ...s, status: 'loading' } : s));
-
-    let html = response.text || '';
-    html = html.replace(/^```html/, '').replace(/```$/, '').trim();
+    let cleanedHtml = html;
+    const htmlMatch = html.match(/```html\s*([\s\S]*?)\s*```/i);
+    if (htmlMatch) {
+      cleanedHtml = htmlMatch[1];
+    } else {
+      cleanedHtml = html.replace(/^```html/i, '').replace(/```$/i, '').trim();
+    }
 
     setLoadingSteps(prev => prev.map(s => s.id === 'generate' ? { ...s, status: 'completed' } : s.id === 'finalize' ? { ...s, status: 'loading' } : s));
 
@@ -1479,7 +1691,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
         .insert({
           user_id: session.user.id,
           name: customFilename,
-          html_content: html,
+          html_content: cleanedHtml,
           metadata: suggestedMetadata ? suggestedMetadata[lang] : null
         })
         .select()
@@ -1499,7 +1711,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
       const newMaterial: GeneratedMaterial = {
         id: Math.random().toString(36).substr(2, 9),
         name: customFilename,
-        html: html,
+        html: cleanedHtml,
         timestamp: Date.now(),
         metadata: suggestedMetadata ? suggestedMetadata[lang] : undefined
       };
@@ -1508,7 +1720,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
 
     setLoadingSteps(prev => prev.map(s => s.id === 'finalize' ? { ...s, status: 'completed' } : s));
 
-    return html;
+    return cleanedHtml;
   };
 
   const generatePage = async () => {
@@ -1530,15 +1742,21 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
       if (selectedLang === 'all') {
         const langs: ('pt' | 'en' | 'es')[] = ['pt', 'en', 'es'];
         const names: Record<'pt' | 'en' | 'es', string> = { pt: filename, en: filenameEn, es: filenameEs };
-        let lastHtml = '';
+        let masterHtml = '';
+        
         for (const lang of langs) {
           setLoadingMsg(`Gerando versão ${lang.toUpperCase()}...`);
           // Reset steps for each language to show progress
           setLoadingSteps(steps.map(s => s.id === 'analyze' ? { ...s, status: 'loading' } : { ...s, status: 'pending' }));
-          lastHtml = await generateSinglePage(lang, names[lang]);
+          
+          if (lang === 'pt') {
+            masterHtml = await generateSinglePage(lang, names[lang]);
+          } else {
+            await generateSinglePage(lang, names[lang], masterHtml);
+          }
         }
-        setGeneratedHtml(lastHtml);
-        setFilename(filenameEs); // Show the last one in preview
+        setGeneratedHtml(masterHtml); // Keep master in preview
+        setFilename(filename); 
       } else {
         const html = await generateSinglePage(selectedLang, filename);
         setGeneratedHtml(html);
@@ -2008,7 +2226,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                 </div>
 
                 <div className="mt-8 flex justify-center">
-                  <button onClick={() => setView('converter')} className="flex items-center gap-2 text-slate-500 hover:text-white transition-colors text-sm font-bold">
+                  <button onClick={() => { setView('editor'); setEditorTab('converter'); }} className="flex items-center gap-2 text-slate-500 hover:text-white transition-colors text-sm font-bold">
                     Ir para Conversor <ChevronRight size={16} />
                   </button>
                 </div>
@@ -2016,115 +2234,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
             </motion.div>
           )}
 
-          {/* 3. Converter Tab */}
-          {view === 'converter' && (
-            <motion.div key="converter" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="flex flex-col gap-6">
-              <div className="bg-slate-900 rounded-[2rem] border border-slate-800 shadow-lg shadow-black/20 overflow-hidden flex flex-col">
-                {/* Header */}
-                <div className="px-8 py-6 border-b border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4 bg-slate-900/50 backdrop-blur-md">
-                  <div>
-                    <h2 className="text-2xl font-black text-white flex items-center gap-3">
-                      <Wand2 className="text-purple-500" /> Conversor Inteligente
-                    </h2>
-                    <p className="text-slate-400 text-sm mt-1">Transforme textos brutos, anotações ou PDFs em Markdown estruturado.</p>
-                  </div>
-                  <button
-                    onClick={convertToMarkdown}
-                    disabled={!rawText.trim()}
-                    className="w-full md:w-auto bg-purple-600 text-white px-10 py-4 rounded-2xl font-black flex items-center justify-center gap-3 hover:bg-purple-500 shadow-xl shadow-purple-900/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 group"
-                  >
-                    <Sparkles size={20} className="group-hover:rotate-12 transition-transform" />
-                    <span>CONVERTER AGORA</span>
-                  </button>
-                </div>
-
-                {/* Content Area */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-slate-800 min-h-[500px]">
-                  {/* Input */}
-                  <div className="flex flex-col p-6">
-                    <div className="flex justify-between items-center mb-4">
-                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                        <FileText size={14} /> Entrada de Texto
-                      </label>
-                      <div className="flex items-center gap-4">
-                        {rawText && (
-                          <button
-                            onClick={() => setRawText('')}
-                            className="text-[10px] font-bold text-slate-500 hover:text-white transition-colors"
-                          >
-                            Limpar
-                          </button>
-                        )}
-                        <button
-                          onClick={convertToMarkdown}
-                          disabled={!rawText.trim()}
-                          className="text-[10px] font-bold text-purple-400 hover:text-purple-300 flex items-center gap-1 transition-colors disabled:opacity-30"
-                        >
-                          <Sparkles size={10} /> Converter
-                        </button>
-                      </div>
-                    </div>
-                    <textarea
-                      value={rawText}
-                      onChange={(e) => setRawText(e.target.value)}
-                      placeholder="Cole aqui suas anotações, e-mails, rascunhos ou conteúdo de PDF..."
-                      className="flex-1 w-full p-6 border border-slate-700 bg-slate-800/50 text-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-purple-600 resize-none placeholder:text-slate-600 font-mono text-sm leading-relaxed"
-                    />
-                  </div>
-
-                  {/* Info / Output Placeholder */}
-                  <div className="flex flex-col p-6 bg-slate-900/50">
-                    {markdownText && markdownText.length > 100 ? (
-                      <div className="flex flex-col h-full">
-                        <div className="flex justify-between items-center mb-4">
-                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                            <CheckCircle2 size={14} className="text-emerald-500" /> Último Resultado Convertido
-                          </label>
-                          <button
-                            onClick={() => setView('editor')}
-                            className="text-[10px] font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1 transition-colors"
-                          >
-                            Abrir no Editor <ChevronRight size={10} />
-                          </button>
-                        </div>
-                        <div className="flex-1 bg-slate-950 rounded-2xl border border-slate-800 p-6 overflow-y-auto custom-scrollbar prose prose-invert prose-slate prose-xs max-w-none">
-                          <ReactMarkdown>{markdownText}</ReactMarkdown>
-                        </div>
-                        <div className="mt-4 flex justify-end">
-                          <button
-                            onClick={() => {
-                              navigator.clipboard.writeText(markdownText);
-                              alert('Markdown copiado!');
-                            }}
-                            className="text-[10px] font-bold text-slate-400 hover:text-white flex items-center gap-1 transition-colors"
-                          >
-                            <Copy size={12} /> Copiar Markdown
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col items-center justify-center h-full text-center py-12">
-                        <div className="w-24 h-24 bg-slate-800 rounded-full flex items-center justify-center mb-6 shadow-xl shadow-black/20">
-                          <ArrowRightLeft size={40} className="text-slate-600" />
-                        </div>
-                        <h3 className="text-xl font-bold text-white mb-2">Pronto para Processar</h3>
-                        <p className="text-slate-500 max-w-sm leading-relaxed">
-                          Nossa IA irá analisar seu texto, identificar títulos, listas e tabelas, e gerar um Markdown limpo para uso no Editor.
-                        </p>
-                        <div className="mt-8 flex gap-2">
-                          <span className="px-3 py-1 rounded-lg bg-slate-800 text-slate-500 text-xs font-mono border border-slate-700">Estruturação</span>
-                          <span className="px-3 py-1 rounded-lg bg-slate-800 text-slate-500 text-xs font-mono border border-slate-700">Limpeza</span>
-                          <span className="px-3 py-1 rounded-lg bg-slate-800 text-slate-500 text-xs font-mono border border-slate-700">Formatação</span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-          {/* 4. Editor Tab */}
+          {/* 3. Editor Tab */}
           {view === 'editor' && (
             <motion.div
               key="editor"
@@ -2195,14 +2305,14 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                         onChange={(e) => setSelectedApi(e.target.value as keyof ApiKeys)}
                         className="w-full px-2.5 py-2 bg-slate-800 border border-slate-700 text-white text-xs font-bold rounded-lg outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer [&>option]:text-slate-900"
                       >
-                        <option value="gemini">Google Gemini</option>
-                        <option value="openai">OpenAI (GPT-4o)</option>
-                        <option value="claude">Anthropic Claude</option>
-                        <option value="groq">Groq (Llama 3)</option>
+                        {(apiKeys.gemini || process.env.GEMINI_API_KEY) ? <option value="gemini">Google Gemini</option> : null}
+                        {apiKeys.openai ? <option value="openai">OpenAI (GPT-4o)</option> : null}
+                        {apiKeys.claude ? <option value="claude">Anthropic Claude</option> : null}
+                        {apiKeys.groq ? <option value="groq">Groq (Llama 3)</option> : null}
+                        {!apiKeys.gemini && !apiKeys.openai && !apiKeys.claude && !apiKeys.groq && !process.env.GEMINI_API_KEY && (
+                          <option value="gemini">Gemini (Padrão)</option>
+                        )}
                       </select>
-                      {selectedApi !== 'gemini' && (
-                        <p className="text-[9px] text-amber-400">⚠️ Usa Gemini internamente</p>
-                      )}
                     </div>
 
                     {/* Idioma selector */}
@@ -2275,16 +2385,132 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                     <button
                       onClick={generatePage}
                       disabled={!markdownText.trim() || !filename.trim() || (selectedLang === 'all' && (!filenameEn.trim() || !filenameEs.trim()))}
-                      className="w-full bg-blue-600 text-white py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-blue-500 shadow-lg shadow-blue-900/20 transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-95"
+                      className={`w-full py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all shadow-lg active:scale-95 ${
+                        !markdownText.trim() 
+                        ? 'bg-slate-800 text-slate-600 cursor-not-allowed border border-slate-700 shadow-none' 
+                        : 'bg-blue-600 text-white hover:bg-blue-500 shadow-blue-900/20'
+                      }`}
                     >
                       <Wand2 size={13} /> Gerar Página Interativa
                     </button>
+                    {!markdownText.trim() && (
+                      <p className="text-[8px] text-slate-600 text-center mt-2 italic">
+                        Converta ou escreva conteúdo para habilitar a geração.
+                      </p>
+                    )}
                   </div>
                 </div>
 
                 {/* Content Area */}
                 <div className="flex-1 overflow-hidden relative bg-slate-950">
-                  {editorTab === 'content' ? (
+                  {editorTab === 'converter' ? (
+                    <div className="h-full flex flex-col overflow-hidden">
+                      <div className="h-10 bg-slate-900/50 flex items-center px-4 justify-between border-b border-slate-800">
+                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Conversor Rápido</span>
+                        <button
+                          onClick={convertToMarkdown}
+                          disabled={!rawText.trim()}
+                          className="text-[10px] font-black text-purple-400 hover:text-purple-300 flex items-center gap-1 uppercase tracking-widest disabled:opacity-30"
+                        >
+                          <Sparkles size={12} /> Converter Agora
+                        </button>
+                      </div>
+
+                      <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-slate-800">
+                        {/* Input */}
+                        <div className="flex flex-col p-6 group">
+                          <div className="flex justify-between items-center mb-4">
+                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                              <FileText size={14} /> Entrada de Texto
+                            </label>
+                            <div className="flex items-center gap-4">
+                              <span className="text-[9px] font-mono text-slate-600">{rawText.length} caracteres</span>
+                              {rawText && (
+                                <button onClick={() => setRawText('')} className="text-[10px] font-bold text-slate-500 hover:text-white transition-colors">Limpar</button>
+                              )}
+                            </div>
+                          </div>
+                          <div className="flex-1 relative">
+                            <textarea
+                              value={rawText}
+                              onChange={(e) => setRawText(e.target.value)}
+                              placeholder="Cole aqui suas anotações, e-mails ou rascunhos para converter em Markdown..."
+                              className="w-full h-full p-6 bg-slate-900/30 text-slate-200 rounded-2xl outline-none border border-slate-800 focus:border-purple-500/50 font-mono text-sm resize-none leading-relaxed custom-scrollbar transition-all group-hover:bg-slate-900/50"
+                            />
+                            {!rawText && (
+                              <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20">
+                                <div className="text-center">
+                                  <Download size={48} className="mx-auto mb-2 text-slate-400" />
+                                  <p className="text-xs font-bold uppercase tracking-widest">Arraste arquivos ou cole texto</p>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Info / Action Panel */}
+                        <div className="flex flex-col p-8 bg-slate-900/10 items-center justify-center text-center relative overflow-hidden">
+                          {/* Animated Background Element */}
+                          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-purple-600/5 blur-[100px] rounded-full" />
+                          
+                          <div className="relative z-10 max-w-sm">
+                            {!rawText.trim() ? (
+                              <>
+                                <div className="w-20 h-20 bg-slate-900 rounded-3xl flex items-center justify-center mb-6 shadow-xl border border-slate-800 mx-auto">
+                                  <ArrowRightLeft size={32} className="text-slate-600" />
+                                </div>
+                                <h4 className="text-lg font-black text-white mb-2">Aguardando Conteúdo</h4>
+                                <p className="text-slate-500 text-sm mb-8">
+                                  Insira seu texto bruto à esquerda para que possamos estruturá-lo com inteligência artificial.
+                                </p>
+                                <div className="flex justify-center gap-2">
+                                  <span className="px-3 py-1 rounded-lg bg-slate-900 text-slate-500 text-[10px] font-bold uppercase tracking-widest border border-slate-800">Estruturação</span>
+                                  <span className="px-3 py-1 rounded-lg bg-slate-900 text-slate-500 text-[10px] font-bold uppercase tracking-widest border border-slate-800">Limpeza</span>
+                                </div>
+                              </>
+                            ) : (
+                              <motion.div
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                className="space-y-6"
+                              >
+                                <div className="w-24 h-24 bg-purple-600/10 rounded-[2rem] flex items-center justify-center mb-6 shadow-2xl shadow-purple-900/20 border border-purple-500/30 mx-auto">
+                                  <Sparkles size={40} className="text-purple-400 animate-pulse" />
+                                </div>
+                                <div>
+                                  <h4 className="text-xl font-black text-white mb-2">Conteúdo Detectado</h4>
+                                  <p className="text-slate-400 text-sm mb-8">
+                                    Estamos prontos para transformar suas anotações em um Markdown profissional e estruturado.
+                                  </p>
+                                </div>
+                                
+                                <button
+                                  onClick={convertToMarkdown}
+                                  className="w-full bg-purple-600 hover:bg-purple-500 text-white py-5 rounded-2xl font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-purple-900/40 transition-all active:scale-95 flex items-center justify-center gap-3 group"
+                                >
+                                  <Wand2 size={20} className="group-hover:rotate-12 transition-transform" />
+                                  Converter Agora
+                                </button>
+                                
+                                <div className="pt-6 grid grid-cols-2 gap-4">
+                                  <div className="p-4 bg-slate-900/50 rounded-2xl border border-slate-800">
+                                    <p className="text-[10px] font-black text-slate-500 uppercase mb-1">Estimativa</p>
+                                    <p className="text-lg font-black text-white">~{Math.ceil(rawText.length / 4)}</p>
+                                    <p className="text-[8px] text-slate-600 uppercase">Tokens</p>
+                                  </div>
+                                  <div className="p-4 bg-slate-900/50 rounded-2xl border border-slate-800">
+                                    <p className="text-[10px] font-black text-slate-500 uppercase mb-1">Qualidade</p>
+                                    <p className="text-lg font-black text-purple-400">Alta</p>
+                                    <p className="text-[8px] text-slate-600 uppercase">GPT-4o / Gemini</p>
+                                  </div>
+                                </div>
+                              </motion.div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : editorTab === 'content' ? (
                     <div className="flex h-full divide-x divide-slate-800">
                       {/* Editor Pane */}
                       <div className="flex-1 flex flex-col min-w-0">
@@ -2405,7 +2631,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                         />
                       </div>
                     </div>
-                  ) : (
+                  ) : editorTab === 'metadata' ? (
                     <div className="h-full flex flex-col overflow-hidden">
                       <div className="h-10 bg-slate-900/50 flex items-center px-4 justify-between border-b border-slate-800">
                         <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Sugestões de Metadados & SEO</span>
@@ -2457,7 +2683,16 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                                         {copiedId === 'meta-title' ? <Check size={16} className="text-emerald-500" /> : <Copy size={16} />}
                                       </button>
                                     </div>
-                                    <p className="text-xl font-black text-white leading-tight">{suggestedMetadata[metadataLang].title}</p>
+                                    <input
+                                      type="text"
+                                      value={suggestedMetadata[metadataLang].title}
+                                      onChange={(e) => {
+                                        const newMeta = { ...suggestedMetadata };
+                                        newMeta[metadataLang].title = e.target.value;
+                                        setSuggestedMetadata(newMeta);
+                                      }}
+                                      className="w-full bg-transparent border-b border-slate-800 focus:border-blue-500 outline-none text-xl font-black text-white leading-tight pb-2"
+                                    />
                                   </div>
 
                                   <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8">
@@ -2468,14 +2703,23 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                                           onClick={() => setFilename(suggestedMetadata[metadataLang].filename)}
                                           className="text-[10px] font-black text-blue-400 hover:text-blue-300 uppercase tracking-widest"
                                         >
-                                          Aplicar
+                                          Aplicar ao Gerador
                                         </button>
                                         <button onClick={() => copyToClipboard(suggestedMetadata[metadataLang].filename, 'meta-file')} className="text-slate-500 hover:text-white transition-colors">
                                           {copiedId === 'meta-file' ? <Check size={16} className="text-emerald-500" /> : <Copy size={16} />}
                                         </button>
                                       </div>
                                     </div>
-                                    <p className="text-blue-400 font-mono text-sm">{suggestedMetadata[metadataLang].filename}.html</p>
+                                    <input
+                                      type="text"
+                                      value={suggestedMetadata[metadataLang].filename}
+                                      onChange={(e) => {
+                                        const newMeta = { ...suggestedMetadata };
+                                        newMeta[metadataLang].filename = e.target.value;
+                                        setSuggestedMetadata(newMeta);
+                                      }}
+                                      className="w-full bg-transparent border-b border-slate-800 focus:border-blue-500 outline-none text-blue-400 font-mono text-sm pb-2"
+                                    />
                                   </div>
                                 </div>
 
@@ -2487,18 +2731,29 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                                         {copiedId === 'meta-desc' ? <Check size={16} className="text-emerald-500" /> : <Copy size={16} />}
                                       </button>
                                     </div>
-                                    <p className="text-slate-400 text-sm leading-relaxed">{suggestedMetadata[metadataLang].description}</p>
+                                    <textarea
+                                      value={suggestedMetadata[metadataLang].description}
+                                      onChange={(e) => {
+                                        const newMeta = { ...suggestedMetadata };
+                                        newMeta[metadataLang].description = e.target.value;
+                                        setSuggestedMetadata(newMeta);
+                                      }}
+                                      className="w-full bg-transparent border-b border-slate-800 focus:border-blue-500 outline-none text-slate-400 text-sm leading-relaxed resize-none h-24"
+                                    />
                                   </div>
 
                                   <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8">
-                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 block">Tags Sugeridas</label>
-                                    <div className="flex flex-wrap gap-2">
-                                      {suggestedMetadata[metadataLang].tags.map((tag, i) => (
-                                        <span key={i} className="px-3 py-1 bg-slate-800 text-slate-400 text-[10px] font-bold rounded-lg border border-slate-700">
-                                          {tag}
-                                        </span>
-                                      ))}
-                                    </div>
+                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 block">Tags (separadas por vírgula)</label>
+                                    <input
+                                      type="text"
+                                      value={suggestedMetadata[metadataLang].tags.join(', ')}
+                                      onChange={(e) => {
+                                        const newMeta = { ...suggestedMetadata };
+                                        newMeta[metadataLang].tags = e.target.value.split(',').map(t => t.trim());
+                                        setSuggestedMetadata(newMeta);
+                                      }}
+                                      className="w-full bg-transparent border-b border-slate-800 focus:border-blue-500 outline-none text-slate-400 text-[10px] font-bold pb-2"
+                                    />
                                   </div>
                                 </div>
                               </div>
@@ -2507,7 +2762,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                         </div>
                       </div>
                     </div>
-                  )}
+                  ) : null}
                 </div>
               </div>
             </motion.div>
@@ -2608,7 +2863,7 @@ Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`ht
                     Comece convertendo um texto ou criando um prompt para gerar sua primeira página interativa.
                   </p>
                   <button
-                    onClick={() => setView('converter')}
+                    onClick={() => { setView('editor'); setEditorTab('converter'); }}
                     className="bg-blue-600 text-white px-8 py-4 rounded-2xl font-bold hover:bg-blue-500 transition-all shadow-lg shadow-blue-900/20 active:scale-95"
                   >
                     <Plus size={18} className="inline mr-2" /> Criar Novo Material
