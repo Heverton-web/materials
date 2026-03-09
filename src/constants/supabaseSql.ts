@@ -124,6 +124,11 @@ BEGIN
         ALTER TABLE branding_configs ADD COLUMN supabase_anon_key TEXT;
     END IF;
 
+    -- Migração para brand_presets
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='brand_presets' AND column_name='font_family') THEN
+        ALTER TABLE brand_presets ADD COLUMN font_family TEXT DEFAULT 'Inter';
+    END IF;
+
     -- Migração para prompt_library (renomear colunas se necessário)
     IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='prompt_library' AND column_name='name') THEN
         ALTER TABLE prompt_library RENAME COLUMN name TO title;
