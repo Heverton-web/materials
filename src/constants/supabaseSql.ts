@@ -27,9 +27,19 @@ CREATE TABLE IF NOT EXISTS branding_configs (
   supabase_url TEXT,
   supabase_anon_key TEXT,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  UNIQUE(user_id)
 );
 
+-- 3.5 Brand Presets (Múltiplas configurações de marca por usuário)
+CREATE TABLE IF NOT EXISTS brand_presets (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users ON DELETE CASCADE NOT NULL,
+  name TEXT NOT NULL,
+  primary_color TEXT DEFAULT '#004a8e',
+  secondary_color TEXT DEFAULT '#b38e5d',
+  font_family TEXT DEFAULT 'Inter',
+  is_active BOOLEAN DEFAULT false,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
 -- 4. Generated Materials (Histórico de Materiais)
 CREATE TABLE IF NOT EXISTS generated_materials (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -55,6 +65,7 @@ CREATE TABLE IF NOT EXISTS prompt_library (
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE api_keys ENABLE ROW LEVEL SECURITY;
 ALTER TABLE branding_configs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE brand_presets ENABLE ROW LEVEL SECURITY;
 ALTER TABLE generated_materials ENABLE ROW LEVEL SECURITY;
 ALTER TABLE prompt_library ENABLE ROW LEVEL SECURITY;
 
@@ -72,6 +83,9 @@ BEGIN
     END IF;
     IF NOT EXISTS (SELECT 1 FROM pg_policy WHERE polname = 'Users can manage own branding') THEN
         CREATE POLICY "Users can manage own branding" ON branding_configs FOR ALL USING (auth.uid() = user_id);
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_policy WHERE polname = 'Users can manage own brand presets') THEN
+        CREATE POLICY "Users can manage own brand presets" ON brand_presets FOR ALL USING (auth.uid() = user_id);
     END IF;
     IF NOT EXISTS (SELECT 1 FROM pg_policy WHERE polname = 'Users can manage own materials') THEN
         CREATE POLICY "Users can manage own materials" ON generated_materials FOR ALL USING (auth.uid() = user_id);

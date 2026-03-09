@@ -150,14 +150,14 @@ export default function OnboardingWizard({ onComplete, onCancel }: OnboardingWiz
         if (keysError) throw keysError;
       }
 
-      const { error: configError } = await tempSupabase.from('branding_configs').insert({
+      const { error: configError } = await tempSupabase.from('branding_configs').upsert({
         user_id: userId,
         supabase_url: supabaseConfig.url,
         supabase_anon_key: supabaseConfig.anonKey,
-        primary_blue: '#020617',
-        primary_gold: '#f59e0b',
-        description: 'Configuração Aura Inicial'
-      });
+        primary_blue: '#004a8e',
+        primary_gold: '#b38e5d',
+        description: 'Hub Conexão Digital - Plataforma Elite de Automação e Design'
+      }, { onConflict: 'user_id' });
 
       if (configError) throw configError;
 

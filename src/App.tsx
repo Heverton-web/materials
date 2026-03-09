@@ -99,12 +99,25 @@ interface PageData {
 }
 
 interface BrandConfig {
+  id?: string;
+  name?: string;
   primaryBlue: string;
   primaryGold: string;
   description: string;
+  fontFamily: string;
   pdfBase64?: string;
   pdfName?: string;
   systemPrompt?: string;
+}
+
+interface BrandPreset {
+  id: string;
+  user_id: string;
+  name: string;
+  primary_color: string;
+  secondary_color: string;
+  font_family: string;
+  is_active: boolean;
 }
 
 interface ApiKeys {
@@ -873,6 +886,7 @@ export default function App() {
   const [brandConfig, setBrandConfig] = useState<BrandConfig>({
     primaryBlue: '#1C1917',
     primaryGold: '#CA8A04',
+    fontFamily: 'Inter',
     description: 'Plataforma multisetorial de geração de materiais de elite.',
     systemPrompt: `Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
@@ -883,6 +897,12 @@ DIRETRIZES DE DESIGN & ESTRUTURA (ESTILO LIQUID GLASS):
 - CORES: Fundo #0C0A09, acento Ouro #CA8A04.
 - TIPOGRAFIA: Fira Sans e Fira Code.`
   });
+
+  const [brandPresets, setBrandPresets] = React.useState<BrandPreset[]>([]);
+  const [activeBrandId, setActiveBrandId] = React.useState<string | null>(null);
+  const [isExtractingColors, setIsExtractingColors] = React.useState(false);
+  const [showNewBrandModal, setShowNewBrandModal] = React.useState(false);
+  const [newBrandName, setNewBrandName] = React.useState('');
 
   const [apiKeys, setApiKeys] = useState<ApiKeys>({
     gemini: '',
@@ -1026,25 +1046,53 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
     setLoadingSteps(steps);
 
     try {
-      // Load Branding
-      const { data: branding, error: bError } = await supabase
-        .from('branding_configs')
-        .select('*')
-        .single();
+      // Load Brand Presets (new system)
+      let presetsLoaded = false;
+      try {
+        const { data: presets } = await supabase
+          .from('brand_presets')
+          .select('*')
+          .order('created_at', { ascending: true });
 
-      if (branding && !bError) {
-        setBrandConfig({
-          primaryBlue: branding.primary_blue,
-          primaryGold: branding.primary_gold,
-          description: branding.description,
-          pdfName: branding.pdf_name,
-          systemPrompt: branding.system_prompt || brandConfig.systemPrompt
-        });
+        if (presets && presets.length > 0) {
+          setBrandPresets(presets as BrandPreset[]);
+          const active = (presets as BrandPreset[]).find(p => p.is_active) || (presets as BrandPreset[])[0];
+          setActiveBrandId(active.id);
+          setBrandConfig(prev => ({
+            ...prev,
+            id: active.id,
+            name: active.name,
+            primaryBlue: active.primary_color || prev.primaryBlue,
+            primaryGold: active.secondary_color || prev.primaryGold,
+            fontFamily: active.font_family || 'Inter',
+          }));
+          presetsLoaded = true;
+        }
+      } catch (_) {}
 
-        setSupabaseConfig({
-          url: branding.supabase_url || '',
-          anonKey: branding.supabase_anon_key || ''
-        });
+      // Fallback: Load legacy branding_configs
+      if (!presetsLoaded) {
+        const { data: branding, error: bError } = await supabase
+          .from('branding_configs')
+          .select('*')
+          .single();
+
+        if (branding && !bError) {
+          setBrandConfig(prev => ({
+            ...prev,
+            primaryBlue: branding.primary_blue || prev.primaryBlue,
+            primaryGold: branding.primary_gold || prev.primaryGold,
+            description: branding.description || prev.description,
+            pdfName: branding.pdf_name,
+            systemPrompt: branding.system_prompt || prev.systemPrompt,
+            fontFamily: 'Inter',
+          }));
+
+          setSupabaseConfig({
+            url: branding.supabase_url || '',
+            anonKey: branding.supabase_anon_key || ''
+          });
+        }
       }
 
       setLoadingSteps(prev => prev.map(s => s.id === 'branding' ? { ...s, status: 'completed' } : s.id === 'keys' ? { ...s, status: 'loading' } : s));
@@ -1146,25 +1194,123 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
     }
   };
 
+  // ---- BRAND PRESET CRUD ----
+
+  const createBrandPreset = async (name: string) => {
+    if (!supabase || !session) return;
+    try {
+      // Deactivate existing
+      await supabase.from('brand_presets').update({ is_active: false }).eq('user_id', session.user.id);
+      const { data, error } = await supabase.from('brand_presets').insert({
+        user_id: session.user.id,
+        name,
+        primary_color: '#1C1917',
+        secondary_color: '#CA8A04',
+        font_family: 'Inter',
+        is_active: true,
+      }).select().single();
+      if (error) throw error;
+      const newPreset: BrandPreset = data;
+      setBrandPresets(prev => [...prev, newPreset]);
+      setActiveBrandId(newPreset.id);
+      setBrandConfig(prev => ({ ...prev, id: newPreset.id, name: newPreset.name, primaryBlue: newPreset.primary_color, primaryGold: newPreset.secondary_color, fontFamily: newPreset.font_family }));
+    } catch (err: any) { alert('Erro ao criar preset: ' + err.message); }
+  };
+
+  const switchBrandPreset = async (presetId: string) => {
+    const preset = brandPresets.find(p => p.id === presetId);
+    if (!preset) return;
+    setBrandPresets(prev => prev.map(p => ({ ...p, is_active: p.id === presetId })));
+    setActiveBrandId(presetId);
+    setBrandConfig(prev => ({ ...prev, id: preset.id, name: preset.name, primaryBlue: preset.primary_color, primaryGold: preset.secondary_color, fontFamily: preset.font_family }));
+    if (supabase && session) {
+      await supabase.from('brand_presets').update({ is_active: false }).eq('user_id', session.user.id);
+      await supabase.from('brand_presets').update({ is_active: true }).eq('id', presetId);
+    }
+  };
+
+  const deleteBrandPreset = async (presetId: string) => {
+    if (!supabase || !session) return;
+    if (brandPresets.length <= 1) { alert('Você precisa ter pelo menos um preset de branding.'); return; }
+    try {
+      const { error } = await supabase.from('brand_presets').delete().eq('id', presetId);
+      if (error) throw error;
+      const remaining = brandPresets.filter(p => p.id !== presetId);
+      setBrandPresets(remaining);
+      if (activeBrandId === presetId && remaining.length > 0) {
+        await switchBrandPreset(remaining[0].id);
+      }
+    } catch (err: any) { alert('Erro ao excluir preset: ' + err.message); }
+  };
+
+  const extractColorsFromBranding = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !apiKeys.gemini) { alert('Configure a chave da API Gemini primeiro.'); return; }
+    setIsExtractingColors(true);
+    try {
+      const reader = new FileReader();
+      reader.onload = async (ev) => {
+        const base64 = (ev.target?.result as string).split(',')[1];
+        const mimeType = file.type;
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKeys.gemini}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [
+              { text: 'Você é um especialista em design de marca. Analise esta imagem/documento e extraia: 1) A cor primária principal (hex), 2) A cor de destaque/secundária (hex), 3) Nome da marca (se visível), 4) Família tipográfica sugerida (apenas: Inter, Roboto, Montserrat, Poppins, Outfit, Raleway, Lato, Open Sans, Nunito, Lexend, Playfair Display ou DM Sans). Responda APENAS em JSON: {"primary":"#hex","secondary":"#hex","name":"string ou null","fontFamily":"FontName"}' },
+              { inlineData: { mimeType, data: base64 } }
+            ]}],
+          }),
+        });
+        const result = await response.json();
+        const text = result.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+        const jsonMatch = text.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          const extracted = JSON.parse(jsonMatch[0]);
+          setBrandConfig(prev => ({
+            ...prev,
+            primaryBlue: extracted.primary || prev.primaryBlue,
+            primaryGold: extracted.secondary || prev.primaryGold,
+            fontFamily: extracted.fontFamily || prev.fontFamily,
+            name: extracted.name || prev.name,
+            pdfName: file.name,
+            pdfBase64: base64,
+          }));
+          if (extracted.name && window.confirm(`Nome detectado: "${extracted.name}". Renomear este preset?`)) {
+            setBrandConfig(prev => ({ ...prev, name: extracted.name }));
+          }
+        }
+        setIsExtractingColors(false);
+      };
+      reader.readAsDataURL(file);
+    } catch (err: any) {
+      alert('Erro ao extrair cores: ' + err.message);
+      setIsExtractingColors(false);
+    }
+  };
+
   const saveBranding = async () => {
-    if (!session) return alert('Você precisa estar logado para salvar.');
+    if (!session || !activeBrandId) { alert('Selecione ou crie um preset de branding primeiro.'); return; }
     setLoading(true);
     setLoadingMsg('Salvando branding no Supabase...');
 
     try {
       const { error } = await supabase
-        .from('branding_configs')
-        .upsert({
-          user_id: session.user.id,
-          primary_blue: brandConfig.primaryBlue,
-          primary_gold: brandConfig.primaryGold,
-          description: brandConfig.description,
-          pdf_name: brandConfig.pdfName,
-          system_prompt: brandConfig.systemPrompt
-        });
+        .from('brand_presets')
+        .update({
+          name: brandConfig.name || 'Meu Branding',
+          primary_color: brandConfig.primaryBlue,
+          secondary_color: brandConfig.primaryGold,
+          font_family: brandConfig.fontFamily || 'Inter',
+        })
+        .eq('id', activeBrandId);
 
       if (error) throw error;
-      alert('Branding salvo com sucesso!');
+      setBrandPresets(prev => prev.map(p => p.id === activeBrandId
+        ? { ...p, name: brandConfig.name || p.name, primary_color: brandConfig.primaryBlue, secondary_color: brandConfig.primaryGold, font_family: brandConfig.fontFamily || 'Inter' }
+        : p
+      ));
+      alert('Preset de branding salvo com sucesso!');
     } catch (error: any) {
       alert(`Erro ao salvar branding: ${error.message}`);
     } finally {
@@ -2068,18 +2214,109 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
           {/* 2. Branding Tab */}
           {view === 'branding' && (
             <motion.div key="branding" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="space-y-6">
+
+              {/* PRESET SELECTOR BAR */}
+              <div className="bg-slate-900/50 backdrop-blur-3xl rounded-3xl px-6 py-5 border border-white/5 shadow-2xl">
+                <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-3 block">Preset de Branding Ativo</label>
+                <div className="flex items-center gap-3">
+                  {/* Select */}
+                  <div className="relative flex-1">
+                    <select
+                      value={activeBrandId || ''}
+                      onChange={(e) => switchBrandPreset(e.target.value)}
+                      className="w-full px-4 py-3 bg-slate-950/80 border border-white/10 text-amber-500 text-sm font-black rounded-xl outline-none focus:border-amber-500/50 cursor-pointer appearance-none uppercase tracking-widest transition-all h-[46px]"
+                    >
+                      <option value="" disabled>Selecione um Preset</option>
+                      {brandPresets.map(preset => (
+                        <option key={preset.id} value={preset.id}>{preset.name}</option>
+                      ))}
+                    </select>
+                    <ChevronDown size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-600 pointer-events-none" />
+                  </div>
+                  {/* Buttons - same height as select */}
+                  <button
+                    onClick={() => { setNewBrandName(''); setShowNewBrandModal(true); }}
+                    className="flex items-center gap-2 px-5 h-[46px] bg-amber-500/10 border border-amber-500/30 text-amber-500 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-amber-500 hover:text-black transition-all whitespace-nowrap shrink-0"
+                  >
+                    <Plus size={14} /> Novo
+                  </button>
+                  {brandPresets.length > 1 && (
+                    <button
+                      onClick={() => activeBrandId && window.confirm('Excluir este preset permanentemente?') && deleteBrandPreset(activeBrandId)}
+                      className="flex items-center gap-2 px-5 h-[46px] bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all whitespace-nowrap shrink-0"
+                    >
+                      <Trash2 size={14} /> Excluir
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* NEW BRAND PRESET MODAL */}
+              {showNewBrandModal && (
+                <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/70 backdrop-blur-sm" onClick={() => setShowNewBrandModal(false)}>
+                  <div
+                    className="bg-slate-900 border border-white/10 rounded-3xl p-8 w-full max-w-sm shadow-2xl"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="flex items-center justify-between mb-6">
+                      <h3 className="text-base font-black text-white uppercase tracking-tighter flex items-center gap-2">
+                        <Plus size={16} className="text-amber-500" /> Novo Preset
+                      </h3>
+                      <button onClick={() => setShowNewBrandModal(false)} className="p-2 rounded-xl hover:bg-white/5 text-slate-500 hover:text-white transition-colors">
+                        <X size={16} />
+                      </button>
+                    </div>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 block">Nome do Branding</label>
+                        <input
+                          type="text"
+                          value={newBrandName}
+                          onChange={(e) => setNewBrandName(e.target.value)}
+                          onKeyDown={(e) => { if (e.key === 'Enter' && newBrandName.trim()) { createBrandPreset(newBrandName.trim()); setShowNewBrandModal(false); } }}
+                          placeholder="Ex: TRC Odontologia"
+                          autoFocus
+                          className="w-full px-4 py-3 bg-slate-950/80 border border-white/10 text-white text-sm font-bold rounded-xl outline-none focus:border-amber-500/50 placeholder:text-slate-600 transition-colors"
+                        />
+                      </div>
+                      <button
+                        onClick={() => { if (newBrandName.trim()) { createBrandPreset(newBrandName.trim()); setShowNewBrandModal(false); } }}
+                        disabled={!newBrandName.trim()}
+                        className="w-full py-3.5 bg-amber-500 text-black text-xs font-black uppercase tracking-widest rounded-xl hover:bg-amber-400 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                      >
+                        Criar Preset
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* MAIN BRANDING EDITOR */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
                 {/* Left Panel: Visual Identity */}
                 <div className="lg:col-span-4 space-y-6">
                   <div className="bg-slate-900/50 backdrop-blur-3xl rounded-3xl p-8 border border-white/5 h-full shadow-2xl">
                     <h2 className="text-xl font-sans font-black text-white mb-8 flex items-center gap-3 uppercase tracking-tighter">
-                      <Palette className="text-amber-500" /> Identidade Aura
+                      <Palette className="text-amber-500" /> Identidade Visual
                     </h2>
 
-                    <div className="space-y-8">
-                      <div className="space-y-4">
-                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Primária (Main Aura)</label>
+                    <div className="space-y-6">
+                      {/* Nome */}
+                      <div className="space-y-3">
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Nome do Preset</label>
+                        <input
+                          type="text"
+                          value={brandConfig.name || ''}
+                          onChange={(e) => setBrandConfig({ ...brandConfig, name: e.target.value })}
+                          placeholder="Ex: TRC Odontologia"
+                          className="w-full px-4 py-3 bg-slate-950/50 border border-white/5 text-white text-sm font-bold rounded-xl outline-none focus:border-amber-500/50 transition-colors"
+                        />
+                      </div>
+
+                      {/* Primary color */}
+                      <div className="space-y-3">
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Cor Primária</label>
                         <div className="flex items-center gap-4 bg-slate-950/50 p-4 border border-white/5 rounded-2xl">
                           <input
                             type="color"
@@ -2099,8 +2336,9 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                         </div>
                       </div>
 
-                      <div className="space-y-4">
-                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Destaque (Aura Gold)</label>
+                      {/* Secondary color */}
+                      <div className="space-y-3">
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Cor Secundária / Destaque</label>
                         <div className="flex items-center gap-4 bg-slate-950/50 p-4 border border-white/5 rounded-2xl">
                           <input
                             type="color"
@@ -2119,22 +2357,48 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                           </div>
                         </div>
                       </div>
+
+                      {/* Color preview bar */}
+                      <div className="h-4 rounded-full overflow-hidden flex">
+                        <div className="flex-1 transition-all" style={{ backgroundColor: brandConfig.primaryBlue }} />
+                        <div className="flex-1 transition-all" style={{ backgroundColor: brandConfig.primaryGold }} />
+                      </div>
+
+                      {/* Font Family */}
+                      <div className="space-y-3">
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Família Tipográfica</label>
+                        <div className="relative">
+                          <select
+                            value={brandConfig.fontFamily || 'Inter'}
+                            onChange={(e) => setBrandConfig({ ...brandConfig, fontFamily: e.target.value })}
+                            className="w-full px-4 py-3 bg-slate-950/80 border border-white/10 text-white text-sm font-bold rounded-xl outline-none focus:border-amber-500/50 cursor-pointer appearance-none transition-all"
+                          >
+                            {['Inter', 'Roboto', 'Montserrat', 'Poppins', 'Outfit', 'Raleway', 'Lato', 'Open Sans', 'Nunito', 'Lexend', 'Playfair Display', 'DM Sans'].map(f => (
+                              <option key={f} value={f}>{f}</option>
+                            ))}
+                          </select>
+                          <ChevronDown size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-600 pointer-events-none" />
+                        </div>
+                        <p className="text-[10px] text-slate-600 font-bold" style={{ fontFamily: brandConfig.fontFamily || 'Inter' }}>
+                          Preview: Aa Bb Cc — {brandConfig.fontFamily || 'Inter'}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Right Panel: Brand Strategy */}
+                {/* Right Panel: Strategy + AI Upload */}
                 <div className="lg:col-span-8 space-y-6">
                   <div className="bg-slate-900/50 backdrop-blur-3xl rounded-3xl p-8 border border-white/5 h-full flex flex-col shadow-2xl">
                     <h2 className="text-xl font-sans font-black text-white mb-8 flex items-center gap-3 uppercase tracking-tighter">
-                      <FileText className="text-amber-500" /> Estratégia Aura
+                      <FileText className="text-amber-500" /> Estratégia de Marca
                     </h2>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-10 flex-1">
                       <div className="space-y-4 flex flex-col">
                         <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Descrição Sistêmica</label>
                         <textarea
-                          value={brandConfig.description}
+                          value={brandConfig.description || ''}
                           onChange={(e) => setBrandConfig({ ...brandConfig, description: e.target.value })}
                           className="flex-1 w-full p-4 bg-slate-950/50 border border-white/5 text-slate-300 rounded-2xl outline-none focus:border-amber-500/50 placeholder:text-slate-700 resize-none font-sans text-xs font-bold leading-relaxed"
                           placeholder="Defina o core business e tom de voz..."
@@ -2142,17 +2406,23 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                       </div>
 
                       <div className="space-y-4 flex flex-col">
-                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Guia de Estilo (PDF)</label>
+                        <div className="flex items-center justify-between">
+                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Análise de Guia Visual via IA</label>
+                          {isExtractingColors && <RefreshCw className="animate-spin text-amber-500" size={12} />}
+                        </div>
+
                         {!brandConfig.pdfName ? (
-                          <label className="flex-1 flex flex-col items-center justify-center w-full border border-dashed border-slate-800 rounded-2xl cursor-pointer hover:bg-blue-500/5 transition-all group bg-slate-950/30">
+                          <label className={`flex-1 flex flex-col items-center justify-center w-full border border-dashed border-slate-800 rounded-2xl cursor-pointer hover:bg-blue-500/5 transition-all group bg-slate-950/30 ${isExtractingColors ? 'opacity-50 pointer-events-none' : ''}`}>
                             <div className="flex flex-col items-center justify-center p-6 text-center">
                               <div className="w-16 h-16 bg-white/5 border border-white/5 rounded-2xl flex items-center justify-center mb-4 group-hover:border-amber-500/30 transition-all">
-                                <FileUp className="w-6 h-6 text-slate-600 group-hover:text-amber-500" />
+                                {isExtractingColors ? <RefreshCw className="w-6 h-6 text-amber-500 animate-spin" /> : <Sparkles className="w-6 h-6 text-slate-600 group-hover:text-amber-500" />}
                               </div>
-                              <p className="text-xs font-black text-slate-500 group-hover:text-white transition-colors uppercase">Upload Styleguide</p>
-                              <p className="text-[9px] text-slate-700 mt-2 uppercase tracking-widest font-bold">Max 10MB .PDF</p>
+                              <p className="text-xs font-black text-slate-500 group-hover:text-white transition-colors uppercase">
+                                {isExtractingColors ? 'Extraindo Cores & Nome...' : 'Dropar Logo/PDF'}
+                              </p>
+                              <p className="text-[9px] text-slate-700 mt-2 uppercase tracking-widest font-bold">A Gemini IA extrai o Preset</p>
                             </div>
-                            <input type="file" className="hidden" accept="application/pdf" onChange={handlePdfUpload} />
+                            <input type="file" className="hidden" accept="application/pdf,image/png,image/jpeg,image/webp" onChange={extractColorsFromBranding} disabled={isExtractingColors} />
                           </label>
                         ) : (
                           <div className="flex-1 flex flex-col items-center justify-center w-full bg-slate-950/50 border border-white/5 rounded-2xl p-8 relative group">
@@ -2160,9 +2430,9 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                               <FileText size={32} className="text-amber-500" />
                             </div>
                             <p className="text-xs font-bold text-white text-center break-all px-4 uppercase tracking-tighter">{brandConfig.pdfName}</p>
-                            <p className="text-[9px] text-amber-500 font-black mt-2 uppercase tracking-[0.2em]">Documento Integrado</p>
+                            <p className="text-[9px] text-amber-500 font-black mt-2 uppercase tracking-[0.2em]">Guia Integrado</p>
                             <button
-                              onClick={removePdf}
+                              onClick={(e) => { e.preventDefault(); setBrandConfig({...brandConfig, pdfName: undefined, pdfBase64: undefined}); }}
                               className="absolute top-4 right-4 p-2 bg-white/5 rounded-xl text-slate-500 hover:bg-amber-500 hover:text-black transition-all opacity-0 group-hover:opacity-100"
                             >
                               <X size={14} />
@@ -2173,8 +2443,9 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                     </div>
 
                     <div className="mt-10 pt-8 border-t border-white/5 flex justify-end gap-6">
-                      <button onClick={saveBranding} className="bg-amber-500 text-black px-10 py-4 rounded-2xl font-black flex items-center gap-3 hover:bg-amber-400 transition-all uppercase tracking-widest text-xs shadow-lg shadow-amber-500/20">
-                        <Save size={18} /> Salvar Brand Config
+                      <button onClick={saveBranding} disabled={loading} className={`bg-amber-500 text-black px-10 py-4 rounded-2xl font-black flex items-center gap-3 hover:bg-amber-400 transition-all uppercase tracking-widest text-xs shadow-lg shadow-amber-500/20 ${loading ? 'opacity-50' : ''}`}>
+                        {loading ? <RefreshCw className="animate-spin" size={18} /> : <Save size={18} />}
+                        Salvar Preset Atual
                       </button>
                     </div>
                   </div>
