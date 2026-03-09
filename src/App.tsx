@@ -129,10 +129,10 @@ OBRIGATÓRIO INCLUIR NO <head> OU ANTES DO fechamento do <body>:
 
 DIRETRIZES DE DESIGN & ESTRUTURA:
 - ESTRUTURA DE LANDING PAGE: Divida o conteúdo em seções claras (<section>). Crie um fluxo de navegação envolvente.
-- HERO: Use um fundo com gradiente linear suave usando o Azul da marca. Título em 'Cormorant Garamond' com font-light e tracking-tight. Adicione um efeito de Glassmorphism sutil.
+- HERO: Use um fundo com gradiente linear suave usando o Azul da marca. Título em 'Roboto' ou 'Inter' com font-bold e tracking-tight. Adicione um efeito de Glassmorphism sutil.
 - BENTO GRIDS: Transforme listas de benefícios em Bento Grids (grids assimétricos) com bg-white, bordas finas (border-slate-200) e sombras suaves (shadow-xl shadow-black/5). Use ícones Lucide em dourado.
 - CORES: Fundo principal bg-[#fdfbf7]. Use o Azul (#004a8e) para títulos de seção e o Dourado (#c5a059) para detalhes e ícones.
-- ANIMAÇÕES (GSAP): Você DEVE escrever o script JS no final do arquivo para inicializar o GSAP e ScrollTrigger. Crie animações de fade-in e slide-up para os cards e textos conforme o usuário rola a página.
+- ANIMAÇÕES (GSAP): Você DEVE escrever o script JS no final do arquivo para inicializar o GSAP e ScrollTrigger. Crie animações de fade-in e slide-up para os cards e textos conforme o usuário rola a página. Garanta que os elementos fiquem visíveis (opacity: 1) como fallback.
 
 RESTRIÇÕES:
 Retorne APENAS o código HTML. Sem botões de link externo, vídeos ou imagens.`
@@ -193,7 +193,7 @@ OBRIGATÓRIO INCLUIR NO <head> OU ANTES DO fechamento do <body>:
 
 Diretrizes de Design & Sofisticação:
 - Estética Aurora: Crie um fundo dinâmico usando 3 ou 4 esferas de gradiente (blur-[120px]) com cores análogas (ex: Índigo, Violeta e fúcsia) que se movem lentamente em órbitas irregulares via CSS Keyframes. O fundo base deve ser um cinza quase preto (bg-[#050505]).
-- Minimalismo Orgânico: Use tipografia serifada premium para títulos (Google Fonts 'Playfair Display' ou 'Instrument Serif') e sans-serif para corpo ('Inter'). Garanta um letter-spacing negativo nos títulos (tracking-tighter).
+- Minimalismo Orgânico: Use tipografia sans-serif premium para títulos (Google Fonts 'Roboto' ou 'Inter') e sans-serif para corpo ('Inter'). Garanta um letter-spacing negativo nos títulos (tracking-tighter).
 - Contraste de Superfície: O conteúdo principal deve flutuar em um container central com bg-white/[0.02] e backdrop-blur-3xl. As bordas devem ser quase invisíveis (border-white/5).
 - Interatividade & Animações: Escreva o script JS para usar GSAP para um efeito de 'Reveal' suave no carregamento (opacity 0 para 1 com deslocamento de 20px no eixo Y). Adicione um cursor personalizado que reage ao passar sobre elementos clicáveis (escala e mudança de mix-blend-mode).
 - Estrutura: Layout de 'Landing Page Hero' ultra-clean, com um CTA central minimalista e ícones Lucide com traço fino (stroke-width: 1px).
@@ -880,8 +880,8 @@ DIRETRIZES DE DESIGN & ESTRUTURA (ESTILO MEDICAL LUXURY):
 - HERO SECTION: O primeiro título (#) deve ser transformado em um Hero de alto impacto, com fundo em gradiente azul (#004a8e para #002d5a) e texto em branco/dourado.
 - TRANSFORMAÇÃO DE LISTAS: Listas de benefícios ou características devem ser convertidas em GRIDS de cards (grid-cols-1 md:grid-cols-3) com ícones Lucide e bordas sutis.
 - RITMO VISUAL: Alterne as cores de fundo entre as seções (ex: bg-[#fdfbf7] para bg-white ou bg-slate-50).
-- TIPOGRAFIA: Use 'Cormorant Garamond' (Serif) para títulos e 'Inter' (Sans) para o corpo.
-- ANIMAÇÕES: Use GSAP para revelação de elementos ao rolar a página.
+- TIPOGRAFIA: Use 'Roboto' ou 'Inter' (Sans) para títulos e corpo.
+- ANIMAÇÕES: Use GSAP para revelação de elementos ao rolar a página. Garanta visibilidade inicial ou fallback.
 
 RESTRIÇÕES TÉCNICAS:
 - NÃO inclua cabeçalhos ou rodapés externos.
@@ -964,6 +964,17 @@ O Flex Gold é a tendência atual para clínicas que buscam um implante para tud
   }, []);
 
   useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (loading) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [loading]);
+
+  useEffect(() => {
     if (session) {
       loadUserData();
       setShowLoginModal(false);
@@ -982,8 +993,8 @@ DIRETRIZES DE DESIGN & ESTRUTURA (ESTILO MEDICAL LUXURY):
 - HERO SECTION: O primeiro título (#) deve ser transformado em um Hero de alto impacto, com fundo em gradiente azul (#004a8e para #002d5a) e texto em branco/dourado.
 - TRANSFORMAÇÃO DE LISTAS: Listas de benefícios ou características devem ser convertidas em GRIDS de cards (grid-cols-1 md:grid-cols-3) com ícones Lucide e bordas sutis.
 - RITMO VISUAL: Alterne as cores de fundo entre as seções (ex: bg-[#fdfbf7] para bg-white ou bg-slate-50).
-- TIPOGRAFIA: Use 'Cormorant Garamond' (Serif) para títulos e 'Inter' (Sans) para o corpo.
-- ANIMAÇÕES: Use GSAP para revelação de elementos ao rolar a página.
+- TIPOGRAFIA: Use 'Roboto' ou 'Inter' (Sans) para títulos e corpo.
+- ANIMAÇÕES: Use GSAP para revelação de elementos ao rolar a página. Garanta visibilidade inicial ou fallback.
 
 RESTRIÇÕES TÉCNICAS:
 - NÃO inclua cabeçalhos ou rodapés externos.
@@ -1420,6 +1431,11 @@ RESTRIÇÕES TÉCNICAS:
         setView('editor');
 
         setLoadingSteps(prev => prev.map(s => ({ ...s, status: 'completed' })));
+        
+        // Autogerar metadados após conversão
+        setTimeout(() => {
+          generateMetadataSuggestions();
+        }, 1000);
       } catch (apiError: any) {
         if (apiError.message?.includes('429') || apiError.message?.toLowerCase().includes('quota')) {
           throw new Error("Limite de quota do Gemini excedido. Por favor, configure sua própria API Key na aba 'Configurações' para continuar testando sem interrupções.");
@@ -1483,6 +1499,12 @@ RESTRIÇÕES TÉCNICAS:
         if (!response.text) throw new Error("Sem resposta do modelo.");
         const data = JSON.parse(response.text);
         setSuggestedMetadata(data);
+        
+        // Preencher automaticamente os nomes dos arquivos
+        if (data.pt?.filename) setFilename(data.pt.filename);
+        if (data.en?.filename) setFilenameEn(data.en.filename);
+        if (data.es?.filename) setFilenameEs(data.es.filename);
+        
         setEditorTab('metadata');
 
         setLoadingSteps(prev => prev.map(s => ({ ...s, status: 'completed' })));
@@ -1569,9 +1591,9 @@ DESIGN SYSTEM OBRIGATÓRIO:
    - Accent: ${brandConfig.primaryGold} (Dourado Premium)
    - Backgrounds: Use Off-white (#FDFDFD), Slate-950 (#020617) e variações de Glassmorphism.
 2. TIPOGRAFIA:
-   - Títulos: 'Cormorant Garamond', serif (Elegância e Tradição).
-   - Corpo: 'Inter', sans-serif (Clareza e Modernidade).
-   - Use pesos leves (300/400) para um ar mais sofisticado.
+   - Títulos: 'Roboto', 'Inter', 'Montserrat', sans-serif (Peso 700/900).
+   - Corpo: 'Roboto', 'Inter', sans-serif (Peso 300/400).
+   - Use fontes SANS-SERIF modernas e limpas.
 3. COMPONENTES DE IMPACTO:
    - HERO: Layout 50/50 ou Centralizado com tipografia massiva (text-7xl+), gradientes sutis e animação de entrada.
    - BENTO GRIDS: Use grids assimétricos para seções de benefícios.
@@ -1581,6 +1603,7 @@ DESIGN SYSTEM OBRIGATÓRIO:
 
 REGRAS TÉCNICAS:
 1. ANIMAÇÕES (GSAP): Você DEVE incluir a CDN do GSAP e ScrollTrigger. Adicione scripts para animar seções conforme o scroll (fade-in, slide-up, stagger).
+   - IMPORTANTE: Garanta que os elementos fiquem visíveis (opacity: 1) caso o JS falhe ou o scroll passe rápido demais. Use 'gsap.set' para estados iniciais e 'gsap.to' com ScrollTrigger.
 2. ÍCONES: Use Lucide React (via CDN). Escolha ícones que remetam a tecnologia e precisão.
 3. RESPONSIVIDADE: Mobile-first impecável.
 4. SEO: Injetar título, descrição e tags nos locais corretos do <head>.
