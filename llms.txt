@@ -1,0 +1,21 @@
+# Aura 2026 - Interactive Builder
+> Uma plataforma elite para transmutação de código e design potencializada por IA multilinear.
+
+## Arquivos Principais
+- [src/App.tsx]: Orquestrador principal da aplicação.
+- [src/index.css]: Definição do sistema de design, glassmorphism e temas dinâmicos.
+- [src/lib/supabase.ts]: Cliente de integração com Supabase.
+- [src/constants/]: Contém prompts de sistema, esquemas SQL e arquétipos de design.
+
+## Conceitos Chave
+- **Transmutação**: Geração de materiais HTML/CSS premium a partir de prompts e diretrizes de marca.
+- **Isolamento de Temas**: Separação entre a identidade visual da plataforma (tema do operador) e o branding do material gerado.
+- **Exportação Massiva**: Funcionalidade de download de múltiplos materiais em um único arquivo ZIP.
+- **Arquétipos de Design**: Coleção de estilos pré-definidos injetados nos prompts da IA para manter a consistência estética.
+
+## Dependências Relevantes
+- Framework: React (Vite + TypeScript)
+- CSS: Tailwind CSS 4.0
+- Backend: Supabase (Auth/DB)
+- Utilitários: JSZip, Framer Motion, Lucide React
+- LLMs: Gemini, OpenAI, Claude, Groq

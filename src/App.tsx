@@ -58,6 +58,8 @@ import StylePreview from './components/StylePreview';
 import MaterialPreviewModal from './components/MaterialPreviewModal';
 import { SEED_PROMPTS_SQL } from './constants/seedSql';
 import { SUPABASE_TABLES_SQL } from './constants/supabaseSql';
+import JSZip from 'jszip';
+import { Square, CheckSquare } from 'lucide-react';
 
 // --- Types & Constants ---
 
@@ -69,6 +71,7 @@ interface MetadataItem {
   filename: string;
   description: string;
   tags: string[];
+  style?: string;
 }
 
 interface SuggestedMetadata {
@@ -947,6 +950,7 @@ O Futuro é agora. O Hub Conexão é a ferramenta definitiva para quem não acei
   const [filenameEs, setFilenameEs] = useState<string>('mi-pagina');
   const [generatedHtml, setGeneratedHtml] = useState<string>('');
   const [materials, setMaterials] = useState<GeneratedMaterial[]>([]);
+  const [selectedMaterials, setSelectedMaterials] = useState<string[]>([]);
   const [promptLibrary, setPromptLibrary] = useState<PromptLibraryEntry[]>([]);
   const [viewingMaterial, setViewingMaterial] = useState<GeneratedMaterial | null>(null);
   const [selectedPromptId, setSelectedPromptId] = useState<string>('');
@@ -959,11 +963,52 @@ O Futuro é agora. O Hub Conexão é a ferramenta definitiva para quem não acei
   const [suggestedMetadata, setSuggestedMetadata] = useState<SuggestedMetadata | null>(null);
   const [metadataLang, setMetadataLang] = useState<'pt' | 'en' | 'es'>('pt');
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [appAccentColor, setAppAccentColor] = useState<string>(() => localStorage.getItem('app_accent_color') || '#f59e0b');
 
   const copyToClipboard = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  const toggleMaterialSelection = (id: string) => {
+    setSelectedMaterials(prev =>
+      prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
+    );
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedMaterials.length === materials.length) {
+      setSelectedMaterials([]);
+    } else {
+      setSelectedMaterials(materials.map(m => m.id));
+    }
+  };
+
+  const downloadSelectedAsZip = async () => {
+    if (selectedMaterials.length === 0) return;
+
+    const zip = new JSZip();
+    const folder = zip.folder("materiais_aura");
+
+    selectedMaterials.forEach(id => {
+      const material = materials.find(m => m.id === id);
+      if (material) {
+        // Ensure name is safe for file system
+        const safeName = material.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+        folder?.file(`${safeName}.html`, material.html);
+      }
+    });
+
+    const content = await zip.generateAsync({ type: "blob" });
+    const url = URL.createObjectURL(content);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `materiais_aura_${new Date().toISOString().split('T')[0]}.zip`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   // --- Supabase Integration ---
@@ -979,6 +1024,38 @@ O Futuro é agora. O Hub Conexão é a ferramenta definitiva para quem não acei
 
     return () => subscription.unsubscribe();
   }, []);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    root.style.setProperty('--accent-color', appAccentColor);
+    localStorage.setItem('app_accent_color', appAccentColor);
+
+    // Create a shadow color with opacity
+    let shadowColor = appAccentColor;
+    if (shadowColor.startsWith('#')) {
+      if (shadowColor.length === 7) shadowColor += '33';
+      else if (shadowColor.length === 9) shadowColor = shadowColor.substring(0, 7) + '33';
+    } else {
+      shadowColor = 'rgba(245, 158, 11, 0.2)'; // Fallback
+    }
+    root.style.setProperty('--accent-shadow', shadowColor);
+
+    // Create a hover color
+    root.style.setProperty('--accent-hover', appAccentColor + 'ee');
+    // Dynamic Style for Scrollbars
+    const styleId = 'aura-scrollbar-dynamic';
+    let styleEl = document.getElementById(styleId);
+    if (!styleEl) {
+      styleEl = document.createElement('style');
+      styleEl.id = styleId;
+      document.head.appendChild(styleEl);
+    }
+    styleEl.innerHTML = `
+      *::-webkit-scrollbar-thumb { background-color: ${appAccentColor} !important; }
+      *::-webkit-scrollbar-thumb:hover { background-color: ${appAccentColor}ee !important; }
+    `;
+
+  }, [appAccentColor]);
 
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -1007,7 +1084,7 @@ O Futuro é agora. O Hub Conexão é a ferramenta definitiva para quem não acei
         systemPrompt: `Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e bibliotecas modernas).
         
 ESTILO LIQUID GLASS (DARK PREMIUN):
-  - PALETA: Fundo stone-950, acentos amber-600/gold, texto stone-100.
+  - PALETA: Fundo stone-950, acentos accent/gold, texto stone-100.
   - COMPONENTES: Use .glass-card e .glass-card-dark (backdrop-blur-xl, background com baixa opacidade stone-900/40, bordas brancas/5).
   - BORDAS: Cantos sharp (rounded-none) para estética técnica elite.
   - GRADIENTES: Use .liquid-gradient para fundos de destaque.
@@ -1484,6 +1561,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
         if (error) throw error;
       }
       setMaterials(prev => prev.filter(m => m.id !== deleteConfirmId));
+      setSelectedMaterials(prev => prev.filter(id => id !== deleteConfirmId));
       setDeleteConfirmId(null);
     } catch (error: any) {
       alert(`Erro ao excluir: ${error.message}`);
@@ -1879,14 +1957,21 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
 
     setLoadingSteps(prev => prev.map(s => s.id === 'generate' ? { ...s, status: 'completed' } : s.id === 'finalize' ? { ...s, status: 'loading' } : s));
 
+    const selectedPrompt = promptLibrary.find(p => p.id === selectedPromptId);
+    const currentStyle = selectedPrompt?.title || 'Aura Base';
+
     if (session) {
+      const materialMetadata = suggestedMetadata
+        ? { ...suggestedMetadata[lang], style: currentStyle }
+        : { title: customFilename, filename: customFilename, description: '', tags: [], style: currentStyle };
+
       const { data, error } = await supabase
         .from('generated_materials')
         .insert({
           user_id: session.user.id,
           name: customFilename,
           html_content: cleanedHtml,
-          metadata: suggestedMetadata ? suggestedMetadata[lang] : null
+          metadata: materialMetadata
         })
         .select()
         .single();
@@ -1902,12 +1987,16 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
         setMaterials(prev => [newMaterial, ...prev]);
       }
     } else {
+      const materialMetadata = suggestedMetadata
+        ? { ...suggestedMetadata[lang], style: currentStyle }
+        : { title: customFilename, filename: customFilename, description: '', tags: [], style: currentStyle };
+
       const newMaterial: GeneratedMaterial = {
         id: Math.random().toString(36).substr(2, 9),
         name: customFilename,
         html: cleanedHtml,
         timestamp: Date.now(),
-        metadata: suggestedMetadata ? suggestedMetadata[lang] : undefined
+        metadata: materialMetadata
       };
       setMaterials(prev => [newMaterial, ...prev]);
     }
@@ -1998,12 +2087,12 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
       <header className="bg-slate-950/50 backdrop-blur-xl border-b border-white/5 sticky top-0 z-50 px-6 py-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-500/20" style={{ backgroundColor: brandConfig.primaryBlue }}>
+            <div className="w-10 h-10 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-accent-shadow" style={{ backgroundColor: appAccentColor }}>
               <Sparkles size={24} />
             </div>
             <div>
               <h1 className="text-xl font-black tracking-tight uppercase text-white font-sans">
-                Interactive <span style={{ color: brandConfig.primaryGold }}>Builder</span>
+                Interactive <span style={{ color: appAccentColor }}>Builder</span>
               </h1>
             </div>
           </div>
@@ -2020,7 +2109,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                 </div>
                 <button
                   onClick={() => supabase.auth.signOut()}
-                  className="p-2 text-slate-500 hover:text-amber-500 transition-colors"
+                  className="p-2 text-slate-500 hover:text-accent transition-colors"
                   title="Sair"
                 >
                   <LogOut size={18} />
@@ -2042,9 +2131,9 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
       <nav className="bg-slate-950/80 backdrop-blur-2xl border-b border-white/5 sticky top-[73px] z-40 px-6 py-2">
         <div className="max-w-7xl mx-auto flex items-center justify-center gap-2 overflow-x-auto max-w-full">
           {[
-            { id: 'keys', icon: Key, label: 'API Keys' },
-            { id: 'supabase', icon: ShieldCheck, label: 'Supabase' },
-            { id: 'branding', icon: Palette, label: 'Branding' },
+            { id: 'keys', icon: Key, label: 'Infra & Tema' },
+            { id: 'supabase', icon: ShieldCheck, label: 'Suporte' },
+            { id: 'branding', icon: Palette, label: 'Branding IA' },
             { id: 'editor', icon: Code, label: 'Editor' },
             { id: 'preview', icon: Eye, label: 'Preview' },
             { id: 'materials', icon: History, label: 'Materiais' }
@@ -2052,7 +2141,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
             <button
               key={tab.id}
               onClick={() => setView(tab.id as ViewType)}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl text-[11px] font-bold transition-all whitespace-nowrap ${view === tab.id ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl text-[11px] font-bold transition-all whitespace-nowrap ${view === tab.id ? 'bg-accent text-black shadow-lg shadow-accent-shadow' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
             >
               <tab.icon size={14} /> {tab.label}
             </button>
@@ -2087,7 +2176,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                       animate={{ rotate: 360 }}
                       transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
                     >
-                      <Sparkles size={48} className="text-amber-500" />
+                      <Sparkles size={48} className="text-accent" />
                     </motion.div>
                   </div>
 
@@ -2105,7 +2194,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                         transition={{ delay: idx * 0.1 }}
                         className="flex items-center gap-4"
                       >
-                        <div className={`w-5 h-5 rounded-full flex items-center justify-center border-2 transition-colors ${step.status === 'completed' ? 'bg-amber-500 border-amber-500' :
+                        <div className={`w-5 h-5 rounded-full flex items-center justify-center border-2 transition-colors ${step.status === 'completed' ? 'bg-accent border-accent' :
                           step.status === 'loading' ? 'bg-blue-500/20 border-blue-500 animate-pulse' :
                             'border-slate-800'
                           }`}>
@@ -2115,7 +2204,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                             <div className="w-1.5 h-1.5 bg-blue-400 rounded-full" />
                           ) : null}
                         </div>
-                        <span className={`text-[11px] font-black uppercase tracking-[0.2em] transition-colors ${step.status === 'completed' ? 'text-amber-500' :
+                        <span className={`text-[11px] font-black uppercase tracking-[0.2em] transition-colors ${step.status === 'completed' ? 'text-accent' :
                           step.status === 'loading' ? 'text-white' :
                             'text-slate-600'
                           }`}>
@@ -2128,7 +2217,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                   {/* Progress Bar */}
                   <div className="mt-12 h-2 w-full bg-slate-950 rounded-full overflow-hidden border border-white/5">
                     <motion.div
-                      className="h-full bg-gradient-to-r from-blue-500 to-amber-500 shadow-[0_0_15px_rgba(59,130,246,0.5)]"
+                      className="h-full bg-gradient-to-r from-blue-500 to-accent shadow-[0_0_15px_rgba(59,130,246,0.5)]"
                       initial={{ width: "0%" }}
                       animate={{
                         width: `${(loadingSteps.filter(s => s.status === 'completed').length / loadingSteps.length) * 100}%`
@@ -2149,11 +2238,11 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                 <div className="flex justify-between items-center mb-10 border-b border-white/5 pb-8">
                   <div>
                     <h2 className="text-4xl font-sans font-black text-white flex items-center gap-4 tracking-tighter uppercase">
-                      <ShieldCheck className="text-amber-500" size={32} /> Infraestrutura Aura
+                      <Key className="text-accent" size={32} /> Infra & Interface
                     </h2>
-                    <p className="text-slate-400 mt-2 font-bold text-xs uppercase tracking-widest">Conexão segura com o motor de dados Supabase.</p>
+                    <p className="text-slate-400 mt-2 font-bold text-xs uppercase tracking-widest">Configure as chaves de acesso e a estética da plataforma.</p>
                   </div>
-                  <button onClick={saveSupabaseConfig} className="bg-amber-500 text-black px-10 py-4 rounded-2xl font-black flex items-center gap-3 hover:bg-amber-400 transition-all uppercase tracking-widest text-xs shadow-lg shadow-amber-500/20">
+                  <button onClick={saveSupabaseConfig} className="bg-accent text-black px-10 py-4 rounded-2xl font-black flex items-center gap-3 hover:bg-accent-hover transition-all uppercase tracking-widest text-xs shadow-lg shadow-accent-shadow">
                     <Save size={18} /> Estabelecer Conexão
                   </button>
                 </div>
@@ -2168,7 +2257,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                         value={supabaseConfig.url}
                         onChange={(e) => setSupabaseConfig({ ...supabaseConfig, url: e.target.value })}
                         placeholder="https://..."
-                        className="w-full pl-12 pr-4 py-4 bg-slate-950/50 border border-white/5 text-slate-200 font-mono text-sm outline-none focus:border-amber-500/50 transition-colors rounded-2xl"
+                        className="w-full pl-12 pr-4 py-4 bg-slate-950/50 border border-white/5 text-slate-200 font-mono text-sm outline-none focus:border-accent-shadow transition-colors rounded-2xl"
                       />
                     </div>
                   </div>
@@ -2182,11 +2271,47 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                         value={supabaseConfig.anonKey}
                         onChange={(e) => setSupabaseConfig({ ...supabaseConfig, anonKey: e.target.value })}
                         placeholder="eyJhbGciOiJIUzI1Ni..."
-                        className="w-full pl-12 pr-4 py-4 bg-slate-950/50 border border-white/5 text-slate-200 font-mono text-sm outline-none focus:border-amber-500/50 transition-colors rounded-2xl"
+                        className="w-full pl-12 pr-4 py-4 bg-slate-950/50 border border-white/5 text-slate-200 font-mono text-sm outline-none focus:border-accent-shadow transition-colors rounded-2xl"
                       />
                     </div>
                   </div>
                 </div>
+                {/* PLATFORM THEME PICKER */}
+                <div className="mt-12 pt-8 border-t border-white/5">
+                  <h3 className="text-base font-black text-white uppercase tracking-tighter mb-6 flex items-center gap-3">
+                    <Palette size={18} className="text-accent" /> Personalização da Plataforma
+                  </h3>
+                  <div className="bg-slate-950/40 p-6 rounded-2xl border border-white/5 flex flex-wrap items-center gap-8">
+                    <div className="flex items-center gap-4">
+                      <input 
+                        type="color" 
+                        value={appAccentColor} 
+                        onChange={(e) => setAppAccentColor(e.target.value)}
+                        className="w-12 h-12 cursor-pointer bg-transparent border-none p-0 rounded-lg overflow-hidden"
+                      />
+                      <div>
+                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Cor Global Aura</p>
+                        <p className="text-xs font-mono text-white mt-1 uppercase">{appAccentColor}</p>
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-[200px]">
+                      <p className="text-[10px] font-bold text-slate-600 leading-relaxed uppercase tracking-tighter">
+                        Esta cor altera os estados visuais do Interactive Builder (botões, ícones, estados de hover), permitindo que você trabalhe no ambiente que desejar sem afetar o branding dos materiais gerados.
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      {['#f59e0b', '#3b82f6', '#10b981', '#ef4444', '#8b5cf6', '#ec4899'].map(c => (
+                        <button 
+                          key={c} 
+                          onClick={() => setAppAccentColor(c)}
+                          className={`w-6 h-6 rounded-full border border-white/10 transition-transform hover:scale-125 ${appAccentColor === c ? 'ring-2 ring-white/20 scale-125' : ''}`}
+                          style={{ backgroundColor: c }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
               </div>
 
               {/* SQL Scripts & Library Styles */}
@@ -2196,13 +2321,13 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                   <div className="flex justify-between items-center mb-6">
                     <div>
                       <h3 className="text-xl font-sans font-black text-white flex items-center gap-3 uppercase tracking-tighter">
-                        <FileCode className="text-amber-500" /> Esquema SQL
+                        <FileCode className="text-accent" /> Esquema SQL
                       </h3>
                       <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">Definição de Tabelas e RLS.</p>
                     </div>
                     <button
                       onClick={() => copyToClipboard(SUPABASE_SQL, 'sql')}
-                      className={`flex items-center gap-2 px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${copiedId === 'sql' ? 'bg-amber-500 text-black' : 'bg-white/5 text-slate-400 hover:text-white border border-white/5'}`}
+                      className={`flex items-center gap-2 px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${copiedId === 'sql' ? 'bg-accent text-black' : 'bg-white/5 text-slate-400 hover:text-white border border-white/5'}`}
                     >
                       {copiedId === 'sql' ? <><Check size={14} /> Copiado!</> : <><Copy size={14} /> Copiar Schema</>}
                     </button>
@@ -2219,13 +2344,13 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                   <div className="flex justify-between items-center mb-6">
                     <div>
                       <h3 className="text-xl font-sans font-black text-white flex items-center gap-3 uppercase tracking-tighter">
-                        <Palette className="text-amber-500" /> Biblioteca Seed
+                        <Palette className="text-accent" /> Biblioteca Seed
                       </h3>
                       <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">Injeção de 31 estilos Premium.</p>
                     </div>
                     <button
                       onClick={() => copyToClipboard(SEED_PROMPTS_SQL, 'seed')}
-                      className={`flex items-center gap-2 px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${copiedId === 'seed' ? 'bg-amber-500 text-black' : 'bg-white/5 text-slate-400 hover:text-white border border-white/5'}`}
+                      className={`flex items-center gap-2 px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${copiedId === 'seed' ? 'bg-accent text-black' : 'bg-white/5 text-slate-400 hover:text-white border border-white/5'}`}
                     >
                       {copiedId === 'seed' ? <><Check size={14} /> Copiado!</> : <><Copy size={14} /> Copiar Seed SQL</>}
                     </button>
@@ -2259,7 +2384,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                     <select
                       value={activeBrandId || ''}
                       onChange={(e) => switchBrandPreset(e.target.value)}
-                      className="w-full px-4 py-3 bg-slate-950/80 border border-white/10 text-amber-500 text-sm font-black rounded-xl outline-none focus:border-amber-500/50 cursor-pointer appearance-none uppercase tracking-widest transition-all h-[46px]"
+                      className="w-full px-4 py-3 bg-slate-950/80 border border-white/10 text-accent text-sm font-black rounded-xl outline-none focus:border-accent-shadow cursor-pointer appearance-none uppercase tracking-widest transition-all h-[46px]"
                     >
                       <option value="" disabled>Selecione um Preset</option>
                       {brandPresets.map(preset => (
@@ -2271,7 +2396,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                   {/* Buttons - same height as select */}
                   <button
                     onClick={() => { setNewBrandName(''); setShowNewBrandModal(true); }}
-                    className="flex items-center gap-2 px-5 h-[46px] bg-amber-500/10 border border-amber-500/30 text-amber-500 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-amber-500 hover:text-black transition-all whitespace-nowrap shrink-0"
+                    className="flex items-center gap-2 px-5 h-[46px] bg-accent/10 border border-accent/30 text-accent rounded-xl text-xs font-black uppercase tracking-widest hover:bg-accent hover:text-black transition-all whitespace-nowrap shrink-0"
                   >
                     <Plus size={14} /> Novo
                   </button>
@@ -2295,7 +2420,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                   >
                     <div className="flex items-center justify-between mb-6">
                       <h3 className="text-base font-black text-white uppercase tracking-tighter flex items-center gap-2">
-                        <Plus size={16} className="text-amber-500" /> Novo Preset
+                        <Plus size={16} className="text-accent" /> Novo Preset
                       </h3>
                       <button onClick={() => setShowNewBrandModal(false)} className="p-2 rounded-xl hover:bg-white/5 text-slate-500 hover:text-white transition-colors">
                         <X size={16} />
@@ -2311,13 +2436,13 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                           onKeyDown={(e) => { if (e.key === 'Enter' && newBrandName.trim()) { createBrandPreset(newBrandName.trim()); setShowNewBrandModal(false); } }}
                           placeholder="Ex: TRC Odontologia"
                           autoFocus
-                          className="w-full px-4 py-3 bg-slate-950/80 border border-white/10 text-white text-sm font-bold rounded-xl outline-none focus:border-amber-500/50 placeholder:text-slate-600 transition-colors"
+                          className="w-full px-4 py-3 bg-slate-950/80 border border-white/10 text-white text-sm font-bold rounded-xl outline-none focus:border-accent-shadow placeholder:text-slate-600 transition-colors"
                         />
                       </div>
                       <button
                         onClick={() => { if (newBrandName.trim()) { createBrandPreset(newBrandName.trim()); setShowNewBrandModal(false); } }}
                         disabled={!newBrandName.trim()}
-                        className="w-full py-3.5 bg-amber-500 text-black text-xs font-black uppercase tracking-widest rounded-xl hover:bg-amber-400 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                        className="w-full py-3.5 bg-accent text-black text-xs font-black uppercase tracking-widest rounded-xl hover:bg-accent-hover transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                       >
                         Criar Preset
                       </button>
@@ -2333,7 +2458,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                 <div className="lg:col-span-4 space-y-6">
                   <div className="bg-slate-900/50 backdrop-blur-3xl rounded-3xl p-8 border border-white/5 h-full shadow-2xl">
                     <h2 className="text-xl font-sans font-black text-white mb-8 flex items-center gap-3 uppercase tracking-tighter">
-                      <Palette className="text-amber-500" /> Identidade Visual
+                      <Palette className="text-accent" /> Identidade Visual
                     </h2>
 
                     <div className="space-y-6">
@@ -2345,7 +2470,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                           value={brandConfig.name || ''}
                           onChange={(e) => setBrandConfig({ ...brandConfig, name: e.target.value })}
                           placeholder="Ex: TRC Odontologia"
-                          className="w-full px-4 py-3 bg-slate-950/50 border border-white/5 text-white text-sm font-bold rounded-xl outline-none focus:border-amber-500/50 transition-colors"
+                          className="w-full px-4 py-3 bg-slate-950/50 border border-white/5 text-white text-sm font-bold rounded-xl outline-none focus:border-accent-shadow transition-colors"
                         />
                       </div>
 
@@ -2373,7 +2498,10 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
 
                       {/* Secondary color */}
                       <div className="space-y-3">
-                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Cor Secundária / Destaque</label>
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] flex items-center justify-between">
+                          Cor Secundária / Destaque
+                          <span className="text-[8px] opacity-40">(Usada nos Materiais)</span>
+                        </label>
                         <div className="flex items-center gap-4 bg-slate-950/50 p-4 border border-white/5 rounded-2xl">
                           <input
                             type="color"
@@ -2406,7 +2534,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                           <select
                             value={brandConfig.fontFamily || 'Inter'}
                             onChange={(e) => setBrandConfig({ ...brandConfig, fontFamily: e.target.value })}
-                            className="w-full px-4 py-3 bg-slate-950/80 border border-white/10 text-white text-sm font-bold rounded-xl outline-none focus:border-amber-500/50 cursor-pointer appearance-none transition-all"
+                            className="w-full px-4 py-3 bg-slate-950/80 border border-white/10 text-white text-sm font-bold rounded-xl outline-none focus:border-accent-shadow cursor-pointer appearance-none transition-all"
                           >
                             {['Inter', 'Roboto', 'Montserrat', 'Poppins', 'Outfit', 'Raleway', 'Lato', 'Open Sans', 'Nunito', 'Lexend', 'Playfair Display', 'DM Sans'].map(f => (
                               <option key={f} value={f}>{f}</option>
@@ -2426,7 +2554,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                 <div className="lg:col-span-8 space-y-6">
                   <div className="bg-slate-900/50 backdrop-blur-3xl rounded-3xl p-8 border border-white/5 h-full flex flex-col shadow-2xl">
                     <h2 className="text-xl font-sans font-black text-white mb-8 flex items-center gap-3 uppercase tracking-tighter">
-                      <FileText className="text-amber-500" /> Estratégia de Marca
+                      <FileText className="text-accent" /> Estratégia de Marca
                     </h2>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-10 flex-1">
@@ -2435,7 +2563,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                         <textarea
                           value={brandConfig.description || ''}
                           onChange={(e) => setBrandConfig({ ...brandConfig, description: e.target.value })}
-                          className="flex-1 w-full p-4 bg-slate-950/50 border border-white/5 text-slate-300 rounded-2xl outline-none focus:border-amber-500/50 placeholder:text-slate-700 resize-none font-sans text-xs font-bold leading-relaxed"
+                          className="flex-1 w-full p-4 bg-slate-950/50 border border-white/5 text-slate-300 rounded-2xl outline-none focus:border-accent-shadow placeholder:text-slate-700 resize-none font-sans text-xs font-bold leading-relaxed"
                           placeholder="Defina o core business e tom de voz..."
                         />
                       </div>
@@ -2443,14 +2571,14 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                       <div className="space-y-4 flex flex-col">
                         <div className="flex items-center justify-between">
                           <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Análise de Guia Visual via IA</label>
-                          {isExtractingColors && <RefreshCw className="animate-spin text-amber-500" size={12} />}
+                          {isExtractingColors && <RefreshCw className="animate-spin text-accent" size={12} />}
                         </div>
 
                         {!brandConfig.pdfName ? (
                           <label className={`flex-1 flex flex-col items-center justify-center w-full border border-dashed border-slate-800 rounded-2xl cursor-pointer hover:bg-blue-500/5 transition-all group bg-slate-950/30 ${isExtractingColors ? 'opacity-50 pointer-events-none' : ''}`}>
                             <div className="flex flex-col items-center justify-center p-6 text-center">
-                              <div className="w-16 h-16 bg-white/5 border border-white/5 rounded-2xl flex items-center justify-center mb-4 group-hover:border-amber-500/30 transition-all">
-                                {isExtractingColors ? <RefreshCw className="w-6 h-6 text-amber-500 animate-spin" /> : <Sparkles className="w-6 h-6 text-slate-600 group-hover:text-amber-500" />}
+                              <div className="w-16 h-16 bg-white/5 border border-white/5 rounded-2xl flex items-center justify-center mb-4 group-hover:border-accent/30 transition-all">
+                                {isExtractingColors ? <RefreshCw className="w-6 h-6 text-accent animate-spin" /> : <Sparkles className="w-6 h-6 text-slate-600 group-hover:text-accent" />}
                               </div>
                               <p className="text-xs font-black text-slate-500 group-hover:text-white transition-colors uppercase">
                                 {isExtractingColors ? 'Extraindo Cores & Nome...' : 'Dropar Logo/PDF'}
@@ -2461,14 +2589,14 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                           </label>
                         ) : (
                           <div className="flex-1 flex flex-col items-center justify-center w-full bg-slate-950/50 border border-white/5 rounded-2xl p-8 relative group">
-                            <div className="w-16 h-16 bg-amber-500/10 border border-amber-500/20 rounded-2xl flex items-center justify-center mb-4">
-                              <FileText size={32} className="text-amber-500" />
+                            <div className="w-16 h-16 bg-accent/10 border border-accent-shadow rounded-2xl flex items-center justify-center mb-4">
+                              <FileText size={32} className="text-accent" />
                             </div>
                             <p className="text-xs font-bold text-white text-center break-all px-4 uppercase tracking-tighter">{brandConfig.pdfName}</p>
-                            <p className="text-[9px] text-amber-500 font-black mt-2 uppercase tracking-[0.2em]">Guia Integrado</p>
+                            <p className="text-[9px] text-accent font-black mt-2 uppercase tracking-[0.2em]">Guia Integrado</p>
                             <button
                               onClick={(e) => { e.preventDefault(); setBrandConfig({ ...brandConfig, pdfName: undefined, pdfBase64: undefined }); }}
-                              className="absolute top-4 right-4 p-2 bg-white/5 rounded-xl text-slate-500 hover:bg-amber-500 hover:text-black transition-all opacity-0 group-hover:opacity-100"
+                              className="absolute top-4 right-4 p-2 bg-white/5 rounded-xl text-slate-500 hover:bg-accent hover:text-black transition-all opacity-0 group-hover:opacity-100"
                             >
                               <X size={14} />
                             </button>
@@ -2478,7 +2606,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                     </div>
 
                     <div className="mt-10 pt-8 border-t border-white/5 flex justify-end gap-6">
-                      <button onClick={saveBranding} disabled={loading} className={`bg-amber-500 text-black px-10 py-4 rounded-2xl font-black flex items-center gap-3 hover:bg-amber-400 transition-all uppercase tracking-widest text-xs shadow-lg shadow-amber-500/20 ${loading ? 'opacity-50' : ''}`}>
+                      <button onClick={saveBranding} disabled={loading} className={`bg-accent text-black px-10 py-4 rounded-2xl font-black flex items-center gap-3 hover:bg-accent-hover transition-all uppercase tracking-widest text-xs shadow-lg shadow-accent-shadow ${loading ? 'opacity-50' : ''}`}>
                         {loading ? <RefreshCw className="animate-spin" size={18} /> : <Save size={18} />}
                         Salvar Preset Atual
                       </button>
@@ -2496,11 +2624,11 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                 <div className="flex justify-between items-center mb-10 border-b border-white/5 pb-8">
                   <div>
                     <h2 className="text-4xl font-sans font-black text-white flex items-center gap-4 tracking-tighter uppercase">
-                      <Key className="text-amber-500" size={32} /> Chaves Aura
+                      <Key className="text-accent" size={32} /> Chaves Aura
                     </h2>
                     <p className="text-slate-400 mt-2 font-bold text-xs uppercase tracking-widest">Gerencie as conexões neurais com modelos de IA.</p>
                   </div>
-                  <button onClick={saveApiKeys} className="bg-amber-500 text-black px-10 py-4 rounded-2xl font-black flex items-center gap-3 hover:bg-amber-400 transition-all uppercase tracking-widest text-xs shadow-lg shadow-amber-500/20">
+                  <button onClick={saveApiKeys} className="bg-accent text-black px-10 py-4 rounded-2xl font-black flex items-center gap-3 hover:bg-accent-hover transition-all uppercase tracking-widest text-xs shadow-lg shadow-accent-shadow">
                     <Save size={18} /> Validar Credenciais
                   </button>
                 </div>
@@ -2514,7 +2642,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                   ].map((service) => (
                     <div key={service.id} className="p-6 bg-slate-950/50 border border-white/5 hover:border-blue-500/30 transition-all group relative overflow-hidden rounded-2xl shadow-xl">
                       <div className="flex items-center gap-4 mb-4">
-                        <div className="w-10 h-10 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center text-amber-500">
+                        <div className="w-10 h-10 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center text-accent">
                           <service.icon size={20} />
                         </div>
                         <span className="font-bold text-[10px] text-slate-300 uppercase tracking-widest leading-none">{service.label}</span>
@@ -2525,10 +2653,10 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                           value={(apiKeys as any)[service.id]}
                           onChange={(e) => setApiKeys({ ...apiKeys, [service.id]: e.target.value })}
                           placeholder={`SECRET_KEY_${service.id.toUpperCase()}`}
-                          className="w-full px-4 py-4 bg-slate-900/50 border border-white/5 text-slate-200 font-mono text-xs outline-none focus:border-amber-500/50 placeholder:text-slate-800 transition-all rounded-xl"
+                          className="w-full px-4 py-4 bg-slate-900/50 border border-white/5 text-slate-200 font-mono text-xs outline-none focus:border-accent-shadow placeholder:text-slate-800 transition-all rounded-xl"
                         />
                         {(apiKeys as any)[service.id] && (
-                          <div className="absolute right-4 top-1/2 -translate-y-1/2 text-amber-500">
+                          <div className="absolute right-4 top-1/2 -translate-y-1/2 text-accent">
                             <CheckCircle2 size={14} />
                           </div>
                         )}
@@ -2561,7 +2689,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                     <button
                       key={tab.id}
                       onClick={() => setEditorTab(tab.id as any)}
-                      className={`flex items-center gap-3 px-5 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${editorTab === tab.id ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20' : 'bg-slate-950/50 text-slate-500 hover:text-white hover:bg-white/5 border border-white/5'
+                      className={`flex items-center gap-3 px-5 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${editorTab === tab.id ? 'bg-accent text-black shadow-lg shadow-accent-shadow' : 'bg-slate-950/50 text-slate-500 hover:text-white hover:bg-white/5 border border-white/5'
                         }`}
                     >
                       <tab.icon size={16} className={`${editorTab === tab.id ? 'text-black' : 'text-slate-600'}`} />
@@ -2583,7 +2711,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                       <div className="flex-1 flex flex-col bg-slate-950/40">
                         <div className="h-16 flex items-center px-8 justify-between border-b border-white/5">
                           <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] flex items-center gap-3">
-                            <FileText size={16} className="text-amber-500" /> Fluxo Bruto
+                            <FileText size={16} className="text-accent" /> Fluxo Bruto
                           </label>
                           <span className="text-[10px] font-mono text-slate-700 uppercase tracking-widest">{rawText.length} Bytes</span>
                         </div>
@@ -2628,8 +2756,8 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                             </div>
                           ) : (
                             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center space-y-8 max-w-sm">
-                              <div className="w-28 h-28 rounded-3xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto transition-all shadow-2xl">
-                                <Sparkles size={48} className="text-amber-500 animate-pulse" />
+                              <div className="w-28 h-28 rounded-3xl bg-accent/10 border border-accent/30 flex items-center justify-center mx-auto transition-all shadow-2xl">
+                                <Sparkles size={48} className="text-accent animate-pulse" />
                               </div>
                               <div>
                                 <h4 className="text-2xl font-black text-white mb-4 uppercase tracking-tighter">DNA_Mapeado</h4>
@@ -2640,7 +2768,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
 
                               <button
                                 onClick={convertToMarkdown}
-                                className="w-full bg-amber-500 hover:bg-amber-400 text-black py-6 rounded-2xl font-black text-xs uppercase tracking-[0.3em] transition-all flex items-center justify-center gap-4 shadow-lg shadow-amber-500/20 active:scale-[0.98]"
+                                className="w-full bg-accent hover:bg-accent-hover text-black py-6 rounded-2xl font-black text-xs uppercase tracking-[0.3em] transition-all flex items-center justify-center gap-4 shadow-lg shadow-accent-shadow active:scale-[0.98]"
                               >
                                 <Wand2 size={24} /> Executar Síntese
                               </button>
@@ -2655,14 +2783,14 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                       <div className="flex-1 flex flex-col min-w-0 bg-slate-950/40">
                         <div className="h-16 flex items-center px-8 justify-between border-b border-white/5">
                           <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Manuscrito Markdown</span>
-                          <button onClick={() => setMarkdownText('')} className="text-[10px] font-black text-slate-600 hover:text-amber-500 transition-colors uppercase tracking-widest">Limpar_Buffer</button>
+                          <button onClick={() => setMarkdownText('')} className="text-[10px] font-black text-slate-600 hover:text-accent transition-colors uppercase tracking-widest">Limpar_Buffer</button>
                         </div>
                         <div className="flex-1 relative w-full p-8 min-h-[400px]">
                           <textarea
                             value={markdownText}
                             onChange={(e) => setMarkdownText(e.target.value)}
                             placeholder="# Arquitetura_de_Dados..."
-                            className="absolute inset-0 w-full h-full p-8 bg-transparent text-slate-300 outline-none font-mono text-xs resize-none leading-loose custom-scrollbar selection:bg-amber-500/30"
+                            className="absolute inset-0 w-full h-full p-8 bg-transparent text-slate-300 outline-none font-mono text-xs resize-none leading-loose custom-scrollbar selection:bg-accent/30"
                           />
                         </div>
                       </div>
@@ -2698,7 +2826,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                                     setBrandConfig({ ...brandConfig, systemPrompt: prompt.content });
                                   }
                                 }}
-                                className="w-full px-5 py-4 bg-slate-900 border border-white/10 text-slate-200 rounded-2xl text-[10px] outline-none focus:border-amber-500/50 cursor-pointer appearance-none uppercase tracking-widest font-black transition-all"
+                                className="w-full px-5 py-4 bg-slate-900 border border-white/10 text-slate-200 rounded-2xl text-[10px] outline-none focus:border-accent-shadow cursor-pointer appearance-none uppercase tracking-widest font-black transition-all"
                               >
                                 <option value="">SELECIONAR ARQUÉTIPO...</option>
                                 {promptLibrary.map(p => (
@@ -2728,7 +2856,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
 
                           <button
                             onClick={seedPromptLibrary}
-                            className="w-full py-4 bg-white/5 border border-white/5 text-slate-500 hover:text-amber-500 rounded-2xl text-[9px] font-black uppercase tracking-[0.3em] transition-all flex items-center justify-center gap-3 shadow-sm"
+                            className="w-full py-4 bg-white/5 border border-white/5 text-slate-500 hover:text-accent rounded-2xl text-[9px] font-black uppercase tracking-[0.3em] transition-all flex items-center justify-center gap-3 shadow-sm"
                           >
                             <Download size={14} /> Importar Padrões Aura
                           </button>
@@ -2741,16 +2869,16 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                           <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Cérebro Aura (System Prompt)</span>
                           <button
                             onClick={savePromptToLibrary}
-                            className="text-[10px] font-black text-amber-500 hover:text-amber-400 flex items-center gap-2 uppercase tracking-widest transition-all font-sans"
+                            className="text-[10px] font-black text-accent hover:text-accent-hover flex items-center gap-2 uppercase tracking-widest transition-all font-sans"
                           >
-                            <Save size={14} className="text-amber-500" /> Salvar Prompt
+                            <Save size={14} className="text-accent" /> Salvar Prompt
                           </button>
                         </div>
                         <div className="flex-1 p-8 relative w-full h-full">
                           <textarea
                             value={brandConfig.systemPrompt}
                             onChange={(e) => setBrandConfig({ ...brandConfig, systemPrompt: e.target.value })}
-                            className="absolute inset-0 w-full h-full p-8 bg-transparent text-slate-400 font-mono text-[11px] leading-relaxed resize-none outline-none focus:border-amber-500/30 custom-scrollbar selection:bg-amber-500/20"
+                            className="absolute inset-0 w-full h-full p-8 bg-transparent text-slate-400 font-mono text-[11px] leading-relaxed resize-none outline-none focus:border-accent/30 custom-scrollbar selection:bg-accent-shadow"
                             placeholder="Defina as diretrizes lógicas para a criação das interfaces Aura..."
                           />
                         </div>
@@ -2764,7 +2892,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                         <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Heurística Aura (SEO & Metadata)</span>
                         <button
                           onClick={generateMetadataSuggestions}
-                          className="text-[10px] font-black text-amber-500 hover:text-amber-400 flex items-center gap-2 uppercase tracking-[0.3em] font-sans transition-all"
+                          className="text-[10px] font-black text-accent hover:text-accent-hover flex items-center gap-2 uppercase tracking-[0.3em] font-sans transition-all"
                         >
                           <Sparkles size={14} /> Computar Sugestões_Aura
                         </button>
@@ -2783,7 +2911,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                               </p>
                               <button
                                 onClick={generateMetadataSuggestions}
-                                className="bg-amber-500 text-black px-12 py-5 rounded-2xl font-black uppercase tracking-[0.3em] text-[10px] hover:bg-amber-400 transition-all shadow-lg shadow-amber-500/20 active:scale-[0.98]"
+                                className="bg-accent text-black px-12 py-5 rounded-2xl font-black uppercase tracking-[0.3em] text-[10px] hover:bg-accent-hover transition-all shadow-lg shadow-accent-shadow active:scale-[0.98]"
                               >
                                 Computar Sugestões_Aura
                               </button>
@@ -2796,9 +2924,9 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                                   <button
                                     key={lang}
                                     onClick={() => setMetadataLang(lang)}
-                                    className={`px-8 py-3 rounded-xl text-[9px] font-black uppercase tracking-[0.3em] transition-all ${metadataLang === lang ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20' : 'text-slate-500 hover:text-white hover:bg-white/5'} `}
+                                    className={`px-8 py-3 rounded-xl text-[9px] font-black uppercase tracking-[0.3em] transition-all ${metadataLang === lang ? 'bg-accent text-black shadow-lg shadow-accent-shadow' : 'text-slate-500 hover:text-white hover:bg-white/5'} `}
                                   >
-                                    {lang === 'pt' ? 'Português' : lang === 'en' ? 'English' : 'Español'}
+                                    {lang === 'pt' ? '🇧🇷 PT-BR' : lang === 'en' ? '🇺🇸 EN-US' : '🇪🇸 ES-ES'}
                                   </button>
                                 ))}
                               </div>
@@ -2808,8 +2936,8 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                                   <div className="bg-slate-900/50 border border-white/5 rounded-2xl p-8 relative backdrop-blur-3xl">
                                     <div className="flex justify-between items-center mb-6">
                                       <label className="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em]">Protocolo_Título</label>
-                                      <button onClick={() => copyToClipboard(suggestedMetadata[metadataLang].title, 'meta-title')} className="text-slate-600 hover:text-amber-500 transition-colors">
-                                        {copiedId === 'meta-title' ? <Check size={16} className="text-amber-500" /> : <Copy size={16} />}
+                                      <button onClick={() => copyToClipboard(suggestedMetadata[metadataLang].title, 'meta-title')} className="text-slate-600 hover:text-accent transition-colors">
+                                        {copiedId === 'meta-title' ? <Check size={16} className="text-accent" /> : <Copy size={16} />}
                                       </button>
                                     </div>
                                     <input
@@ -2820,7 +2948,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                                         newMeta[metadataLang].title = e.target.value;
                                         setSuggestedMetadata(newMeta);
                                       }}
-                                      className="w-full bg-transparent border-b border-white/10 focus:border-amber-500/50 outline-none text-xl font-black text-slate-200 tracking-tight pb-4 transition-all"
+                                      className="w-full bg-transparent border-b border-white/10 focus:border-accent-shadow outline-none text-xl font-black text-slate-200 tracking-tight pb-4 transition-all"
                                     />
                                   </div>
 
@@ -2830,12 +2958,12 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                                       <div className="flex items-center gap-6">
                                         <button
                                           onClick={() => setFilename(suggestedMetadata[metadataLang].filename)}
-                                          className="text-[9px] font-black text-amber-500 hover:text-amber-400 uppercase tracking-[0.3em]"
+                                          className="text-[9px] font-black text-accent hover:text-accent-hover uppercase tracking-[0.3em]"
                                         >
                                           Aplicar_Ao_Motor
                                         </button>
-                                        <button onClick={() => copyToClipboard(suggestedMetadata[metadataLang].filename, 'meta-file')} className="text-slate-600 hover:text-amber-500 transition-colors">
-                                          {copiedId === 'meta-file' ? <Check size={16} className="text-amber-500" /> : <Copy size={16} />}
+                                        <button onClick={() => copyToClipboard(suggestedMetadata[metadataLang].filename, 'meta-file')} className="text-slate-600 hover:text-accent transition-colors">
+                                          {copiedId === 'meta-file' ? <Check size={16} className="text-accent" /> : <Copy size={16} />}
                                         </button>
                                       </div>
                                     </div>
@@ -2847,15 +2975,15 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                                         newMeta[metadataLang].filename = e.target.value;
                                         setSuggestedMetadata(newMeta);
                                       }}
-                                      className="w-full bg-transparent border-b border-white/10 focus:border-amber-500/50 outline-none text-amber-500 font-mono text-[10px] font-black pb-4"
+                                      className="w-full bg-transparent border-b border-white/10 focus:border-accent-shadow outline-none text-accent font-mono text-[10px] font-black pb-4"
                                     />
                                   </div>
 
                                   <div className="bg-slate-900/50 border border-white/5 rounded-2xl p-8 backdrop-blur-3xl relative">
                                     <div className="flex justify-between items-center mb-6">
                                       <label className="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em]">Heurística_Tags</label>
-                                      <button onClick={() => copyToClipboard(suggestedMetadata[metadataLang].tags?.join(', '), 'meta-tags')} className="text-slate-600 hover:text-amber-500 transition-colors">
-                                        {copiedId === 'meta-tags' ? <Check size={16} className="text-amber-500" /> : <Copy size={16} />}
+                                      <button onClick={() => copyToClipboard(suggestedMetadata[metadataLang].tags?.join(', '), 'meta-tags')} className="text-slate-600 hover:text-accent transition-colors">
+                                        {copiedId === 'meta-tags' ? <Check size={16} className="text-accent" /> : <Copy size={16} />}
                                       </button>
                                     </div>
                                     <div className="flex flex-wrap gap-2 mb-4">
@@ -2876,7 +3004,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                                         setSuggestedMetadata(newMeta);
                                       }}
                                       placeholder="tag1, tag2, tag3"
-                                      className="w-full bg-transparent border-b border-white/10 focus:border-amber-500/50 outline-none text-slate-500 font-mono text-[9px] font-black pb-2"
+                                      className="w-full bg-transparent border-b border-white/10 focus:border-accent-shadow outline-none text-slate-500 font-mono text-[9px] font-black pb-2"
                                     />
                                   </div>
                                 </div>
@@ -2885,8 +3013,8 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                                   <div className="bg-slate-900/50 border border-white/5 rounded-2xl p-8 h-full flex flex-col backdrop-blur-3xl flex-1 min-h-[200px]">
                                     <div className="flex justify-between items-center mb-6">
                                       <label className="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em]">Heurística_Aura (Description)</label>
-                                      <button onClick={() => copyToClipboard(suggestedMetadata[metadataLang].description, 'meta-desc')} className="text-slate-600 hover:text-amber-500 transition-colors">
-                                        {copiedId === 'meta-desc' ? <Check size={16} className="text-amber-500" /> : <Copy size={16} />}
+                                      <button onClick={() => copyToClipboard(suggestedMetadata[metadataLang].description, 'meta-desc')} className="text-slate-600 hover:text-accent transition-colors">
+                                        {copiedId === 'meta-desc' ? <Check size={16} className="text-accent" /> : <Copy size={16} />}
                                       </button>
                                     </div>
                                     <textarea
@@ -2896,7 +3024,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                                         newMeta[metadataLang].description = e.target.value;
                                         setSuggestedMetadata(newMeta);
                                       }}
-                                      className="flex-1 w-full bg-transparent border border-white/5 p-6 rounded-xl focus:border-amber-500/30 outline-none text-slate-400 text-xs leading-relaxed resize-none custom-scrollbar transition-all"
+                                      className="flex-1 w-full bg-transparent border border-white/5 p-6 rounded-xl focus:border-accent/30 outline-none text-slate-400 text-xs leading-relaxed resize-none custom-scrollbar transition-all"
                                     />
                                   </div>
                                 </div>
@@ -2915,7 +3043,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                   <div className="bg-slate-900/50 backdrop-blur-3xl rounded-3xl border border-white/5 shadow-2xl xl:sticky top-[100px] flex flex-col overflow-hidden">
                     <div className="p-6 border-b border-white/5 bg-slate-950/40">
                       <p className="text-[11px] font-black text-white uppercase tracking-[0.3em] flex items-center gap-3">
-                        <Wand2 size={16} className="text-amber-500" /> Motor de Geração
+                        <Wand2 size={16} className="text-accent" /> Motor de Geração
                       </p>
                     </div>
 
@@ -2927,7 +3055,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                           <select
                             value={selectedApi}
                             onChange={(e) => setSelectedApi(e.target.value as keyof ApiKeys)}
-                            className="w-full px-5 py-4 bg-slate-950/80 border border-white/10 text-slate-200 text-[10px] font-black rounded-xl outline-none focus:border-amber-500/50 cursor-pointer appearance-none uppercase tracking-widest transition-all"
+                            className="w-full px-5 py-4 bg-slate-950/80 border border-white/10 text-slate-200 text-[10px] font-black rounded-xl outline-none focus:border-accent-shadow cursor-pointer appearance-none uppercase tracking-widest transition-all"
                           >
                             {(apiKeys.gemini || (typeof process !== 'undefined' && process.env.GEMINI_API_KEY)) ? <option value="gemini">Google Gemini 2.5 Flash</option> : null}
                             {apiKeys.openai ? <option value="openai">OpenAI GPT-4o</option> : null}
@@ -2948,12 +3076,12 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                           <select
                             value={selectedLang}
                             onChange={(e) => setSelectedLang(e.target.value as any)}
-                            className="w-full px-5 py-4 bg-slate-950/80 border border-white/10 text-slate-200 text-[10px] font-black rounded-xl outline-none focus:border-amber-500/50 cursor-pointer appearance-none uppercase tracking-widest transition-all"
+                            className="w-full px-5 py-4 bg-slate-950/80 border border-white/10 text-slate-200 text-[10px] font-black rounded-xl outline-none focus:border-accent-shadow cursor-pointer appearance-none uppercase tracking-widest transition-all"
                           >
-                            <option value="pt">BR Português</option>
-                            <option value="en">US English</option>
-                            <option value="es">ES Spanish</option>
-                            <option value="all">��� Multilingual</option>
+                            <option value="pt">🇧🇷 PT-BR Português</option>
+                            <option value="en">🇺🇸 EN-US English</option>
+                            <option value="es">🇪🇸 ES-ES Spanish</option>
+                            <option value="all">🌐 Multilingual</option>
                           </select>
                           <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-600 pointer-events-none" />
                         </div>
@@ -2965,33 +3093,33 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                         {selectedLang === 'all' ? (
                           <div className="space-y-2">
                             <div className="flex items-center gap-2">
-                              <span className="text-[9px] font-black text-slate-500 w-8">PT</span>
+                              <span className="text-[9px] font-black text-slate-500 w-8">🇧🇷 PT</span>
                               <input
                                 type="text"
                                 value={filename}
                                 onChange={(e) => setFilename(e.target.value)}
                                 placeholder="pt-page"
-                                className="flex-1 w-full px-4 py-3 bg-slate-950/80 border border-white/10 text-slate-200 text-[10px] font-mono rounded-xl outline-none focus:border-amber-500/50 transition-all font-bold"
+                                className="flex-1 w-full px-4 py-3 bg-slate-950/80 border border-white/10 text-slate-200 text-[10px] font-mono rounded-xl outline-none focus:border-accent-shadow transition-all font-bold"
                               />
                             </div>
                             <div className="flex items-center gap-2">
-                              <span className="text-[9px] font-black text-slate-500 w-8">EN</span>
+                              <span className="text-[9px] font-black text-slate-500 w-8">🇺🇸 EN</span>
                               <input
                                 type="text"
                                 value={filenameEn}
                                 onChange={(e) => setFilenameEn(e.target.value)}
                                 placeholder="en-page"
-                                className="flex-1 w-full px-4 py-3 bg-slate-950/80 border border-white/10 text-slate-200 text-[10px] font-mono rounded-xl outline-none focus:border-amber-500/50 transition-all font-bold"
+                                className="flex-1 w-full px-4 py-3 bg-slate-950/80 border border-white/10 text-slate-200 text-[10px] font-mono rounded-xl outline-none focus:border-accent-shadow transition-all font-bold"
                               />
                             </div>
                             <div className="flex items-center gap-2">
-                              <span className="text-[9px] font-black text-slate-500 w-8">ES</span>
+                              <span className="text-[9px] font-black text-slate-500 w-8">🇪🇸 ES</span>
                               <input
                                 type="text"
                                 value={filenameEs}
                                 onChange={(e) => setFilenameEs(e.target.value)}
                                 placeholder="es-page"
-                                className="flex-1 w-full px-4 py-3 bg-slate-950/80 border border-white/10 text-slate-200 text-[10px] font-mono rounded-xl outline-none focus:border-amber-500/50 transition-all font-bold"
+                                className="flex-1 w-full px-4 py-3 bg-slate-950/80 border border-white/10 text-slate-200 text-[10px] font-mono rounded-xl outline-none focus:border-accent-shadow transition-all font-bold"
                               />
                             </div>
                           </div>
@@ -3002,7 +3130,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                               value={filename}
                               onChange={(e) => setFilename(e.target.value)}
                               placeholder="page-id"
-                              className="flex-1 w-full px-5 py-4 bg-slate-950/80 border border-white/10 text-slate-200 text-[10px] font-mono rounded-xl outline-none focus:border-amber-500/50 transition-all font-bold min-w-[50px]"
+                              className="flex-1 w-full px-5 py-4 bg-slate-950/80 border border-white/10 text-slate-200 text-[10px] font-mono rounded-xl outline-none focus:border-accent-shadow transition-all font-bold min-w-[50px]"
                             />
                             <span className="text-slate-500 text-[9px] font-black uppercase">.html</span>
                           </div>
@@ -3015,7 +3143,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                         disabled={!markdownText.trim() || !filename.trim()}
                         className={`w-full mt-4 py-5 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] flex items-center justify-center gap-4 transition-all shadow-xl active:scale-[0.98] ${!markdownText.trim() || !filename.trim()
                           ? 'bg-slate-900 border border-white/5 text-slate-600 cursor-not-allowed'
-                          : 'bg-amber-500 text-black hover:bg-amber-400 shadow-amber-500/20'
+                          : 'bg-accent text-black hover:bg-accent-hover shadow-accent-shadow'
                           }`}
                       >
                         <Flame size={18} fill="currentColor" /> Transmutar
@@ -3043,7 +3171,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                     </div>
 
                     <div className="flex-1 bg-slate-900/50 border border-white/10 px-6 py-2.5 rounded-xl flex items-center gap-4 mx-4 group backdrop-blur-xl">
-                      <Lock size={14} className="text-amber-500/50 group-hover:text-amber-500 transition-colors" />
+                      <Lock size={14} className="text-accent-shadow group-hover:text-accent transition-colors" />
                       <span className="text-[10px] font-mono text-slate-500 truncate uppercase tracking-widest font-black">
                         aura_protocol://render.live/view/{filename || 'unnamed'}.aura
                       </span>
@@ -3052,7 +3180,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                     <div className="flex items-center gap-6">
                       <button
                         onClick={() => downloadHtml(generatedHtml, filename)}
-                        className="p-3 text-slate-500 hover:text-amber-500 transition-all hover:bg-white/5 rounded-xl"
+                        className="p-3 text-slate-500 hover:text-accent transition-all hover:bg-white/5 rounded-xl"
                         title="Exportar Aura"
                       >
                         <Download size={20} />
@@ -3088,7 +3216,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                   </p>
                   <button
                     onClick={() => setView('editor')}
-                    className="bg-amber-500 text-black px-12 py-5 rounded-2xl font-black uppercase tracking-[0.3em] text-[10px] hover:bg-amber-400 transition-all shadow-lg shadow-amber-500/20 active:scale-[0.98]"
+                    className="bg-accent text-black px-12 py-5 rounded-2xl font-black uppercase tracking-[0.3em] text-[10px] hover:bg-accent-hover transition-all shadow-lg shadow-accent-shadow active:scale-[0.98]"
                   >
                     Abrir Operador Editor
                   </button>
@@ -3103,11 +3231,26 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
               <div className="flex justify-between items-end border-b border-white/5 pb-10">
                 <div>
                   <h2 className="text-4xl font-black text-white flex items-center gap-6 uppercase tracking-tighter">
-                    <FolderOpen className="text-amber-500" size={40} /> Repositório Aura
+                    <FolderOpen className="text-accent" size={40} /> Repositório Aura
                   </h2>
                   <p className="text-slate-500 mt-2 font-black text-[10px] uppercase tracking-widest leading-relaxed">Acesso ao registro histórico de transmutações heuísticas do sistema.</p>
                 </div>
                 <div className="hidden md:flex gap-4">
+                  {selectedMaterials.length > 0 && (
+                    <button
+                      onClick={downloadSelectedAsZip}
+                      className="px-8 py-3 bg-accent text-black rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-accent-shadow active:scale-95 transition-all flex items-center gap-3 animate-in fade-in slide-in-from-right-4 duration-500"
+                    >
+                      <Download size={16} /> Baixar_Zip ({selectedMaterials.length})
+                    </button>
+                  )}
+                  <button
+                    onClick={toggleSelectAll}
+                    className="px-8 py-3 bg-slate-900 border border-white/5 rounded-2xl text-[10px] font-black text-slate-500 hover:text-white uppercase tracking-widest shadow-xl backdrop-blur-3xl transition-all flex items-center gap-3"
+                  >
+                    {selectedMaterials.length === materials.length && materials.length > 0 ? <CheckSquare size={16} className="text-accent" /> : <Square size={16} />}
+                    {selectedMaterials.length === materials.length && materials.length > 0 ? 'Desmarcar_Todos' : 'Selecionar_Todos'}
+                  </button>
                   <div className="px-8 py-3 bg-slate-900 border border-white/5 rounded-2xl text-[10px] font-black text-slate-500 uppercase tracking-widest shadow-xl backdrop-blur-3xl">
                     {materials.length}_REGISTROS_ATIVOS
                   </div>
@@ -3116,10 +3259,10 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
 
               {materials.length === 0 ? (
                 <div className="bg-blue-500/5 border border-white/5 rounded-3xl p-24 flex flex-col items-center justify-center text-center relative overflow-hidden backdrop-blur-3xl">
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-amber-500/5 blur-[150px] rounded-full" />
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-accent/5 blur-[150px] rounded-full" />
                   <div className="relative z-10">
                     <div className="w-32 h-32 rounded-3xl bg-slate-900 border border-white/5 flex items-center justify-center mx-auto mb-10 group transition-all shadow-2xl">
-                      <FolderOpen size={56} className="text-slate-600 group-hover:text-amber-500 transition-colors" />
+                      <FolderOpen size={56} className="text-slate-600 group-hover:text-accent transition-colors" />
                     </div>
                     <h3 className="text-2xl font-black text-white mb-4 uppercase tracking-tighter">Vácuo de Registros Aura</h3>
                     <p className="text-slate-500 max-w-md mx-auto mb-12 text-[10px] font-black uppercase tracking-widest leading-relaxed">
@@ -3127,7 +3270,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                     </p>
                     <button
                       onClick={() => { setView('editor'); setEditorTab('converter'); }}
-                      className="bg-amber-500 text-black px-12 py-5 rounded-2xl font-black hover:bg-amber-400 transition-all shadow-lg shadow-amber-500/20 text-[10px] uppercase tracking-[0.3em]"
+                      className="bg-accent text-black px-12 py-5 rounded-2xl font-black hover:bg-accent-hover transition-all shadow-lg shadow-accent-shadow text-[10px] uppercase tracking-[0.3em]"
                     >
                       <Plus size={20} className="inline mr-3" /> Nova_Transmutação_Aura
                     </button>
@@ -3141,13 +3284,24 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                       layout
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      className="group bg-slate-900/40 border border-white/10 rounded-3xl hover:border-amber-500/30 transition-all overflow-hidden flex flex-col relative backdrop-blur-3xl shadow-2xl"
+                      className={`group bg-slate-900/40 border rounded-3xl transition-all overflow-hidden flex flex-col relative backdrop-blur-3xl shadow-2xl ${selectedMaterials.includes(material.id) ? 'border-accent-shadow ring-1 ring-accent-shadow shadow-accent/5' : 'border-white/10 hover:border-accent/30'
+                        }`}
                     >
+                      {/* Checkbox Aura */}
+                      <button
+                        onClick={() => toggleMaterialSelection(material.id)}
+                        className={`absolute top-6 left-6 z-20 p-2 rounded-lg transition-all ${selectedMaterials.includes(material.id) ? 'bg-accent text-black shadow-lg shadow-accent-shadow' : 'bg-slate-950/50 text-slate-600 hover:text-white border border-white/5'
+                          }`}
+                        title={selectedMaterials.includes(material.id) ? 'Desmarcar' : 'Selecionar'}
+                      >
+                        {selectedMaterials.includes(material.id) ? <CheckSquare size={18} /> : <Square size={18} />}
+                      </button>
+
                       <div className="h-56 bg-slate-950/50 relative p-8 flex items-center justify-center group-hover:bg-slate-950/80 transition-all border-b border-white/5 mx-4 mt-4 rounded-2xl">
-                        <FileCode size={64} className="text-slate-800 group-hover:text-amber-500/40 transition-colors" />
+                        <FileCode size={64} className="text-slate-800 group-hover:text-accent/40 transition-colors" />
                         <div className="absolute top-6 right-6">
-                          <span className="px-4 py-1 bg-amber-500/10 text-amber-500 text-[10px] font-black uppercase tracking-widest border border-amber-500/20 rounded-lg">
-                            v.Aura
+                          <span className="px-4 py-1 bg-accent/10 text-accent text-[10px] font-black uppercase tracking-widest border border-accent-shadow rounded-lg max-w-[120px] truncate" title={material.metadata?.style || 'v.Aura'}>
+                            {material.metadata?.style || 'v.Aura'}
                           </span>
                         </div>
                         <div className="absolute bottom-4 left-6">
@@ -3173,21 +3327,21 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                         <div className="grid grid-cols-4 gap-4 pb-4">
                           <button
                             onClick={() => setViewingMaterial(material)}
-                            className="flex items-center justify-center p-4 bg-slate-900 border border-white/5 rounded-xl hover:border-amber-500/30 text-slate-500 hover:text-amber-500 transition-all shadow-xl"
+                            className="flex items-center justify-center p-4 bg-slate-900 border border-white/5 rounded-xl hover:border-accent/30 text-slate-500 hover:text-accent transition-all shadow-xl"
                             title="Visualizar Aura"
                           >
                             <Eye size={20} />
                           </button>
                           <button
                             onClick={() => loadMaterial(material)}
-                            className="flex items-center justify-center p-4 bg-slate-900 border border-white/5 rounded-xl hover:border-amber-500/30 text-slate-500 hover:text-amber-500 transition-all shadow-xl"
+                            className="flex items-center justify-center p-4 bg-slate-900 border border-white/5 rounded-xl hover:border-accent/30 text-slate-500 hover:text-accent transition-all shadow-xl"
                             title="Editar Material"
                           >
                             <Pencil size={20} />
                           </button>
                           <button
                             onClick={() => downloadHtml(material.html, material.name)}
-                            className="flex items-center justify-center p-4 bg-slate-900 border border-white/5 rounded-xl hover:border-amber-500/30 text-slate-500 hover:text-amber-500 transition-all shadow-xl"
+                            className="flex items-center justify-center p-4 bg-slate-900 border border-white/5 rounded-xl hover:border-accent/30 text-slate-500 hover:text-accent transition-all shadow-xl"
                             title="Descarregar Buffer"
                           >
                             <Download size={20} />
@@ -3272,9 +3426,9 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
               exit={{ opacity: 0, scale: 0.95 }}
               className="relative bg-slate-900/40 border border-white/5 p-12 max-w-md w-full rounded-3xl shadow-2xl overflow-hidden backdrop-blur-3xl"
             >
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-amber-500/50 to-transparent" />
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-accent-shadow to-transparent" />
 
-              <div className="w-24 h-24 rounded-2xl bg-amber-500/10 text-amber-500 border border-amber-500/20 flex items-center justify-center mb-8 mx-auto shadow-2xl">
+              <div className="w-24 h-24 rounded-2xl bg-accent/10 text-accent border border-accent-shadow flex items-center justify-center mb-8 mx-auto shadow-2xl">
                 <LogIn size={40} />
               </div>
               <h3 className="text-2xl font-black text-white mb-2 text-center uppercase tracking-tighter">Terminal Aura</h3>
@@ -3287,13 +3441,13 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                   <div className="relative">
                     <input
                       type="email" placeholder="IDENTIFICADOR_USUÁRIO" value={authEmail} onChange={e => setAuthEmail(e.target.value)}
-                      className="w-full px-6 py-5 border border-white/5 bg-slate-950/50 text-slate-200 text-xs font-black rounded-xl outline-none focus:border-amber-500/30 transition-all placeholder:text-slate-800" required
+                      className="w-full px-6 py-5 border border-white/5 bg-slate-950/50 text-slate-200 text-xs font-black rounded-xl outline-none focus:border-accent/30 transition-all placeholder:text-slate-800" required
                     />
                   </div>
                   <div className="relative">
                     <input
                       type="password" placeholder="CHAVE_DE_ACESSO" value={authPassword} onChange={e => setAuthPassword(e.target.value)}
-                      className="w-full px-6 py-5 border border-white/5 bg-slate-950/50 text-slate-200 text-xs font-black rounded-xl outline-none focus:border-amber-500/30 transition-all placeholder:text-slate-800" required
+                      className="w-full px-6 py-5 border border-white/5 bg-slate-950/50 text-slate-200 text-xs font-black rounded-xl outline-none focus:border-accent/30 transition-all placeholder:text-slate-800" required
                     />
                   </div>
                 </div>
@@ -3301,7 +3455,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
                 <div className="flex flex-col gap-4 pt-4">
                   <button
                     type="submit"
-                    className="w-full px-8 py-5 bg-amber-500 text-black font-black uppercase tracking-[0.3em] text-[10px] hover:bg-amber-400 rounded-2xl transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center gap-3 active:scale-[0.98]"
+                    className="w-full px-8 py-5 bg-accent text-black font-black uppercase tracking-[0.3em] text-[10px] hover:bg-accent-hover rounded-2xl transition-all shadow-lg shadow-accent-shadow flex items-center justify-center gap-3 active:scale-[0.98]"
                   >
                     <LogIn size={20} /> INICIAR_SESSÃO_AURA
                   </button>

@@ -9,35 +9,49 @@
   /* Slate 950 Deep Navy */
   --color-secondary: #0f172a;
   /* Slate 900 */
-  --color-cta: #f59e0b;
+  --color-cta: var(--accent-color, #f59e0b);
   /* Amber 500 Vibrant Gold */
   --color-accent-blue: #60a5fa;
   /* Blue 400 */
   --color-bg-page: #020617;
+
+  --color-accent: var(--accent-color, #f59e0b);
+  --color-accent-hover: var(--accent-hover, #fbbf24);
+  --color-accent-shadow: var(--accent-shadow, rgba(245, 158, 11, 0.2));
 }
 
-/* Custom Scrollbar Aura */
-::-webkit-scrollbar {
+/* Custom Scrollbar Global Aura */
+*::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
-::-webkit-scrollbar-track {
+*::-webkit-scrollbar-track {
   background: #020617;
 }
 
-::-webkit-scrollbar-thumb {
-  background: #f59e0b;
+*::-webkit-scrollbar-thumb {
+  background: var(--accent-color, #f59e0b);
   border-radius: 10px;
+  border: 2px solid #020617;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #fbbf24;
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-hover, #fbbf24);
+}
+
+/* Custom Scrollbar Utility */
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--accent-color, #f59e0b);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-hover, #fbbf24);
 }
 
 /* Glassmorphism Utilities Aura */
 .glass-aura {
-  @apply bg-blue-900/10 backdrop-blur-xl border border-blue-500/20 shadow-[0_0_30px_rgba(59,130,246,0.1)];
+  @apply bg-blue-900/10 backdrop-blur-xl border border-blue-500/20 shadow-[0_0_30px_rgba(59, 130, 246, 0.1)];
 }
 
 .glass-aura-dark {
