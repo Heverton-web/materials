@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS generated_materials (
 -- 5. Prompt Library (Biblioteca de Prompts)
 CREATE TABLE IF NOT EXISTS prompt_library (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID REFERENCES auth.users ON DELETE CASCADE NOT NULL,
+  user_id UUID REFERENCES auth.users ON DELETE CASCADE,
   title TEXT NOT NULL,
   content TEXT NOT NULL,
   description TEXT,
@@ -154,6 +154,24 @@ BEGIN
     -- Presets Branding (Elite)
     IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='presets_branding' AND column_name='description') THEN
         ALTER TABLE presets_branding ADD COLUMN description TEXT;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='presets_branding' AND column_name='main_role') THEN
+        ALTER TABLE presets_branding ADD COLUMN main_role TEXT;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='presets_branding' AND column_name='audience_guidelines') THEN
+        ALTER TABLE presets_branding ADD COLUMN audience_guidelines TEXT;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='presets_branding' AND column_name='target_foco') THEN
+        ALTER TABLE presets_branding ADD COLUMN target_foco TEXT;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='presets_branding' AND column_name='target_tom') THEN
+        ALTER TABLE presets_branding ADD COLUMN target_tom TEXT;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='presets_branding' AND column_name='target_regra') THEN
+        ALTER TABLE presets_branding ADD COLUMN target_regra TEXT;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='presets_branding' AND column_name='golden_rule') THEN
+        ALTER TABLE presets_branding ADD COLUMN golden_rule TEXT;
     END IF;
 
     -- Prompt Library

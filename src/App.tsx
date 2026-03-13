@@ -72,6 +72,12 @@ interface MetadataItem {
   description: string;
   tags: string[];
   style?: string;
+  colors?: {
+    primary: string;
+    secondary: string;
+  };
+  fontFamily?: string;
+  model?: string;
 }
 
 interface SuggestedMetadata {
@@ -112,6 +118,13 @@ interface BrandConfig {
   pdfBase64?: string;
   pdfName?: string;
   systemPrompt?: string;
+  // Perfil Estratégico
+  mainRole?: string;
+  audienceGuidelines?: string;
+  targetAudienceFoco?: string;
+  targetAudienceTom?: string;
+  targetAudienceRegra?: string;
+  goldenRule?: string;
 }
 
 interface BrandPreset {
@@ -122,6 +135,12 @@ interface BrandPreset {
   secondary_color: string;
   font_family: string;
   description?: string;
+  main_role?: string;
+  audience_guidelines?: string;
+  target_foco?: string;
+  target_tom?: string;
+  target_regra?: string;
+  golden_rule?: string;
   is_active: boolean;
 }
 
@@ -141,22 +160,24 @@ interface PromptLibraryEntry {
 
 const DEFAULT_PROMPTS = [
   {
-    title: "Aura Blue & Gold (Padrão)",
-    description: "Estética de alta tecnologia com energia vibrante. Azul marinho profundo, dourado energético e formas orgânicas arredondadas.",
+    title: "Liquid Glass / Aurora Glass (Padrão)",
+    description: "Estética de luxo digital premium focada em profundidade, transparência e elegância extrema. Tons de ouro metálico, azul profundo e vidros refinados.",
     content: `Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
-OBRIGATÓRIO INCLUIR NO <head> OU ANTES DO fechamento do <body>:
+OBRIGATÓRIO INCLUIR NO <head>:
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Inter:wght@400;700&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
 
-DIRETRIZES DE DESIGN & ESTRUTURA (AURA 2026):
-- ESTRUTURA: Layout fluido e dinâmico. Use paddings generosos (py-24).
-- HERO: Tipografia impactante 'Outfit' ou 'Satoshi'. Fundo Aura Gradient (Navy para Indigo profundo).
-- GEOMETRIA: Use bordas muito arredondadas (rounded-3xl ou rounded-2xl). Evite cantos vivos.
-- CORES: Fundo #020617. Use Dourado Vibrante (#F59E0B) para CTAs e Azul Elétrico (#60A5FA) para detalhes.
-- GLASSMORFISMO: Use 'glass-aura' (bg-blue-900/10, backdrop-blur-xl, border-blue-500/20).
-- ANIMAÇÕES: Movimentos orgânicos e energéticos com GSAP.
+DIRETRIZES DE DESIGN & ESTRUTURA (LIQUID GLASS PREMIUM):
+- CONCEITO: Luxo digital com profundidade líquida e brilho metálico.
+- PALETA: Base #010409 (Deep Space). Destaque #f3c677 (Metallic Gold). Apoio #000814 e #1e3a8a para iluminação ambiente (blooms).
+- TIPOGRAFIA: Headlines Montserrat 900 com tracking-tighter e gradiente metálico (White to Gold). Corpo Inter. Playfair Display Italic para detalhes.
+- BOTÕES: Use botões Ghost (border-1px-gold) com texto branco ou gold, ou botões sólidos com brilho interno.
+- GRID: Estrutura Bento Grid com cards de vidro lapidado (backdrop-blur-3xl, border-white/10).
+- ILUMINAÇÃO: Efeito "Aura Flow" no fundo com blobs orgânicos que se movem lentamente via GSAP.
+- INTERATIVIDADE: Cursor magnético sutil e animações de entrada fluidas (opacity + scale suaves).
 
 RESTRIÇÕES:
 Retorne APENAS o código HTML. Sem links reais ou interações de navegação.`
@@ -701,54 +722,80 @@ As páginas interativas criadas NÃO terão botões, ícones no estilo href que 
 
 const SUPABASE_SQL = SUPABASE_TABLES_SQL;
 
-const LIBRARY_CSS = `/* Estilos Base da Biblioteca Interactive Builder */
+const LIBRARY_CSS = `/* Estilos Base Interactive Builder - Premium Liquid Glass */
 :root {
-  --primary-blue: #004a8e;
-  --primary-gold: #c5a059;
-  --bg-dark: #020617;
-  --bg-card: #0f172a;
+  --primary-blue: #0f172a;
+  --primary-gold: #f3c677;
+  --bg-dark: #010409;
+  --bg-card: rgba(255, 255, 255, 0.03);
 }
 
 body {
   font-family: 'Inter', sans-serif;
   background-color: var(--bg-dark);
-  color: #f8fafc;
+  color: #f1f5f9;
+  -webkit-font-smoothing: antialiased;
+}
+
+.heading-display {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  background: linear-gradient(135deg, #fff 0%, var(--primary-gold) 50%, #fff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-serif {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
 }
 
 .card {
   background-color: var(--bg-card);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 1.5rem;
-  padding: 2rem;
-  transition: all 0.3s ease;
+  backdrop-filter: blur(40px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 2rem;
+  padding: 2.5rem;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
 .card:hover {
-  border-color: var(--primary-blue);
-  box-shadow: 0 10px 30px -10px rgba(0, 74, 142, 0.3);
+  border-color: rgba(243, 198, 119, 0.3);
+  box-shadow: 0 20px 60px -10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(243, 198, 119, 0.1);
+  transform: translateY(-5px);
 }
 
 .btn-primary {
-  background-color: var(--primary-blue);
-  color: white;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.75rem;
+  border: 1px solid var(--primary-gold);
+  color: var(--primary-gold);
+  background: transparent;
+  padding: 0.8rem 2rem;
+  border-radius: 9999px;
   font-weight: 700;
-  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 .btn-primary:hover {
-  background-color: #005bb3;
-  transform: translateY(-2px);
+  background: var(--primary-gold);
+  color: #010409;
+  box-shadow: 0 0 30px rgba(243, 198, 119, 0.4);
 }
 
 .text-gold {
   color: var(--primary-gold);
+  filter: drop-shadow(0 0 5px rgba(243, 198, 119, 0.2));
 }
 
 .gradient-text {
   background: linear-gradient(to right, #fff, var(--primary-gold));
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }`;
 
@@ -760,9 +807,9 @@ const HeroSection = ({ title, subtitle, colors }: { title: string, subtitle: str
       className="inline-flex items-center gap-2 px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-[0.3em] mb-8 glass-card border-white/20"
       style={{ color: colors.primaryGold }}
     >
-      <Sparkles size={14} /> Hub Conexão Digital Elite
+      <Sparkles size={14} /> Hub Conexão Digital Elite v1.5
     </div>
-    <h1 className="text-5xl md:text-8xl font-black text-white mb-8 tracking-tighter leading-none font-mono">
+    <h1 className="text-5xl md:text-8xl font-black text-white mb-8 tracking-tighter leading-none font-display">
       {title}
     </h1>
     <p className="text-stone-400 max-w-3xl mx-auto text-lg md:text-2xl leading-relaxed font-light">
@@ -893,6 +940,12 @@ export default function App() {
     primaryGold: '#CA8A04',
     fontFamily: 'Inter',
     description: 'Plataforma multisetorial de geração de materiais de elite.',
+    mainRole: 'Você é um Consultor de Elite e Diretor de Arte focado em soluções premium para o mercado de implantodontia.',
+    audienceGuidelines: 'Proprietários de clínicas de alto padrão, médicos implantodontistas e dentistas que buscam tecnologia de ponta.',
+    targetAudienceFoco: 'Tecnologia, Precisão, Autoridade e Luxo Técnico.',
+    targetAudienceTom: 'Altamente profissional, sofisticado, sóbrio e voltado para resultados clínicos.',
+    targetAudienceRegra: 'Nunca use termos infantis. Trate o paciente como um investidor em saúde.',
+    goldenRule: 'Mantenha o padrão Conexão Digital - A excelência não é negociável.',
     systemPrompt: `Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
 DIRETRIZES DE DESIGN & ESTRUTURA (ESTILO LIQUID GLASS):
@@ -957,6 +1010,7 @@ O Futuro é agora. O Hub Conexão é a ferramenta definitiva para quem não acei
   const [selectedMaterials, setSelectedMaterials] = useState<string[]>([]);
   const [promptLibrary, setPromptLibrary] = useState<PromptLibraryEntry[]>([]);
   const [viewingMaterial, setViewingMaterial] = useState<GeneratedMaterial | null>(null);
+  const [viewingTechSheet, setViewingTechSheet] = useState<GeneratedMaterial | null>(null);
   const [selectedPromptId, setSelectedPromptId] = useState<string>('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState<string>('');
@@ -967,7 +1021,7 @@ O Futuro é agora. O Hub Conexão é a ferramenta definitiva para quem não acei
   const [suggestedMetadata, setSuggestedMetadata] = useState<SuggestedMetadata | null>(null);
   const [metadataLang, setMetadataLang] = useState<'pt' | 'en' | 'es'>('pt');
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [appAccentColor, setAppAccentColor] = useState<string>(() => localStorage.getItem('app_accent_color') || '#f59e0b');
+  const [appAccentColor, setAppAccentColor] = useState<string>(() => localStorage.getItem('app_accent_color') || '#ca954e');
 
   const copyToClipboard = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
@@ -1359,6 +1413,12 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
       primaryGold: preset.secondary_color,
       fontFamily: preset.font_family,
       description: preset.description || '',
+      mainRole: preset.main_role || '',
+      audienceGuidelines: preset.audience_guidelines || '',
+      targetAudienceFoco: preset.target_foco || '',
+      targetAudienceTom: preset.target_tom || '',
+      targetAudienceRegra: preset.target_regra || '',
+      goldenRule: preset.golden_rule || '',
     }));
     if (supabase && session) {
       await supabase.from('presets_branding').update({ is_active: false }).eq('user_id', session.user.id);
@@ -1442,6 +1502,12 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
           secondary_color: brandConfig.primaryGold,
           font_family: brandConfig.fontFamily || 'Inter',
           description: brandConfig.description || '',
+          main_role: brandConfig.mainRole || '',
+          audience_guidelines: brandConfig.audienceGuidelines || '',
+          target_foco: brandConfig.targetAudienceFoco || '',
+          target_tom: brandConfig.targetAudienceTom || '',
+          target_regra: brandConfig.targetAudienceRegra || '',
+          golden_rule: brandConfig.goldenRule || '',
         })
         .eq('id', activeBrandId);
 
@@ -1454,6 +1520,12 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
           secondary_color: brandConfig.primaryGold,
           font_family: brandConfig.fontFamily || 'Inter',
           description: brandConfig.description || '',
+          main_role: brandConfig.mainRole || '',
+          audience_guidelines: brandConfig.audienceGuidelines || '',
+          target_foco: brandConfig.targetAudienceFoco || '',
+          target_tom: brandConfig.targetAudienceTom || '',
+          target_regra: brandConfig.targetAudienceRegra || '',
+          golden_rule: brandConfig.goldenRule || '',
         }
         : p
       ));
@@ -1610,6 +1682,36 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
     }
   };
 
+  const deleteSelectedMaterials = async () => {
+    if (selectedMaterials.length === 0) return;
+    
+    if (!window.confirm(`Deseja excluir ${selectedMaterials.length} materiais selecionados? Esta ação é irreversível.`)) {
+      return;
+    }
+
+    setLoading(true);
+    setLoadingMsg('Expurgando Registros selecionados');
+
+    try {
+      if (session) {
+        const { error } = await supabase
+          .from('generated_materials')
+          .delete()
+          .in('id', selectedMaterials)
+          .eq('user_id', session.user.id);
+
+        if (error) throw error;
+      }
+      
+      setMaterials(prev => prev.filter(m => !selectedMaterials.includes(m.id)));
+      setSelectedMaterials([]);
+    } catch (error: any) {
+      alert(`Erro ao excluir em massa: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const previewMaterial = (material: GeneratedMaterial) => {
     setGeneratedHtml(material.html);
     setFilename(material.name);
@@ -1695,7 +1797,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
 
       try {
         const response = await ai.models.generateContent({
-          model: "gemini-1.5-flash",
+          model: "gemini-2.5-flash",
           contents: { parts: contents },
           config: {
             systemInstruction: "Você é um assistente especializado em estruturação de conteúdo técnico e estratégico em Markdown Elite."
@@ -1756,7 +1858,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
 
       try {
         const response = await ai.models.generateContent({
-          model: "gemini-1.5-flash",
+          model: "gemini-2.5-flash",
           contents: `Você é um Diretor de SEO e Especialista em Branding de Elite. Sua missão é gerar metadados estratégicos (Título, Slug, Descrição e Tags) para uma página baseada estritamente no CONTEÚDO fornecido.
 
 INFORMAÇÃO FUNDAMENTAL:
@@ -1768,8 +1870,13 @@ REGRA CRÍTICA: JAMais mencione "Interactive Builder", "Aura AI", "Hub Conexão"
 CONTEÚDO MARKDOWN (FONTE PRIMÁRIA):
 ${markdownText}
 
-BRANDING (DIRETRIZES DE TOM DE VOZ):
-${brandConfig.description}
+BRANDING (DIRETRIZES DE ESTRATÉGIA E TOM DE VOZ):
+Descrição: ${brandConfig.description}
+Papel Principal (Persona): ${brandConfig.mainRole}
+Audiência: ${brandConfig.audienceGuidelines}
+Foco: ${brandConfig.targetAudienceFoco}
+Tom: ${brandConfig.targetAudienceTom}
+Regra de Ouro: ${brandConfig.goldenRule}
 
 REGRAS DE OURO PARA OS METADADOS:
 1. Protocolo_Título (title): Título magnético e profissional focado na solução descrita no Markdown (50-60 chars).
@@ -1854,8 +1961,13 @@ Retorne INTEGRALMENTE em JSON válido na estrutura:
         Tags: ${currentMetadata?.tags?.join(', ') || ''}
         Slug/Arquivo: ${customFilename}
 
-        Diretrizes de Branding:
-        ${brandConfig.description}
+        Diretrizes de Branding & Estratégia:
+        Core: ${brandConfig.description}
+        Persona: ${brandConfig.mainRole}
+        Audiência: ${brandConfig.audienceGuidelines}
+        Foco de Audiência: ${brandConfig.targetAudienceFoco}
+        Tom de Audiência: ${brandConfig.targetAudienceTom}
+        Regra de Ouro Inegociável: ${brandConfig.goldenRule}
         Cores: Primária (${brandConfig.primaryBlue}), Destaque (${brandConfig.primaryGold})
         Tipografia Base: ${brandConfig.fontFamily}
 
@@ -1883,9 +1995,9 @@ Retorne INTEGRALMENTE em JSON válido na estrutura:
 
         DESIGN SYSTEM OBRIGATÓRIO:
         1. PALETA DE CORES:
-        - Primária: ${brandConfig.primaryBlue} (Azul Conexão)
-        - Accent: ${brandConfig.primaryGold} (Dourado Premium)
-        - Backgrounds: Use Off-white (#FDFDFD), Slate-950 (#020617) e variações de Glassmorphism.
+        - Primária: ${brandConfig.primaryBlue}
+        - Secundária/Acento: ${brandConfig.primaryGold}
+        - Backgrounds: Use tonalidades que harmonizem com o branding (ex: Off-white #FDFDFD ou Slate-950 #020617) e variações de Glassmorphism.
         2. TIPOGRAFIA:
         - Use a família principal: '${brandConfig.fontFamily}', sans-serif.
         - Títulos: Peso 700/900, tracking-tighter.
@@ -1903,11 +2015,12 @@ Retorne INTEGRALMENTE em JSON válido na estrutura:
         2. ÍCONES: Use Lucide React (via CDN). Escolha ícones que remetam a tecnologia e precisão.
         3. RESPONSIVIDADE: Mobile-first impecável.
         4. SEO: Injetar título, descrição e tags nos locais corretos do <head>.
+        5. RODAPÉ OBRIGATÓRIO (REDE DE PROTEÇÃO): Toda página DEVE terminar com o seguinte rodapé exatamente como escrito: "© 2026 Conexão Digital Implant. Todos os direitos reservados. Tecnologia a serviço da implantodontia desde 1990".
 
           ESTRUTURA DE SEÇÕES:
-- Hero -> Prova Social -> Benefícios (Bento Grid) -> Detalhes Técnicos (Acordeões ou Tabs) -> Tabela de Comparação (Luxury Style) -> CTA Final (Visual, não clicável).
+- Hero -> Prova Social -> Benefícios (Bento Grid) -> Detalhes Técnicos (Acordeões ou Tabs) -> Tabela de Comparação (Luxury Style) -> CTA Final (Visual, não clicável) -> Rodapé Fixo.
 
-          NUNCA gere um layout linear ou genérico. Use o Dourado para elementos de destaque e bordas finas.`;
+          NUNCA gere um layout linear ou genérico. Use a Cor Secundária/Acento para elementos de destaque e bordas finas.`;
 
     let html = '';
 
@@ -1915,15 +2028,6 @@ Retorne INTEGRALMENTE em JSON válido na estrutura:
       const ai = new GoogleGenAI({ apiKey });
       const parts: any[] = [{ text: promptText }];
 
-      if (brandConfig.pdfBase64) {
-        parts.push({
-          inlineData: {
-            mimeType: "application/pdf",
-            data: brandConfig.pdfBase64
-          }
-        });
-        parts[0].text += "\n\nIMPORTANTE: Siga rigorosamente a identidade visual e diretrizes contidas no PDF de branding anexado.";
-      }
 
       try {
         const response = await ai.models.generateContent({
@@ -2008,9 +2112,18 @@ Retorne INTEGRALMENTE em JSON válido na estrutura:
     const currentStyle = selectedPrompt?.title || 'Aura Base';
 
     if (session) {
-      const materialMetadata = suggestedMetadata
-        ? { ...suggestedMetadata[lang], style: currentStyle }
-        : { title: customFilename, filename: customFilename, description: '', tags: [], style: currentStyle };
+      const materialMetadata: MetadataItem = {
+        ...(suggestedMetadata ? suggestedMetadata[lang] : { title: customFilename, filename: customFilename, description: '', tags: [] }),
+        style: currentStyle,
+        colors: {
+          primary: brandConfig.primaryBlue,
+          secondary: brandConfig.primaryGold
+        },
+        fontFamily: brandConfig.fontFamily,
+        model: selectedApi === 'gemini' ? 'Google Gemini 2.5 Flash' : 
+               selectedApi === 'openai' ? 'OpenAI GPT-4o' :
+               selectedApi === 'claude' ? 'Claude 3.5 Sonnet' : 'Groq Llama 3'
+      };
 
       const { data, error } = await supabase
         .from('generated_materials')
@@ -2034,9 +2147,18 @@ Retorne INTEGRALMENTE em JSON válido na estrutura:
         setMaterials(prev => [newMaterial, ...prev]);
       }
     } else {
-      const materialMetadata = suggestedMetadata
-        ? { ...suggestedMetadata[lang], style: currentStyle }
-        : { title: customFilename, filename: customFilename, description: '', tags: [], style: currentStyle };
+      const materialMetadata: MetadataItem = {
+        ...(suggestedMetadata ? suggestedMetadata[lang] : { title: customFilename, filename: customFilename, description: '', tags: [] }),
+        style: currentStyle,
+        colors: {
+          primary: brandConfig.primaryBlue,
+          secondary: brandConfig.primaryGold
+        },
+        fontFamily: brandConfig.fontFamily,
+        model: selectedApi === 'gemini' ? 'Google Gemini 2.5 Flash' : 
+               selectedApi === 'openai' ? 'OpenAI GPT-4o' :
+               selectedApi === 'claude' ? 'Claude 3.5 Sonnet' : 'Groq Llama 3'
+      };
 
       const newMaterial: GeneratedMaterial = {
         id: Math.random().toString(36).substr(2, 9),
@@ -2057,11 +2179,12 @@ Retorne INTEGRALMENTE em JSON válido na estrutura:
     if (!markdownText.trim()) return;
 
     const steps: LoadingStep[] = [
-      { id: 'analyze', label: 'Analisando Markdown', status: 'loading' },
-      { id: 'style', label: 'Aplicando Direção de Arte', status: 'pending' },
-      { id: 'branding', label: 'Injetando Branding', status: 'pending' },
-      { id: 'generate', label: 'Gerando Código HTML', status: 'pending' },
-      { id: 'finalize', label: 'Finalizando Material', status: 'pending' }
+      { id: 'analyze', label: 'Mapeando DNA do Markdown (Etapa 1)', status: 'loading' },
+      { id: 'style', label: 'Carregando Arquétipo Visual (Etapa 2)', status: 'pending' },
+      { id: 'branding', label: 'Sincronizando Branding Elite (Etapa 0)', status: 'pending' },
+      { id: 'metadata', label: 'Integrando Metadados Heurísticos (Etapa 3)', status: 'pending' },
+      { id: 'generate', label: 'Transmutando Código HTML', status: 'pending' },
+      { id: 'finalize', label: 'Finalizando Material Aura', status: 'pending' }
     ];
 
     setLoading(true);
@@ -2621,12 +2744,86 @@ Retorne INTEGRALMENTE em JSON válido na estrutura:
                     </h2>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-10 flex-1">
+                      <div className="space-y-4 flex flex-col md:col-span-2">
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
+                          <ShieldCheck size={14} className="text-accent" /> Perfil Estratégico & Audiência
+                        </label>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-950/30 p-6 rounded-2xl border border-white/5">
+                          <div className="space-y-3">
+                            <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Papel Principal (IA Persona)</label>
+                            <input
+                              type="text"
+                              value={brandConfig.mainRole || ''}
+                              onChange={(e) => setBrandConfig({ ...brandConfig, mainRole: e.target.value })}
+                              className="w-full px-4 py-3 bg-slate-900/50 border border-white/5 text-slate-300 text-xs font-bold rounded-xl outline-none focus:border-accent-shadow transition-all"
+                              placeholder="Ex: Consultor de Elite..."
+                            />
+                          </div>
+                          <div className="space-y-3">
+                            <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Diretrizes de Audiência</label>
+                            <input
+                              type="text"
+                              value={brandConfig.audienceGuidelines || ''}
+                              onChange={(e) => setBrandConfig({ ...brandConfig, audienceGuidelines: e.target.value })}
+                              className="w-full px-4 py-3 bg-slate-900/50 border border-white/5 text-slate-300 text-xs font-bold rounded-xl outline-none focus:border-accent-shadow transition-all"
+                              placeholder="Ex: Proprietários de clínicas..."
+                            />
+                          </div>
+                          
+                          <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="space-y-3">
+                              <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Público ALVO - Foco</label>
+                              <input
+                                type="text"
+                                value={brandConfig.targetAudienceFoco || ''}
+                                onChange={(e) => setBrandConfig({ ...brandConfig, targetAudienceFoco: e.target.value })}
+                                className="w-full px-4 py-3 bg-slate-900/50 border border-white/5 text-slate-300 text-xs font-bold rounded-xl outline-none focus:border-accent-shadow transition-all"
+                                placeholder="Foco..."
+                              />
+                            </div>
+                            <div className="space-y-3">
+                              <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Público ALVO - Tom</label>
+                              <input
+                                type="text"
+                                value={brandConfig.targetAudienceTom || ''}
+                                onChange={(e) => setBrandConfig({ ...brandConfig, targetAudienceTom: e.target.value })}
+                                className="w-full px-4 py-3 bg-slate-900/50 border border-white/5 text-slate-300 text-xs font-bold rounded-xl outline-none focus:border-accent-shadow transition-all"
+                                placeholder="Tom..."
+                              />
+                            </div>
+                            <div className="space-y-3">
+                              <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Público ALVO - Regra</label>
+                              <input
+                                type="text"
+                                value={brandConfig.targetAudienceRegra || ''}
+                                onChange={(e) => setBrandConfig({ ...brandConfig, targetAudienceRegra: e.target.value })}
+                                className="w-full px-4 py-3 bg-slate-900/50 border border-white/5 text-slate-300 text-xs font-bold rounded-xl outline-none focus:border-accent-shadow transition-all"
+                                placeholder="Regra..."
+                              />
+                            </div>
+                          </div>
+
+                          <div className="md:col-span-2 space-y-3">
+                            <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest flex items-center gap-2">
+                              <Flame size={12} className="text-accent" /> Regra de Ouro Inegociável
+                            </label>
+                            <input
+                              type="text"
+                              value={brandConfig.goldenRule || ''}
+                              onChange={(e) => setBrandConfig({ ...brandConfig, goldenRule: e.target.value })}
+                              className="w-full px-4 py-3 bg-slate-900/50 border border-white/10 text-accent text-xs font-black rounded-xl outline-none focus:border-accent shadow-inner transition-all"
+                              placeholder="A regra máxima da marca..."
+                            />
+                          </div>
+                        </div>
+                      </div>
+
                       <div className="space-y-4 flex flex-col">
-                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Descrição Sistêmica</label>
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Descrição Sistêmica Core</label>
                         <textarea
                           value={brandConfig.description || ''}
                           onChange={(e) => setBrandConfig({ ...brandConfig, description: e.target.value })}
-                          className="flex-1 w-full p-4 bg-slate-950/50 border border-white/5 text-slate-300 rounded-2xl outline-none focus:border-accent-shadow placeholder:text-slate-700 resize-none font-sans text-xs font-bold leading-relaxed"
+                          className="flex-1 w-full p-4 bg-slate-950/50 border border-white/5 text-slate-300 rounded-2xl outline-none focus:border-accent-shadow placeholder:text-slate-700 resize-none font-sans text-xs font-bold leading-relaxed min-h-[120px]"
                           placeholder="Defina o core business e tom de voz..."
                         />
                       </div>
@@ -2898,8 +3095,19 @@ Retorne INTEGRALMENTE em JSON válido na estrutura:
                               </select>
                               <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-600 pointer-events-none" />
                             </div>
+                            <div className="p-4 bg-accent/5 border border-accent/10 rounded-xl space-y-2">
+                              <div className="flex items-center gap-2">
+                                <Palette size={12} className="text-accent" />
+                                <span className="text-[8px] font-black text-accent uppercase tracking-widest">Branding Sincronizado</span>
+                              </div>
+                              <div className="flex gap-2">
+                                <div className="w-4 h-4 rounded-full border border-white/10" style={{ backgroundColor: brandConfig.primaryBlue }} title="Primária" />
+                                <div className="w-4 h-4 rounded-full border border-white/10" style={{ backgroundColor: brandConfig.primaryGold }} title="Acento" />
+                                <span className="text-[8px] font-bold text-slate-500 uppercase flex items-center">{brandConfig.fontFamily}</span>
+                              </div>
+                            </div>
                             <p className="text-[9px] text-slate-600 font-black leading-relaxed uppercase tracking-tighter">
-                              * Define o tom de voz e a sofisticação da interface.
+                              * Define o tom de voz e a sofisticação da interface, fundindo o DNA visual do estilo com o Branding da Etapa 0.
                             </p>
                           </div>
 
@@ -3300,12 +3508,20 @@ Retorne INTEGRALMENTE em JSON válido na estrutura:
                 </div>
                 <div className="hidden md:flex gap-4">
                   {selectedMaterials.length > 0 && (
-                    <button
-                      onClick={downloadSelectedAsZip}
-                      className="px-8 py-3 bg-accent text-black rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-accent-shadow active:scale-95 transition-all flex items-center gap-3 animate-in fade-in slide-in-from-right-4 duration-500"
-                    >
-                      <Download size={16} /> Baixar_Zip ({selectedMaterials.length})
-                    </button>
+                    <>
+                      <button
+                        onClick={downloadSelectedAsZip}
+                        className="px-8 py-3 bg-accent text-black rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-accent-shadow active:scale-95 transition-all flex items-center gap-3 animate-in fade-in slide-in-from-right-4 duration-500"
+                      >
+                        <Download size={16} /> Baixar_Zip ({selectedMaterials.length})
+                      </button>
+                      <button
+                        onClick={deleteSelectedMaterials}
+                        className="px-8 py-3 bg-rose-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-rose-900/40 active:scale-95 transition-all flex items-center gap-3 animate-in fade-in slide-in-from-right-4 duration-500"
+                      >
+                        <Trash2 size={16} /> Excluir_Massa ({selectedMaterials.length})
+                      </button>
+                    </>
                   )}
                   <button
                     onClick={toggleSelectAll}
@@ -3360,31 +3576,37 @@ Retorne INTEGRALMENTE em JSON válido na estrutura:
                         {selectedMaterials.includes(material.id) ? <CheckSquare size={18} /> : <Square size={18} />}
                       </button>
 
-                      <div className="h-56 bg-slate-950/50 relative p-8 flex items-center justify-center group-hover:bg-slate-950/80 transition-all border-b border-white/5 mx-4 mt-4 rounded-2xl">
-                        <FileCode size={64} className="text-slate-800 group-hover:text-accent/40 transition-colors" />
-                        <div className="absolute top-6 right-6">
-                          <span className="px-4 py-1 bg-accent/10 text-accent text-[10px] font-black uppercase tracking-widest border border-accent-shadow rounded-lg max-w-[120px] truncate" title={material.metadata?.style || 'v.Aura'}>
-                            {material.metadata?.style || 'v.Aura'}
-                          </span>
+                      {/* Actions Aura Top Right */}
+                      <div className="absolute top-6 right-6 z-20 flex gap-2">
+                        <button
+                          onClick={() => setViewingTechSheet(material)}
+                          className="p-2 bg-slate-950/50 text-slate-500 hover:text-accent border border-white/5 rounded-lg transition-all"
+                          title="Ficha Técnica"
+                        >
+                          <Settings size={18} />
+                        </button>
+                      </div>
+
+                      <div className="h-auto bg-slate-950/50 relative p-6 flex flex-col group-hover:bg-slate-950/80 transition-all border-b border-white/5 mx-4 mt-4 rounded-2xl">
+                        <div className="flex justify-center mb-6">
+                          <FileCode size={48} className="text-slate-800 group-hover:text-accent/40 transition-colors" />
                         </div>
-                        <div className="absolute bottom-4 left-6">
+                        
+                        <div className="mt-4 flex justify-between items-center">
                           <p className="text-[10px] text-slate-600 font-black uppercase tracking-[0.2em]">{(material.html.length / 1024).toFixed(1)} KB</p>
+                          <p className="text-[10px] text-slate-500 font-bold uppercase">
+                            {new Date(material.timestamp).toLocaleDateString('pt-BR', {
+                              day: '2-digit', month: '2-digit', year: 'numeric'
+                            })}
+                          </p>
                         </div>
                       </div>
 
                       <div className="p-8 flex-1 flex flex-col">
                         <div className="flex-1 mb-10">
-                          <h3 className="text-base font-black text-slate-200 mb-3 truncate uppercase tracking-tighter" title={material.name}>
+                          <h3 className="text-base font-black text-slate-200 mb-1 truncate uppercase tracking-tighter" title={material.name}>
                             {material.name}
                           </h3>
-                          <div className="flex items-center gap-3">
-                            <Clock size={12} className="text-slate-600" />
-                            <p className="text-[10px] text-slate-600 font-black uppercase tracking-widest">
-                              SYNC: {new Date(material.timestamp).toLocaleDateString('pt-BR', {
-                                day: '2-digit', month: '2-digit', year: 'numeric'
-                              })}
-                            </p>
-                          </div>
                         </div>
 
                         <div className="grid grid-cols-4 gap-4 pb-4">
@@ -3473,6 +3695,90 @@ Retorne INTEGRALMENTE em JSON válido na estrutura:
             </motion.div>
           </div>
         )}
+
+        {viewingTechSheet && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setViewingTechSheet(null)}
+              className="absolute inset-0 bg-slate-950/90 backdrop-blur-3xl"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="relative bg-slate-900/60 border border-white/10 p-10 max-w-lg w-full rounded-3xl shadow-2xl backdrop-blur-3xl"
+            >
+              <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-6">
+                <h3 className="text-2xl font-black text-white uppercase tracking-tighter flex items-center gap-3">
+                  <Settings className="text-accent" size={24} /> Ficha Técnica Aura
+                </h3>
+                <button
+                  onClick={() => setViewingTechSheet(null)}
+                  className="p-2 hover:bg-white/5 rounded-xl text-slate-500 hover:text-white transition-all"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                <div className="bg-slate-950/40 p-6 rounded-2xl border border-white/5 space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Estilo Base</span>
+                    <span className="text-xs font-bold text-white uppercase">{viewingTechSheet.metadata?.style || 'AURAV.01'}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Paleta de Cores</span>
+                    <div className="flex gap-4">
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 rounded-full border border-white/10" style={{ backgroundColor: viewingTechSheet.metadata?.colors?.primary }} />
+                        <span className="text-[10px] font-mono text-slate-300 uppercase">{viewingTechSheet.metadata?.colors?.primary}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 rounded-full border border-white/10" style={{ backgroundColor: viewingTechSheet.metadata?.colors?.secondary }} />
+                        <span className="text-[10px] font-mono text-slate-300 uppercase">{viewingTechSheet.metadata?.colors?.secondary}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Tipografia</span>
+                    <span className="text-xs font-bold text-white">{viewingTechSheet.metadata?.fontFamily || 'Inter'}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Modelo de IA</span>
+                    <span className="text-xs font-bold text-white">{viewingTechSheet.metadata?.model || 'Desconhecido'}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Data de Geração</span>
+                    <span className="text-xs font-bold text-white">{new Date(viewingTechSheet.timestamp).toLocaleString('pt-BR')}</span>
+                  </div>
+                </div>
+
+                <div className="bg-slate-950/40 p-6 rounded-2xl border border-white/5">
+                  <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-3">Metadados & SEO</span>
+                  <p className="text-xs text-slate-300 leading-relaxed font-bold mb-4">{viewingTechSheet.metadata?.description}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {viewingTechSheet.metadata?.tags?.map((tag, i) => (
+                      <span key={i} className="px-3 py-1 bg-white/5 border border-white/5 rounded-lg text-[8px] font-black text-slate-500 uppercase tracking-widest">{tag}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-10">
+                <button
+                  onClick={() => setViewingTechSheet(null)}
+                  className="w-full py-4 bg-accent text-black font-black uppercase tracking-widest text-xs rounded-2xl hover:bg-accent-hover transition-all shadow-lg shadow-accent-shadow"
+                >
+                  Fechar Protocolo
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+
 
         {showLoginModal && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">

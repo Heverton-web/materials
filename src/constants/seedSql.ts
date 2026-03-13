@@ -1,27 +1,29 @@
-export const SEED_PROMPTS_SQL = `-- SCRIPT PARA INSERIR OS 31 MODELOS DE DESIGN NA BIBLIOTECA
--- Substitua NULL pelo seu ID de usuário do Supabase (encontrado em Authentication > Users)
+export const SEED_PROMPTS_SQL = `-- SCRIPT PARA INSERIR OS 31 MODELOS DE DESIGN NA BIBLIOTECA (ESTILOS GLOBAIS)
 
 INSERT INTO public.prompt_library (user_id, title, description, content, is_default)
-VALUES 
-(
+VALUES (
     NULL, 
-    'Padrão', 
-    'Estilo que utiliza as cores do branding',
+    'Liquid Glass / Aurora Glass (Padrão)', 
+    'Estética de luxo digital premium focada em profundidade, transparência e elegância extrema. Tons de ouro metálico, azul profundo e vidros refinados.',
     'Gere um ÚNICO arquivo HTML autônomo e responsivo (HTML5, Tailwind CSS via CDN e Lucide Icons).
 
-Diretrizes de Design
-"Gere um ÚNICO arquivo HTML autônomo contendo HTML, CSS (use Tailwind via CDN: https://cdn.tailwindcss.com) e JS (use Lucide Icons via CDN: https://unpkg.com/lucide@latest).
+OBRIGATÓRIO INCLUIR NO <head>:
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Inter:wght@400;700&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
 
-NÃO inclua cabeçalhos ou rodapés externos do construtor.
-As páginas interativas criadas NÃO terão botões, ícones no estilo href que precisam ser clicados para levar para algum lugar, NÃO terão vídeos nem imagens.
+DIRETRIZES DE DESIGN & ESTRUTURA (LIQUID GLASS PREMIUM):
+- CONCEITO: Luxo digital com profundidade líquida e brilho metálico.
+- PALETA: Base #010409 (Deep Space). Destaque #f3c677 (Metallic Gold). Apoio #000814 e #1e3a8a para iluminação ambiente (blooms).
+- TIPOGRAFIA: Headlines Montserrat 900 com tracking-tighter e gradiente metálico (White to Gold). Corpo Inter. Playfair Display Italic para detalhes.
+- BOTÕES: Use botões Ghost (border-1px-gold) com texto branco ou gold, ou botões sólidos com brilho interno.
+- GRID: Estrutura Bento Grid com cards de vidro lapidado (backdrop-blur-3xl, border-white/10).
+- ILUMINAÇÃO: Efeito "Aura Flow" no fundo com blobs orgânicos que se movem lentamente via GSAP.
+- INTERATIVIDADE: Cursor magnético sutil e animações de entrada fluidas (opacity + scale suaves).
 
-Aplique o branding fornecido de forma elegante e profissional.
-
-Use animações suaves (pode usar CSS puro ou bibliotecas via CDN se necessário).
-
-O arquivo deve ser auto-contido e pronto para ser aberto em qualquer navegador.
-
-Retorne APENAS o código HTML completo, sem blocos de código markdown (\`\`\`html).',
+RESTRIÇÕES:
+Retorne APENAS o código HTML. Sem links reais ou interações de navegação.',
     true
 ),
 (
