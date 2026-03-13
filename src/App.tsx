@@ -1695,10 +1695,10 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
 
       try {
         const response = await ai.models.generateContent({
-          model: "gemini-3-flash-preview",
+          model: "gemini-1.5-flash",
           contents: { parts: contents },
           config: {
-            systemInstruction: "Você é um assistente especializado em estruturação de conteúdo técnico em Markdown."
+            systemInstruction: "Você é um assistente especializado em estruturação de conteúdo técnico e estratégico em Markdown Elite."
           }
         });
 
@@ -1756,30 +1756,36 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
 
       try {
         const response = await ai.models.generateContent({
-          model: "gemini-2.5-flash",
-          contents: `Analise o seguinte Markdown e as diretrizes de branding para sugerir metadados estratégicos de SEO para uma landing page de alta conversão.
-          
-          DIRETRIZES DE BRANDING EXTRÍNSECAS:
-          ${brandConfig.description}
+          model: "gemini-1.5-flash",
+          contents: `Você é um Diretor de SEO e Especialista em Branding de Elite. Sua missão é gerar metadados estratégicos (Título, Slug, Descrição e Tags) para uma página baseada estritamente no CONTEÚDO fornecido.
 
-          CONTEÚDO MARKDOWN INTRÍNSECO:
-          ${markdownText}
+INFORMAÇÃO FUNDAMENTAL:
+O assunto da página é definido ÚNICA E EXCLUSIVAMENTE pelo "CONTEÚDO MARKDOWN" abaixo. 
+O "BRANDING" deve ser usado apenas para definir o TOM DE VOZ, ESTILO e SOFISTICAÇÃO da escrita.
 
-          REGRAS DE OURO (NÃO NEGOCIÁVEIS):
-          1. O TÍTULO (title) deve ser magnético, profissional e refletir exatamente a proposta de valor do conteúdo. Mantenha entre 50-60 caracteres.
-          2. O SLUG (filename) deve ser derivado do título de forma lógica, usando apenas letras minúsculas e hífens. Ex: "fios-de-pdo-premium". Sem extensão .html.
-          3. A DESCRIÇÃO (description) deve ser um resumo persuasivo focado em cliques (CTR) para buscas orgânicas. Máximo 160 caracteres.
-          4. As TAGS (tags) devem ser palavras-chave de cauda longa e curta relevantes para o nicho descrito. Mínimo de 8 tags.
-          
-          Retorne INTEGRALMENTE em JSON válido exatamente nesta estrutura:
-          {
-            "pt": {"title": "...", "filename": "...", "description": "...", "tags": ["tag1", "tag2", ...] },
-            "en": {"title": "...", "filename": "...", "description": "...", "tags": ["tag1", "tag2", ...] },
-            "es": {"title": "...", "filename": "...", "description": "...", "tags": ["tag1", "tag2", ...] }
-          }`,
+REGRA CRÍTICA: JAMais mencione "Interactive Builder", "Aura AI", "Hub Conexão" ou qualquer termo relacionado à plataforma de geração nos metadados, a menos que o conteúdo Markdown trate explicitamente sobre esses sistemas.
+
+CONTEÚDO MARKDOWN (FONTE PRIMÁRIA):
+${markdownText}
+
+BRANDING (DIRETRIZES DE TOM DE VOZ):
+${brandConfig.description}
+
+REGRAS DE OURO PARA OS METADADOS:
+1. Protocolo_Título (title): Título magnético e profissional focado na solução descrita no Markdown (50-60 chars).
+2. Aura_ID (Slug) (filename): URL amigável (slug) derivado do título em português. Use apenas minúsculas, hífens, sem acentos (ex: "tratamento-regenerativo-elite").
+3. Heurística_Aura (Description) (description): Resumo persuasivo focado em cliques (CTR). Resuma os benefícios reais descritos no Markdown (Máx 160 chars).
+4. Heurística_Tags (tags): Lista de pelo menos 10 palavras-chave semânticas relevantes ao nicho do Markdown.
+
+Retorne INTEGRALMENTE em JSON válido na estrutura:
+{
+  "pt": {"title": "...", "filename": "...", "description": "...", "tags": ["tag1", "tag2", ...] },
+  "en": {"title": "...", "filename": "...", "description": "...", "tags": ["tag1", "tag2", ...] },
+  "es": {"title": "...", "filename": "...", "description": "...", "tags": ["tag1", "tag2", ...] }
+}`,
           config: {
             responseMimeType: "application/json",
-            systemInstruction: "Você é um Diretor de SEO e Copywriting Estratégico com 20 anos de experiência em marketing digital de luxo."
+            systemInstruction: "Você é um Diretor de SEO e Copywriting Estratégico com 20 anos de experiência em marketing digital de luxo e alta performance."
           }
         });
 
