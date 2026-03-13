@@ -1,0 +1,40 @@
+                </div>
+              </div>
+
+              {/* NEW BRAND PRESET MODAL */}
+              {showNewBrandModal && (
+                <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/70 backdrop-blur-sm" onClick={() => setShowNewBrandModal(false)}>
+                  <div
+                    className="bg-slate-900 border border-white/10 rounded-3xl p-8 w-full max-w-sm shadow-2xl"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="flex items-center justify-between mb-6">
+                      <h3 className="text-base font-black text-white uppercase tracking-tighter flex items-center gap-2">
+                        <Plus size={16} className="text-accent" /> Novo Preset
+                      </h3>
+                      <button onClick={() => setShowNewBrandModal(false)} className="p-2 rounded-xl hover:bg-white/5 text-slate-500 hover:text-white transition-colors">
+                        <X size={16} />
+                      </button>
+                    </div>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 block">Nome do Branding</label>
+                        <input
+                          type="text"
+                          value={newBrandName}
+                          onChange={(e) => setNewBrandName(e.target.value)}
+                          onKeyDown={(e) => { if (e.key === 'Enter' && newBrandName.trim()) { createBrandPreset(newBrandName.trim()); setShowNewBrandModal(false); } }}
+                          placeholder="Ex: TRC Odontologia"
+                          autoFocus
+                          className="w-full px-4 py-3 bg-slate-950/80 border border-white/10 text-white text-sm font-bold rounded-xl outline-none focus:border-accent-shadow placeholder:text-slate-600 transition-colors"
+                        />
+                      </div>
+                      <button
+                        onClick={() => { if (newBrandName.trim()) { createBrandPreset(newBrandName.trim()); setShowNewBrandModal(false); } }}
+                        disabled={!newBrandName.trim()}
+                        className="w-full py-3.5 bg-accent text-black text-xs font-black uppercase tracking-widest rounded-xl hover:bg-accent-hover transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                      >
+                        Criar Preset
+                      </button>
+                    </div>
+                  </div>

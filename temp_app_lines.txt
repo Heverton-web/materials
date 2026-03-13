@@ -1,0 +1,25 @@
+      { id: 'prompts', label: 'Modelos de Design', status: 'pending' }
+    ];
+
+    setLoading(true);
+    setLoadingMsg('Sincronizando Dados');
+    setLoadingSteps(steps);
+
+    try {
+      // Load Brand Presets (new system)
+      let presetsLoaded = false;
+      try {
+        const { data: presets } = await supabase
+          .from('brand_presets')
+          .select('*')
+          .order('created_at', { ascending: true });
+
+        if (presets && presets.length > 0) {
+          setBrandPresets(presets as BrandPreset[]);
+          const active = (presets as BrandPreset[]).find(p => p.is_active) || (presets as BrandPreset[])[0];
+          setActiveBrandId(active.id);
+          setBrandConfig(prev => ({
+            ...prev,
+            id: active.id,
+            name: active.name,
+            primaryBlue: active.primary_color || prev.primaryBlue,

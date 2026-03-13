@@ -1130,7 +1130,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
       let presetsLoaded = false;
       try {
         const { data: presets } = await supabase
-          .from('brand_presets')
+          .from('presets_branding')
           .select('*')
           .order('created_at', { ascending: true });
 
@@ -1281,8 +1281,8 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
     if (!supabase || !session) return;
     try {
       // Deactivate existing
-      await supabase.from('brand_presets').update({ is_active: false }).eq('user_id', session.user.id);
-      const { data, error } = await supabase.from('brand_presets').insert({
+      await supabase.from('presets_branding').update({ is_active: false }).eq('user_id', session.user.id);
+      const { data, error } = await supabase.from('presets_branding').insert({
         user_id: session.user.id,
         name,
         primary_color: '#1C1917',
@@ -1321,8 +1321,8 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
       description: preset.description || '',
     }));
     if (supabase && session) {
-      await supabase.from('brand_presets').update({ is_active: false }).eq('user_id', session.user.id);
-      await supabase.from('brand_presets').update({ is_active: true }).eq('id', presetId);
+      await supabase.from('presets_branding').update({ is_active: false }).eq('user_id', session.user.id);
+      await supabase.from('presets_branding').update({ is_active: true }).eq('id', presetId);
     }
   };
 
@@ -1330,7 +1330,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
     if (!supabase || !session) return;
     if (brandPresets.length <= 1) { alert('Você precisa ter pelo menos um preset de branding.'); return; }
     try {
-      const { error } = await supabase.from('brand_presets').delete().eq('id', presetId);
+      const { error } = await supabase.from('presets_branding').delete().eq('id', presetId);
       if (error) throw error;
       const remaining = brandPresets.filter(p => p.id !== presetId);
       setBrandPresets(remaining);
@@ -1395,7 +1395,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
 
     try {
       const { error } = await supabase
-        .from('brand_presets')
+        .from('presets_branding')
         .update({
           name: brandConfig.name || 'Meu Branding',
           primary_color: brandConfig.primaryBlue,
@@ -1810,7 +1810,8 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
 
         Diretrizes de Branding:
         ${brandConfig.description}
-        Cores: Azul (${brandConfig.primaryBlue}), Dourado (${brandConfig.primaryGold})
+        Cores: Primária (${brandConfig.primaryBlue}), Destaque (${brandConfig.primaryGold})
+        Tipografia Base: ${brandConfig.fontFamily}
 
         IDIOMA DA PÁGINA: ${langNames[lang]}
         
@@ -1840,9 +1841,9 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
         - Accent: ${brandConfig.primaryGold} (Dourado Premium)
         - Backgrounds: Use Off-white (#FDFDFD), Slate-950 (#020617) e variações de Glassmorphism.
         2. TIPOGRAFIA:
-        - Títulos: 'Roboto', 'Inter', 'Montserrat', sans-serif (Peso 700/900).
-        - Corpo: 'Roboto', 'Inter', sans-serif (Peso 300/400).
-        - Use fontes SANS-SERIF modernas e limpas.
+        - Use a família principal: '${brandConfig.fontFamily}', sans-serif.
+        - Títulos: Peso 700/900, tracking-tighter.
+        - Corpo: Peso 300/400.
         3. COMPONENTES DE IMPACTO:
         - HERO: Layout 50/50 ou Centralizado com tipografia massiva (text-7xl+), gradientes sutis e animação de entrada.
         - BENTO GRIDS: Use grids assimétricos para seções de benefícios.
@@ -2414,38 +2415,54 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
               {/* NEW BRAND PRESET MODAL */}
               {showNewBrandModal && (
                 <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/70 backdrop-blur-sm" onClick={() => setShowNewBrandModal(false)}>
-                  <div
-                    className="bg-slate-900 border border-white/10 rounded-3xl p-8 w-full max-w-sm shadow-2xl"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <div className="flex items-center justify-between mb-6">
-                      <h3 className="text-base font-black text-white uppercase tracking-tighter flex items-center gap-2">
-                        <Plus size={16} className="text-accent" /> Novo Preset
+                  <div className="bg-slate-900 border border-white/10 rounded-3xl p-8 w-full max-w-xl shadow-2xl overflow-y-auto max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
+                    <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/5">
+                      <h3 className="text-xl font-black text-white uppercase tracking-tighter flex items-center gap-3">
+                        <Plus size={24} className="text-accent" /> Novo Branding Elite
                       </h3>
                       <button onClick={() => setShowNewBrandModal(false)} className="p-2 rounded-xl hover:bg-white/5 text-slate-500 hover:text-white transition-colors">
-                        <X size={16} />
+                        <X size={20} />
                       </button>
                     </div>
-                    <div className="space-y-4">
-                      <div>
-                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 block">Nome do Branding</label>
-                        <input
-                          type="text"
-                          value={newBrandName}
-                          onChange={(e) => setNewBrandName(e.target.value)}
-                          onKeyDown={(e) => { if (e.key === 'Enter' && newBrandName.trim()) { createBrandPreset(newBrandName.trim()); setShowNewBrandModal(false); } }}
-                          placeholder="Ex: TRC Odontologia"
-                          autoFocus
-                          className="w-full px-4 py-3 bg-slate-950/80 border border-white/10 text-white text-sm font-bold rounded-xl outline-none focus:border-accent-shadow placeholder:text-slate-600 transition-colors"
-                        />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div className="space-y-6">
+                        <div>
+                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 block">Nome da Marca</label>
+                          <input type="text" value={newBrandName} onChange={(e) => setNewBrandName(e.target.value)} placeholder="Ex: TRC Odontologia" className="w-full px-4 py-3 bg-slate-950/80 border border-white/10 text-white text-sm font-bold rounded-xl outline-none focus:border-accent-shadow transition-colors" />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 block">Cor Primária</label>
+                            <div className="flex items-center gap-2 bg-slate-950 p-2 border border-white/5 rounded-xl">
+                              <input type="color" value={newBrandPrimaryColor} onChange={(e) => setNewBrandPrimaryColor(e.target.value)} className="w-8 h-8 cursor-pointer rounded-lg overflow-hidden bg-transparent border-none" />
+                              <input type="text" value={newBrandPrimaryColor} onChange={(e) => setNewBrandPrimaryColor(e.target.value)} className="w-full bg-transparent text-[10px] text-white font-mono outline-none uppercase" />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 block">Cor Destaque</label>
+                            <div className="flex items-center gap-2 bg-slate-950 p-2 border border-white/5 rounded-xl">
+                              <input type="color" value={newBrandSecondaryColor} onChange={(e) => setNewBrandSecondaryColor(e.target.value)} className="w-8 h-8 cursor-pointer rounded-lg overflow-hidden bg-transparent border-none" />
+                              <input type="text" value={newBrandSecondaryColor} onChange={(e) => setNewBrandSecondaryColor(e.target.value)} className="w-full bg-transparent text-[10px] text-white font-mono outline-none uppercase" />
+                            </div>
+                          </div>
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 block">Tipografia</label>
+                          <select value={newBrandFontFamily} onChange={(e) => setNewBrandFontFamily(e.target.value)} className="w-full px-4 py-3 bg-slate-950/80 border border-white/10 text-white text-sm font-bold rounded-xl outline-none focus:border-accent-shadow cursor-pointer appearance-none transition-all">
+                            {["Inter", "Roboto", "Montserrat", "Poppins", "Outfit", "Raleway", "Lato", "Open Sans", "Nunito", "Lexend", "Playfair Display", "DM Sans"].map(f => <option key={f} value={f}>{f}</option>)}
+                          </select>
+                        </div>
                       </div>
-                      <button
-                        onClick={() => { if (newBrandName.trim()) { createBrandPreset(newBrandName.trim()); setShowNewBrandModal(false); } }}
-                        disabled={!newBrandName.trim()}
-                        className="w-full py-3.5 bg-accent text-black text-xs font-black uppercase tracking-widest rounded-xl hover:bg-accent-hover transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                      >
-                        Criar Preset
-                      </button>
+                      <div className="space-y-6 flex flex-col">
+                        <div className="flex-1 flex flex-col">
+                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 block">Descrição Sistêmica Corativa</label>
+                          <textarea value={newBrandDescription} onChange={(e) => setNewBrandDescription(e.target.value)} className="flex-1 w-full p-4 bg-slate-950/80 border border-white/10 text-slate-300 rounded-xl outline-none focus:border-accent-shadow placeholder:text-slate-700 resize-none text-xs font-bold leading-relaxed" placeholder="Ex: Boutique odontológica focada em implantes de alta complexidade. Tom de voz institucional, elegante e tecnológico." />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-8 pt-6 border-t border-white/5 flex gap-4">
+                      <button onClick={() => setShowNewBrandModal(false)} className="flex-1 py-4 bg-white/5 text-white text-xs font-black uppercase tracking-widest rounded-xl hover:bg-white/10 transition-colors">Cancelar</button>
+                      <button onClick={createBrandPreset} disabled={!newBrandName.trim()} className="flex-[2] py-4 bg-accent text-black text-xs font-black uppercase tracking-widest rounded-xl hover:bg-accent-hover transition-colors shadow-lg shadow-accent-shadow disabled:opacity-40 disabled:cursor-not-allowed">Salvar Preset de Branding</button>
                     </div>
                   </div>
                 </div>

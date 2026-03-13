@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS branding_configs (
   system_prompt TEXT,
   supabase_url TEXT,
   supabase_anon_key TEXT,
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 -- 3.5 Brand Presets (Múltiplas configurações de marca por usuário)
@@ -40,6 +40,20 @@ CREATE TABLE IF NOT EXISTS brand_presets (
   is_active BOOLEAN DEFAULT false,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- 3.6 Presets Branding (Sistema de Branding Elite)
+CREATE TABLE IF NOT EXISTS presets_branding (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users ON DELETE CASCADE NOT NULL,
+  name TEXT NOT NULL,
+  primary_color TEXT DEFAULT '#004a8e',
+  secondary_color TEXT DEFAULT '#b38e5d',
+  font_family TEXT DEFAULT 'Inter',
+  description TEXT,
+  is_active BOOLEAN DEFAULT false,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- 4. Generated Materials (Histórico de Materiais)
 CREATE TABLE IF NOT EXISTS generated_materials (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -66,10 +80,11 @@ ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE api_keys ENABLE ROW LEVEL SECURITY;
 ALTER TABLE branding_configs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE brand_presets ENABLE ROW LEVEL SECURITY;
+ALTER TABLE presets_branding ENABLE ROW LEVEL SECURITY;
 ALTER TABLE generated_materials ENABLE ROW LEVEL SECURITY;
 ALTER TABLE prompt_library ENABLE ROW LEVEL SECURITY;
 
--- Políticas de Acesso (Apenas o dono pode ver/editar seus dados)
+-- Políticas de Acesso
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_policy WHERE polname = 'Users can view own profile') THEN
@@ -87,10 +102,13 @@ BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_policy WHERE polname = 'Users can manage own brand presets') THEN
         CREATE POLICY "Users can manage own brand presets" ON brand_presets FOR ALL USING (auth.uid() = user_id);
     END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_policy WHERE polname = 'Users can manage own presets branding elite') THEN
+        CREATE POLICY "Users can manage own presets branding elite" ON presets_branding FOR ALL USING (auth.uid() = user_id);
+    END IF;
     IF NOT EXISTS (SELECT 1 FROM pg_policy WHERE polname = 'Users can manage own materials') THEN
         CREATE POLICY "Users can manage own materials" ON generated_materials FOR ALL USING (auth.uid() = user_id);
     END IF;
-    -- Remover política antiga se existir
+    
     DROP POLICY IF EXISTS "Users can manage own prompts" ON prompt_library;
 
     IF NOT EXISTS (SELECT 1 FROM pg_policy WHERE polname = 'Users can select own or default prompts') THEN
@@ -108,9 +126,10 @@ BEGIN
 END
 $$;
 
--- Script para adicionar colunas se a tabela já existir sem elas
+-- Script de Migração Idempotente
 DO $$
 BEGIN
+    -- Branding Configs
     IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='branding_configs' AND column_name='pdf_name') THEN
         ALTER TABLE branding_configs ADD COLUMN pdf_name TEXT;
     END IF;
@@ -124,12 +143,20 @@ BEGIN
         ALTER TABLE branding_configs ADD COLUMN supabase_anon_key TEXT;
     END IF;
 
-    -- Migração para brand_presets
+    -- Brand Presets
     IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='brand_presets' AND column_name='font_family') THEN
         ALTER TABLE brand_presets ADD COLUMN font_family TEXT DEFAULT 'Inter';
     END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='brand_presets' AND column_name='description') THEN
+        ALTER TABLE brand_presets ADD COLUMN description TEXT;
+    END IF;
 
-    -- Migração para prompt_library (renomear colunas se necessário)
+    -- Presets Branding (Elite)
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='presets_branding' AND column_name='description') THEN
+        ALTER TABLE presets_branding ADD COLUMN description TEXT;
+    END IF;
+
+    -- Prompt Library
     IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='prompt_library' AND column_name='name') THEN
         ALTER TABLE prompt_library RENAME COLUMN name TO title;
     END IF;
@@ -140,7 +167,7 @@ BEGIN
         ALTER TABLE prompt_library ADD COLUMN description TEXT;
     END IF;
 
-    -- Migração para generated_materials
+    -- Generated Materials
     IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='generated_materials' AND column_name='metadata') THEN
         ALTER TABLE generated_materials ADD COLUMN metadata JSONB;
     END IF;
