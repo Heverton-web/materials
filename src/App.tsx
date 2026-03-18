@@ -1232,7 +1232,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
             }));
             presetsLoaded = true;
           }
-        } catch (_) {}
+        } catch (_) { }
       }
 
       // Fallback: Load legacy branding_configs
@@ -1440,50 +1440,139 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
     } catch (err: any) { alert('Erro ao excluir preset: ' + err.message); }
   };
 
+  const callApiProvider = async (provider: string, apiKeys: any, systemPrompt: string, userPrompt: string, isJson: boolean, fileBase64?: string, fileMimeType?: string) => {
+    const apiKey = apiKeys[provider] || (provider === 'gemini' ? process.env.GEMINI_API_KEY : '');
+    if (!apiKey) throw new Error(`API Key para ${provider.toUpperCase()} não encontrada.`);
+
+    if (provider === 'gemini') {
+      const ai = new GoogleGenAI({ apiKey });
+      const contents: any[] = [{ text: userPrompt }];
+      if (fileBase64 && fileMimeType) {
+        contents.push({ inlineData: { mimeType: fileMimeType, data: fileBase64 } });
+      }
+      const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: { parts: contents },
+        config: {
+          systemInstruction: systemPrompt,
+          ...(isJson ? { responseMimeType: "application/json" } : {})
+        }
+      });
+      if (!response.text) throw new Error("Sem resposta do modelo.");
+      return response.text;
+    } else if (provider === 'openai') {
+      const messages: any[] = [{ role: "system", content: systemPrompt }];
+      if (fileBase64 && fileMimeType?.startsWith('image/')) {
+        messages.push({
+          role: "user",
+          content: [
+            { type: "text", text: userPrompt },
+            { type: "image_url", image_url: { url: `data:${fileMimeType};base64,${fileBase64}` } }
+          ]
+        });
+      } else {
+        messages.push({ role: "user", content: userPrompt });
+      }
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+        body: JSON.stringify({
+          model: "gpt-4o",
+          messages,
+          ...(isJson ? { response_format: { type: "json_object" } } : {})
+        })
+      });
+      const data = await response.json();
+      if (data.error) throw new Error(data.error.message);
+      return data.choices[0].message.content;
+    } else if (provider === 'claude') {
+      const content: any[] = [{ type: "text", text: userPrompt }];
+      if (fileBase64 && fileMimeType) {
+        if (fileMimeType === 'application/pdf') {
+          content.push({ type: "document", source: { type: "base64", media_type: "application/pdf", data: fileBase64 } });
+        } else if (fileMimeType.startsWith('image/')) {
+          content.push({ type: "image", source: { type: "base64", media_type: fileMimeType, data: fileBase64 } });
+        }
+      }
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'dangerously-allow-browser': 'true'
+        },
+        body: JSON.stringify({
+          model: "claude-3-5-sonnet-20240620",
+          max_tokens: 4096,
+          system: systemPrompt,
+          messages: [{ role: "user", content }]
+        })
+      });
+      const data = await response.json();
+      if (data.error) throw new Error(data.error.message);
+      return data.content[0].text;
+    } else if (provider === 'groq') {
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+        body: JSON.stringify({
+          model: "llama3-70b-8192",
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userPrompt }
+          ],
+          ...(isJson ? { response_format: { type: "json_object" } } : {})
+        })
+      });
+      const data = await response.json();
+      if (data.error) throw new Error(data.error.message);
+      return data.choices[0].message.content;
+    }
+    throw new Error(`Provedor ${provider} não suportado.`);
+  };
+
   const extractColorsFromBranding = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !apiKeys.gemini) { alert('Configure a chave da API Gemini primeiro.'); return; }
+    const provider = selectedApi;
+    const apiKey = apiKeys[provider] || (provider === 'gemini' ? process.env.GEMINI_API_KEY : '');
+
+    if (!file || !apiKey) { alert(`Configure a chave da API ${provider.toUpperCase()} primeiro.`); return; }
     setIsExtractingColors(true);
     try {
       const reader = new FileReader();
       reader.onload = async (ev) => {
         const base64 = (ev.target?.result as string).split(',')[1];
         const mimeType = file.type;
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKeys.gemini}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{
-              parts: [
-                { text: 'Você é um especialista em design de marca. Analise esta imagem/documento e extraia: 1) A cor primária principal (hex), 2) A cor de destaque/secundária (hex), 3) Nome da marca (se visível), 4) Família tipográfica sugerida (apenas: Inter, Roboto, Montserrat, Poppins, Outfit, Raleway, Lato, Open Sans, Nunito, Lexend, Playfair Display ou DM Sans). Responda APENAS em JSON: {"primary":"#hex","secondary":"#hex","name":"string ou null","fontFamily":"FontName"}' },
-                { inlineData: { mimeType, data: base64 } }
-              ]
-            }],
-          }),
-        });
-        const result = await response.json();
-        const text = result.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
-        const jsonMatch = text.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-          const extracted = JSON.parse(jsonMatch[0]);
-          setBrandConfig(prev => ({
-            ...prev,
-            primaryBlue: extracted.primary || prev.primaryBlue,
-            primaryGold: extracted.secondary || prev.primaryGold,
-            fontFamily: extracted.fontFamily || prev.fontFamily,
-            name: extracted.name || prev.name,
-            pdfName: file.name,
-            pdfBase64: base64,
-          }));
-          if (extracted.name && window.confirm(`Nome detectado: "${extracted.name}". Renomear este preset?`)) {
-            setBrandConfig(prev => ({ ...prev, name: extracted.name }));
+        const systemPrompt = "Você é um especialista em design de marca. Responda APENAS em JSON estruturado.";
+        const userPrompt = 'Analise esta imagem/documento e extraia: 1) A cor primária principal (hex), 2) A cor de destaque/secundária (hex), 3) Nome da marca (se visível), 4) Família tipográfica sugerida (apenas: Inter, Roboto, Montserrat, Poppins, Outfit, Raleway, Lato, Open Sans, Nunito, Lexend, Playfair Display ou DM Sans). Responda APENAS em JSON: {"primary":"#hex","secondary":"#hex","name":"string ou null","fontFamily":"FontName"}';
+
+        try {
+          const text = await callApiProvider(provider, apiKeys, systemPrompt, userPrompt, true, base64, mimeType);
+          const jsonMatch = text.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            const extracted = JSON.parse(jsonMatch[0]);
+            setBrandConfig(prev => ({
+              ...prev,
+              primaryBlue: extracted.primary || prev.primaryBlue,
+              primaryGold: extracted.secondary || prev.primaryGold,
+              fontFamily: extracted.fontFamily || prev.fontFamily,
+              name: extracted.name || prev.name,
+              pdfName: file.name,
+              pdfBase64: base64,
+            }));
+            if (extracted.name && window.confirm(`Nome detectado: "${extracted.name}". Renomear este preset?`)) {
+              setBrandConfig(prev => ({ ...prev, name: extracted.name }));
+            }
           }
+        } catch (apiError: any) {
+          alert('Erro ao extrair cores: ' + apiError.message);
         }
         setIsExtractingColors(false);
       };
       reader.readAsDataURL(file);
     } catch (err: any) {
-      alert('Erro ao extrair cores: ' + err.message);
+      alert('Erro ao carregar arquivo: ' + err.message);
       setIsExtractingColors(false);
     }
   };
@@ -1684,7 +1773,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
 
   const deleteSelectedMaterials = async () => {
     if (selectedMaterials.length === 0) return;
-    
+
     if (!window.confirm(`Deseja excluir ${selectedMaterials.length} materiais selecionados? Esta ação é irreversível.`)) {
       return;
     }
@@ -1702,7 +1791,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
 
         if (error) throw error;
       }
-      
+
       setMaterials(prev => prev.filter(m => !selectedMaterials.includes(m.id)));
       setSelectedMaterials([]);
     } catch (error: any) {
@@ -1774,41 +1863,32 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
     setLoadingSteps(steps);
 
     try {
-      const apiKey = apiKeys.gemini || process.env.GEMINI_API_KEY;
-      if (!apiKey) throw new Error("API Key do Gemini não encontrada.");
-
-      const ai = new GoogleGenAI({ apiKey });
+      const provider = selectedApi;
+      const apiKey = apiKeys[provider] || (provider === 'gemini' ? process.env.GEMINI_API_KEY : '');
+      if (!apiKey) throw new Error(`API Key para ${provider.toUpperCase()} não encontrada.`);
 
       setLoadingSteps(prev => prev.map(s => s.id === 'analyze' ? { ...s, status: 'completed' } : s.id === 'structure' ? { ...s, status: 'loading' } : s));
 
-      const contents: any[] = [
-        { text: `Transforme o seguinte texto em um Markdown bem estruturado, com títulos, listas e tabelas se necessário:\n\n${rawText}` }
-      ];
+      const systemInstruction = "Você é um assistente especializado em estruturação de conteúdo técnico e estratégico em Markdown Elite.";
+      let userPrompt = `Transforme o seguinte texto em um Markdown bem estruturado, com títulos, listas e tabelas se necessário:\n\n${rawText}`;
+
+      let base64 = undefined;
+      let mimeType = undefined;
 
       if (brandConfig.pdfBase64) {
-        contents.push({
-          inlineData: {
-            mimeType: "application/pdf",
-            data: brandConfig.pdfBase64
-          }
-        });
-        contents[0].text += "\n\nUse o PDF de branding anexado como referência para o tom de voz e estrutura.";
+        base64 = brandConfig.pdfBase64;
+        mimeType = "application/pdf";
+        userPrompt += "\n\nUse o PDF/documento de branding anexado como referência para o tom de voz e estrutura.";
       }
 
       try {
-        const response = await ai.models.generateContent({
-          model: "gemini-2.5-flash",
-          contents: { parts: contents },
-          config: {
-            systemInstruction: "Você é um assistente especializado em estruturação de conteúdo técnico e estratégico em Markdown Elite."
-          }
-        });
+        const responseText = await callApiProvider(provider, apiKeys, systemInstruction, userPrompt, false, base64, mimeType);
 
-        if (!response.text) throw new Error("Sem resposta do modelo.");
+        if (!responseText) throw new Error("Sem resposta do modelo.");
 
         setLoadingSteps(prev => prev.map(s => s.id === 'structure' ? { ...s, status: 'completed' } : s.id === 'clean' ? { ...s, status: 'loading' } : s));
 
-        let text = response.text;
+        let text = responseText;
         // Limpar blocos de código markdown se o modelo retornar
         text = text.replace(/^```markdown\n?/, '').replace(/```$/, '').trim();
 
@@ -1824,7 +1904,7 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
         }, 1000);
       } catch (apiError: any) {
         if (apiError.message?.includes('429') || apiError.message?.toLowerCase().includes('quota')) {
-          throw new Error("Limite de quota do Gemini excedido. Por favor, configure sua própria API Key na aba 'Configurações' para continuar testando sem interrupções.");
+          throw new Error(`Limite de quota do ${provider.toUpperCase()} excedido. Por favor, configure sua própria API Key na aba 'Configurações' para continuar testando sem interrupções.`);
         }
         throw apiError;
       }
@@ -1849,17 +1929,15 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
     setLoadingSteps(steps);
 
     try {
-      const apiKey = apiKeys.gemini || process.env.GEMINI_API_KEY;
-      if (!apiKey) throw new Error("API Key do Gemini não encontrada.");
-
-      const ai = new GoogleGenAI({ apiKey });
+      const provider = selectedApi;
+      const apiKey = apiKeys[provider] || (provider === 'gemini' ? process.env.GEMINI_API_KEY : '');
+      if (!apiKey) throw new Error(`API Key para ${provider.toUpperCase()} não encontrada.`);
 
       setLoadingSteps(prev => prev.map(s => s.id === 'analyze' ? { ...s, status: 'completed' } : s.id === 'creative' ? { ...s, status: 'loading' } : s));
 
       try {
-        const response = await ai.models.generateContent({
-          model: "gemini-2.5-flash",
-          contents: `Você é um Diretor de SEO e Especialista em Branding de Elite. Sua missão é gerar metadados estratégicos (Título, Slug, Descrição e Tags) para uma página baseada estritamente no CONTEÚDO fornecido.
+        const systemInstruction = "Você é um Diretor de SEO e Copywriting Estratégico com 20 anos de experiência em marketing digital de luxo e alta performance.";
+        const userPrompt = `Você é um Diretor de SEO e Especialista em Branding de Elite. Sua missão é gerar metadados estratégicos (Título, Slug, Descrição e Tags) para uma página baseada estritamente no CONTEÚDO fornecido.
 
 INFORMAÇÃO FUNDAMENTAL:
 O assunto da página é definido ÚNICA E EXCLUSIVAMENTE pelo "CONTEÚDO MARKDOWN" abaixo. 
@@ -1889,17 +1967,18 @@ Retorne INTEGRALMENTE em JSON válido na estrutura:
   "pt": {"title": "...", "filename": "...", "description": "...", "tags": ["tag1", "tag2", ...] },
   "en": {"title": "...", "filename": "...", "description": "...", "tags": ["tag1", "tag2", ...] },
   "es": {"title": "...", "filename": "...", "description": "...", "tags": ["tag1", "tag2", ...] }
-}`,
-          config: {
-            responseMimeType: "application/json",
-            systemInstruction: "Você é um Diretor de SEO e Copywriting Estratégico com 20 anos de experiência em marketing digital de luxo e alta performance."
-          }
-        });
+}`;
+
+        const responseText = await callApiProvider(provider, apiKeys, systemInstruction, userPrompt, true);
 
         setLoadingSteps(prev => prev.map(s => s.id === 'creative' ? { ...s, status: 'completed' } : s.id === 'translate' ? { ...s, status: 'loading' } : s));
 
-        if (!response.text) throw new Error("Sem resposta do modelo.");
-        const data = JSON.parse(response.text);
+        if (!responseText) throw new Error("Sem resposta do modelo.");
+        let cleanedText = responseText;
+        const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+        if (jsonMatch) cleanedText = jsonMatch[0];
+
+        const data = JSON.parse(cleanedText);
         setSuggestedMetadata(data);
 
         // Preencher automaticamente os nomes dos arquivos
@@ -1912,7 +1991,7 @@ Retorne INTEGRALMENTE em JSON válido na estrutura:
         setLoadingSteps(prev => prev.map(s => ({ ...s, status: 'completed' })));
       } catch (apiError: any) {
         if (apiError.message?.includes('429') || apiError.message?.toLowerCase().includes('quota')) {
-          throw new Error("Limite de quota do Gemini excedido. Por favor, aguarde um momento ou configure sua própria API Key na aba 'Configurações'.");
+          throw new Error(`Limite de quota do ${provider.toUpperCase()} excedido. Por favor, aguarde um momento ou configure sua própria API Key na aba 'Configurações'.`);
         }
         throw apiError;
       }
@@ -2120,9 +2199,9 @@ Retorne INTEGRALMENTE em JSON válido na estrutura:
           secondary: brandConfig.primaryGold
         },
         fontFamily: brandConfig.fontFamily,
-        model: selectedApi === 'gemini' ? 'Google Gemini 2.5 Flash' : 
-               selectedApi === 'openai' ? 'OpenAI GPT-4o' :
-               selectedApi === 'claude' ? 'Claude 3.5 Sonnet' : 'Groq Llama 3'
+        model: selectedApi === 'gemini' ? 'Google Gemini 2.5 Flash' :
+          selectedApi === 'openai' ? 'OpenAI GPT-4o' :
+            selectedApi === 'claude' ? 'Claude 3.5 Sonnet' : 'Groq Llama 3'
       };
 
       const { data, error } = await supabase
@@ -2155,9 +2234,9 @@ Retorne INTEGRALMENTE em JSON válido na estrutura:
           secondary: brandConfig.primaryGold
         },
         fontFamily: brandConfig.fontFamily,
-        model: selectedApi === 'gemini' ? 'Google Gemini 2.5 Flash' : 
-               selectedApi === 'openai' ? 'OpenAI GPT-4o' :
-               selectedApi === 'claude' ? 'Claude 3.5 Sonnet' : 'Groq Llama 3'
+        model: selectedApi === 'gemini' ? 'Google Gemini 2.5 Flash' :
+          selectedApi === 'openai' ? 'OpenAI GPT-4o' :
+            selectedApi === 'claude' ? 'Claude 3.5 Sonnet' : 'Groq Llama 3'
       };
 
       const newMaterial: GeneratedMaterial = {
@@ -2453,9 +2532,9 @@ Retorne INTEGRALMENTE em JSON válido na estrutura:
                   </h3>
                   <div className="bg-slate-950/40 p-6 rounded-2xl border border-white/5 flex flex-wrap items-center gap-8">
                     <div className="flex items-center gap-4">
-                      <input 
-                        type="color" 
-                        value={appAccentColor} 
+                      <input
+                        type="color"
+                        value={appAccentColor}
                         onChange={(e) => setAppAccentColor(e.target.value)}
                         className="w-12 h-12 cursor-pointer bg-transparent border-none p-0 rounded-lg overflow-hidden"
                       />
@@ -2471,8 +2550,8 @@ Retorne INTEGRALMENTE em JSON válido na estrutura:
                     </div>
                     <div className="flex gap-2">
                       {['#f59e0b', '#3b82f6', '#10b981', '#ef4444', '#8b5cf6', '#ec4899'].map(c => (
-                        <button 
-                          key={c} 
+                        <button
+                          key={c}
                           onClick={() => setAppAccentColor(c)}
                           className={`w-6 h-6 rounded-full border border-white/10 transition-transform hover:scale-125 ${appAccentColor === c ? 'ring-2 ring-white/20 scale-125' : ''}`}
                           style={{ backgroundColor: c }}
@@ -2769,7 +2848,7 @@ Retorne INTEGRALMENTE em JSON válido na estrutura:
                               placeholder="Ex: Proprietários de clínicas..."
                             />
                           </div>
-                          
+
                           <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div className="space-y-3">
                               <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Público ALVO - Foco</label>
@@ -3591,7 +3670,7 @@ Retorne INTEGRALMENTE em JSON válido na estrutura:
                         <div className="flex justify-center mb-6">
                           <FileCode size={48} className="text-slate-800 group-hover:text-accent/40 transition-colors" />
                         </div>
-                        
+
                         <div className="mt-4 flex justify-between items-center">
                           <p className="text-[10px] text-slate-600 font-black uppercase tracking-[0.2em]">{(material.html.length / 1024).toFixed(1)} KB</p>
                           <p className="text-[10px] text-slate-500 font-bold uppercase">
