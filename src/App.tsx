@@ -1445,21 +1445,28 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
     if (!apiKey) throw new Error(`API Key para ${provider.toUpperCase()} não encontrada.`);
 
     if (provider === 'gemini') {
-      const ai = new GoogleGenAI({ apiKey });
-      const contents: any[] = [{ text: userPrompt }];
-      if (fileBase64 && fileMimeType) {
-        contents.push({ inlineData: { mimeType: fileMimeType, data: fileBase64 } });
-      }
-      const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: { parts: contents },
-        config: {
-          systemInstruction: systemPrompt,
-          ...(isJson ? { responseMimeType: "application/json" } : {})
+      try {
+        const ai = new GoogleGenAI({ apiKey });
+        const contents: any[] = [{ text: userPrompt }];
+        if (fileBase64 && fileMimeType) {
+          contents.push({ inlineData: { mimeType: fileMimeType, data: fileBase64 } });
         }
-      });
-      if (!response.text) throw new Error("Sem resposta do modelo.");
-      return response.text;
+        const response = await ai.models.generateContent({
+          model: "gemini-2.5-flash",
+          contents: { parts: contents },
+          config: {
+            systemInstruction: systemPrompt,
+            ...(isJson ? { responseMimeType: "application/json" } : {})
+          }
+        });
+        if (!response.text) throw new Error("Sem resposta do modelo.");
+        return response.text;
+      } catch (err: any) {
+        if (err.message?.includes('429') || err.message?.toLowerCase().includes('quota')) {
+          throw new Error(`Limite de quota do Gemini excedido. Por favor, configure sua própria API Key na aba 'Infra & Tema' para continuar testando sem interrupções.`);
+        }
+        throw err;
+      }
     } else if (provider === 'openai') {
       const messages: any[] = [{ role: "system", content: systemPrompt }];
       if (fileBase64 && fileMimeType?.startsWith('image/')) {
@@ -1483,7 +1490,13 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
         })
       });
       const data = await response.json();
-      if (data.error) throw new Error(data.error.message);
+      if (!response.ok || data.error) {
+        console.error('OpenAI Error:', data.error);
+        throw new Error(data.error?.message || `Erro na API OpenAI (${response.status}). Verifique sua chave.`);
+      }
+      if (!data.choices || data.choices.length === 0 || !data.choices[0].message) {
+        throw new Error("A API da OpenAI retornou uma resposta sem conteúdo ('choices' vazio).");
+      }
       return data.choices[0].message.content;
     } else if (provider === 'claude') {
       const content: any[] = [{ type: "text", text: userPrompt }];
@@ -1510,7 +1523,12 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
         })
       });
       const data = await response.json();
-      if (data.error) throw new Error(data.error.message);
+      if (!response.ok || data.error) {
+        throw new Error(data.error?.message || `Erro na API Claude (${response.status})`);
+      }
+      if (!data.content || data.content.length === 0 || !data.content[0].text) {
+        throw new Error("A API da Claude retornou uma resposta sem conteúdo.");
+      }
       return data.content[0].text;
     } else if (provider === 'groq') {
       const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -1526,7 +1544,12 @@ ESTILO LIQUID GLASS (DARK PREMIUN):
         })
       });
       const data = await response.json();
-      if (data.error) throw new Error(data.error.message);
+      if (!response.ok || data.error) {
+        throw new Error(data.error?.message || `Erro na API Groq (${response.status})`);
+      }
+      if (!data.choices || data.choices.length === 0 || !data.choices[0].message) {
+        throw new Error("A API da Groq retornou uma resposta sem conteúdo.");
+      }
       return data.choices[0].message.content;
     }
     throw new Error(`Provedor ${provider} não suportado.`);
@@ -2101,81 +2124,11 @@ Retorne INTEGRALMENTE em JSON válido na estrutura:
 
           NUNCA gere um layout linear ou genérico. Use a Cor Secundária/Acento para elementos de destaque e bordas finas.`;
 
-    let html = '';
+    const html = await callApiProvider(selectedApi, apiKeys, systemInstruction, promptText, false);
 
-    if (selectedApi === 'gemini') {
-      const ai = new GoogleGenAI({ apiKey });
-      const parts: any[] = [{ text: promptText }];
-
-
-      try {
-        const response = await ai.models.generateContent({
-          model: "gemini-2.5-flash",
-          contents: { parts },
-          config: { systemInstruction }
-        });
-        html = response.text || '';
-      } catch (apiError: any) {
-        if (apiError.message?.includes('429') || apiError.message?.toLowerCase().includes('quota')) {
-          throw new Error("Limite de quota do Gemini excedido. Por favor, aguarde um momento ou configure sua própria API Key na aba 'Configurações'.");
-        }
-        throw apiError;
-      }
-    } else if (selectedApi === 'openai') {
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
-        },
-        body: JSON.stringify({
-          model: "gpt-4o",
-          messages: [
-            { role: "system", content: systemInstruction },
-            { role: "user", content: promptText }
-          ]
-        })
-      });
-      const data = await response.json();
-      html = data.choices[0].message.content;
-    } else if (selectedApi === 'claude') {
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01',
-          'dangerously-allow-browser': 'true'
-        },
-        body: JSON.stringify({
-          model: "claude-3-5-sonnet-20240620",
-          max_tokens: 4096,
-          system: systemInstruction,
-          messages: [{ role: "user", content: promptText }]
-        })
-      });
-      const data = await response.json();
-      html = data.content[0].text;
-    } else if (selectedApi === 'groq') {
-      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
-        },
-        body: JSON.stringify({
-          model: "llama3-70b-8192",
-          messages: [
-            { role: "system", content: systemInstruction },
-            { role: "user", content: promptText }
-          ]
-        })
-      });
-      const data = await response.json();
-      html = data.choices[0].message.content;
+    if (!html) {
+      throw new Error(`A API ${selectedApi.toUpperCase()} não retornou conteúdo. Verifique sua chave de acesso ou saldo.`);
     }
-
-    setLoadingSteps(prev => prev.map(s => s.id === 'style' ? { ...s, status: 'completed' } : s.id === 'branding' ? { ...s, status: 'loading' } : s));
 
     let cleanedHtml = html;
     const htmlMatch = html.match(/```html\s*([\s\S]*?)\s*```/i);
